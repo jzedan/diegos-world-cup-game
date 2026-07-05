@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>La Copa del Mundo de Diego</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  .pitch-bg {
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(34,197,94,0.18), transparent 60%),
+      radial-gradient(900px 500px at 90% 110%, rgba(250,204,21,0.12), transparent 60%),
+      linear-gradient(180deg, #0b1220 0%, #0a0f1c 100%);
+  }
+  .glass {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(6px);
+  }
+  .team-btn { transition: transform .08s ease, background-color .15s ease, color .15s ease, box-shadow .15s ease, opacity .15s ease; }
+  .team-btn:not(:disabled):active { transform: scale(0.97); }
+  .team-btn.win { background: linear-gradient(135deg, #22c55e, #16a34a); color: #04140a; box-shadow: 0 6px 20px rgba(34,197,94,.45); border-color: rgba(34,197,94,.6); }
+  .team-btn.lose { opacity: .35; }
+  .team-btn:disabled { cursor: not-allowed; opacity: .5; }
+  .flag { font-size: 1.6rem; line-height: 1; }
+  .champ-glow { box-shadow: 0 0 60px rgba(250,204,21,.35); }
+  @keyframes pop { 0%{transform:scale(.6);opacity:0} 60%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+  .pop { animation: pop .35s ease both; }
+  .confetti { position: fixed; top: -10vh; font-size: 1.4rem; pointer-events: none; z-index: 50; will-change: transform; }
+  @keyframes fall { to { transform: translateY(120vh) rotate(540deg); } }
+  .step-num { font-variant: small-caps; }
+
+  /* ---- bracket ---- */
+  .bracket-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+  .bracket { position: relative; display: flex; align-items: stretch; min-width: 950px; }
+  #connectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
+  .round { flex: 1 1 0; display: flex; flex-direction: column; padding: 0 16px; }
+  .cell { flex: 1 1 0; min-height: 132px; display: flex; align-items: center; justify-content: center; }
+  .bracket-card { position: relative; z-index: 10; width: 100%; }
+  .head-row { display: flex; }
+  .head-col { flex: 1 1 0; padding: 0 16px; text-align: center; }
+</style>
+</head>
+<body class="pitch-bg text-slate-200 min-h-screen">
+
+<header class="max-w-5xl mx-auto px-4 pt-10 pb-4">
+  <div class="flex flex-col items-center text-center gap-2">
+    <div class="text-6xl sm:text-7xl">🏆⚽</div>
+    <h1 class="text-4xl sm:text-6xl font-black bg-gradient-to-r from-emerald-300 via-yellow-300 to-emerald-300 bg-clip-text text-transparent">
+      La Copa del Mundo de Diego
+    </h1>
+    <p class="text-slate-300 max-w-2xl text-base sm:text-lg mt-1">
+      <b>¡Diego's World Cup Game!</b> Empezamos con <b class="text-emerald-300">48 equipos</b> y tú vas
+      eligiendo quién gana cada partido hasta llegar al <b class="text-yellow-300">campeón del mundo</b>. 🌍
+    </p>
+  </div>
+
+  <div class="mt-6 grid grid-cols-1 sm:grid-cols-4 gap-3 max-w-3xl mx-auto text-sm">
+    <div class="glass rounded-2xl p-3 text-center">
+      <div class="text-2xl">🌍</div>
+      <div class="mt-1"><b class="text-emerald-300">48 equipos</b> empiezan el Mundial</div>
+    </div>
+    <div class="glass rounded-2xl p-3 text-center">
+      <div class="text-2xl">✅</div>
+      <div class="mt-1">Los mejores <b class="text-emerald-300">avanzan</b> hasta quedar 16</div>
+    </div>
+    <div class="glass rounded-2xl p-3 text-center">
+      <div class="text-2xl">👆</div>
+      <div class="mt-1">Tú <b class="text-yellow-300">tocas</b> al equipo que gana</div>
+    </div>
+    <div class="glass rounded-2xl p-3 text-center">
+      <div class="text-2xl">🏆</div>
+      <div class="mt-1">Sigue hasta el <b class="text-yellow-300">campeón</b></div>
+    </div>
+  </div>
+
+  <div class="mt-5 flex items-center justify-center gap-3 flex-wrap">
+    <button id="reset-all" class="text-sm px-4 py-2 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      ↺ Empezar de nuevo
+    </button>
+  </div>
+</header>
+
+<!-- ================= CHAMPION BANNER ================= -->
+<section class="max-w-3xl mx-auto px-4 pt-2 pb-2">
+  <div id="champ-banner" class="hidden glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
+    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Campeón del Mundo</div>
+    <div class="text-7xl mt-2">🏆</div>
+    <div id="champ-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
+    <div class="text-slate-300 mt-2">¡Felicidades, Diego eligió al campeón! 🎉</div>
+  </div>
+</section>
+
+<!-- ================= 48 TEAMS ================= -->
+<section class="max-w-5xl mx-auto px-4 pt-6 pb-4">
+  <div class="text-center mb-4">
+    <div class="text-xs uppercase tracking-[0.3em] text-emerald-400/80">Paso 1 · Fase de grupos</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Los 48 equipos 🌍</h2>
+    <p class="text-sm text-slate-400 mt-1">Los equipos con <b class="text-emerald-300">✓ verde</b> avanzaron a la siguiente ronda. Los grises se quedaron fuera.</p>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="groups"></div>
+</section>
+
+<!-- ================= ROUND OF 32 -> 16 ================= -->
+<section class="max-w-5xl mx-auto px-4 pt-6 pb-4">
+  <div class="text-center mb-4">
+    <div class="text-xs uppercase tracking-[0.3em] text-emerald-400/80">Paso 2 · Ronda de 32</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Quedan 16 equipos ✅</h2>
+    <p class="text-sm text-slate-400 mt-1">Estos partidos ya se jugaron. El equipo <b class="text-emerald-300">verde</b> ganó y pasa a los Octavos.</p>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="r32"></div>
+</section>
+
+<!-- ================= INTERACTIVE BRACKET ================= -->
+<section class="max-w-5xl mx-auto px-4 pt-8 pb-4">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Paso 3 · ¡Ahora eliges tú!</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Del Octavo a la Final 👆🏆</h2>
+    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
+      Toca al equipo que crees que <b class="text-emerald-300">gana</b>. Ese equipo pasa al siguiente partido.
+      ¿Te equivocaste? Tócalo <b>otra vez</b> para borrar y elegir el otro. 😉
+    </p>
+    <p class="text-xs text-slate-400 mt-2 max-w-2xl mx-auto">
+      Los dos primeros Octavos (<b>4 jul</b>) ya se jugaron: <b class="text-emerald-300">Marruecos</b> (3–0 a Canadá)
+      y <b class="text-emerald-300">Francia</b> (1–0 a Paraguay). ¡Diego empieza a elegir desde <b class="text-white">Brasil vs Noruega</b>! 👇
+    </p>
+  </div>
+</section>
+
+<main class="max-w-6xl mx-auto px-2 sm:px-4 pb-6">
+  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
+  <div class="bracket-scroll">
+    <div class="head-row max-w-6xl mx-auto" style="min-width:950px">
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">quedan 16 · 4–7 jul</div></div>
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">quedan 8 · 9–11 jul</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">quedan 4 · 14–15 jul</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">19 jul</div></div>
+    </div>
+    <div id="bracket" class="bracket max-w-6xl mx-auto">
+      <svg id="connectors"></svg>
+      <div class="round" id="round-r16"></div>
+      <div class="round" id="round-qf"></div>
+      <div class="round" id="round-sf"></div>
+      <div class="round" id="round-final"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="max-w-5xl mx-auto px-4 pb-10 text-center text-xs text-slate-500 leading-relaxed">
+  Hecho con cariño para Diego · Mundial 2026 (USA · México · Canadá).<br/>
+  Resultados reales de la fase de grupos, Ronda de 32 y los Octavos del 4 de julio (fuente: Wikipedia). Los partidos del 5 de julio en adelante los eliges tú. Horarios en hora local.
+</footer>
+
+<script>
+/* ---------------- FLAGS ---------------- */
+const FLAGS = {
+  "México":"🇲🇽","Corea del Sur":"🇰🇷","Rep. Checa":"🇨🇿","Sudáfrica":"🇿🇦",
+  "Canadá":"🇨🇦","Catar":"🇶🇦","Suiza":"🇨🇭","Bosnia":"🇧🇦",
+  "Brasil":"🇧🇷","Escocia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Marruecos":"🇲🇦","Haití":"🇭🇹",
+  "Estados Unidos":"🇺🇸","Australia":"🇦🇺","Turquía":"🇹🇷","Paraguay":"🇵🇾",
+  "Alemania":"🇩🇪","Costa de Marfil":"🇨🇮","Ecuador":"🇪🇨","Curazao":"🇨🇼",
+  "Países Bajos":"🇳🇱","Suecia":"🇸🇪","Túnez":"🇹🇳","Japón":"🇯🇵",
+  "España":"🇪🇸","Arabia Saudita":"🇸🇦","Uruguay":"🇺🇾","Cabo Verde":"🇨🇻",
+  "Bélgica":"🇧🇪","Irán":"🇮🇷","Nueva Zelanda":"🇳🇿","Egipto":"🇪🇬",
+  "Francia":"🇫🇷","Irak":"🇮🇶","Noruega":"🇳🇴","Senegal":"🇸🇳",
+  "Argentina":"🇦🇷","Austria":"🇦🇹","Jordania":"🇯🇴","Argelia":"🇩🇿",
+  "Portugal":"🇵🇹","Uzbekistán":"🇺🇿","Colombia":"🇨🇴","RD Congo":"🇨🇩",
+  "Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Ghana":"🇬🇭","Panamá":"🇵🇦","Croacia":"🇭🇷"
+};
+const flag = n => FLAGS[n] || "⚽";
+
+/* ---------------- 48 TEAMS (groups) ---------------- */
+/* [name, advanced?] */
+const GROUPS = [
+  { g:"A", teams:[["México",true],["Sudáfrica",true],["Corea del Sur",false],["Rep. Checa",false]] },
+  { g:"B", teams:[["Canadá",true],["Suiza",true],["Bosnia",true],["Catar",false]] },
+  { g:"C", teams:[["Brasil",true],["Marruecos",true],["Escocia",false],["Haití",false]] },
+  { g:"D", teams:[["Estados Unidos",true],["Paraguay",true],["Australia",true],["Turquía",false]] },
+  { g:"E", teams:[["Alemania",true],["Ecuador",true],["Costa de Marfil",true],["Curazao",false]] },
+  { g:"F", teams:[["Países Bajos",true],["Japón",true],["Suecia",true],["Túnez",false]] },
+  { g:"G", teams:[["España",true],["Cabo Verde",true],["Uruguay",false],["Arabia Saudita",false]] },
+  { g:"H", teams:[["Bélgica",true],["Egipto",true],["Irán",false],["Nueva Zelanda",false]] },
+  { g:"I", teams:[["Francia",true],["Noruega",true],["Senegal",true],["Irak",false]] },
+  { g:"J", teams:[["Argentina",true],["Austria",true],["Argelia",true],["Jordania",false]] },
+  { g:"K", teams:[["Portugal",true],["Colombia",true],["RD Congo",true],["Uzbekistán",false]] },
+  { g:"L", teams:[["Inglaterra",true],["Croacia",true],["Ghana",true],["Panamá",false]] }
+];
+
+const groupsEl = document.getElementById("groups");
+GROUPS.forEach(gr => {
+  const card = document.createElement("div");
+  card.className = "glass rounded-2xl p-4";
+  card.innerHTML = `
+    <div class="flex items-center gap-2 mb-3">
+      <div class="w-8 h-8 rounded-full bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-emerald-300 font-black">${gr.g}</div>
+      <div class="text-xs uppercase tracking-widest text-slate-400">Grupo ${gr.g}</div>
+    </div>
+    <div class="space-y-1.5">
+      ${gr.teams.map(([name,adv]) => `
+        <div class="flex items-center gap-2 rounded-lg px-2 py-1.5 ${adv ? "bg-emerald-500/10" : "opacity-45"}">
+          <span class="flag">${flag(name)}</span>
+          <span class="flex-1 text-sm ${adv ? "text-slate-100 font-medium" : "text-slate-400 line-through"}">${name}</span>
+          <span class="text-sm">${adv ? "✅" : "❌"}</span>
+        </div>`).join("")}
+    </div>`;
+  groupsEl.appendChild(card);
+});
+
+/* ---------------- ROUND OF 32 (real results) ---------------- */
+/* winner is the team that advanced to Round of 16 (ordered by the R16 match they feed) */
+const R32 = [
+  { a:"Sudáfrica",      b:"Canadá",     score:"0–1",           winner:"Canadá" },
+  { a:"Países Bajos",   b:"Marruecos",  score:"1–1 (2–3 pen)", winner:"Marruecos" },
+  { a:"Alemania",       b:"Paraguay",   score:"1–1 (3–4 pen)", winner:"Paraguay" },
+  { a:"Francia",        b:"Suecia",     score:"3–0",           winner:"Francia" },
+  { a:"Brasil",         b:"Japón",      score:"2–1",           winner:"Brasil" },
+  { a:"Costa de Marfil",b:"Noruega",    score:"1–2",           winner:"Noruega" },
+  { a:"México",         b:"Ecuador",    score:"2–0",           winner:"México" },
+  { a:"Inglaterra",     b:"RD Congo",   score:"2–1",           winner:"Inglaterra" },
+  { a:"Portugal",       b:"Croacia",    score:"2–1",           winner:"Portugal" },
+  { a:"España",         b:"Austria",    score:"3–0",           winner:"España" },
+  { a:"Estados Unidos", b:"Bosnia",     score:"2–0",           winner:"Estados Unidos" },
+  { a:"Bélgica",        b:"Senegal",    score:"3–2 (pró.)",    winner:"Bélgica" },
+  { a:"Argentina",      b:"Cabo Verde", score:"3–2 (pró.)",    winner:"Argentina" },
+  { a:"Australia",      b:"Egipto",     score:"1–1 (2–4 pen)", winner:"Egipto" },
+  { a:"Suiza",          b:"Argelia",    score:"2–0",           winner:"Suiza" },
+  { a:"Colombia",       b:"Ghana",      score:"1–0",           winner:"Colombia" }
+];
+const r32El = document.getElementById("r32");
+R32.forEach(m => {
+  const teamRow = (name) => {
+    const win = name === m.winner;
+    return `<div class="flex items-center gap-2 rounded-lg px-2 py-1.5 ${win ? "bg-emerald-500/15" : "opacity-50"}">
+      <span class="flag">${flag(name)}</span>
+      <span class="flex-1 text-sm ${win ? "text-emerald-200 font-semibold" : "text-slate-400 line-through"}">${name}</span>
+      ${win ? '<span class="text-xs text-emerald-300 font-bold">PASA ✅</span>' : ''}
+    </div>`;
+  };
+  const row = document.createElement("div");
+  row.className = "glass rounded-2xl p-3";
+  row.innerHTML = `<div class="text-[10px] text-center text-slate-400 mb-1.5">Resultado <span class="text-slate-200 font-semibold">${m.score}</span></div>`
+    + `<div class="space-y-1.5">` + teamRow(m.a) + teamRow(m.b) + `</div>`;
+  r32El.appendChild(row);
+});
+
+/* ---------------- INTERACTIVE KNOCKOUT ---------------- */
+const KO = {
+  r16: [
+    { id:"m89", a:"Canadá",         b:"Marruecos", date:"Sábado 4 jul",  time:"12:00", city:"Houston",                 venue:"NRG Stadium",              played:true, score:"0–3", winner:"Marruecos" },
+    { id:"m90", a:"Paraguay",       b:"Francia",   date:"Sábado 4 jul",  time:"17:00", city:"Filadelfia",              venue:"Lincoln Financial Field",  played:true, score:"0–1", winner:"Francia" },
+    { id:"m91", a:"Brasil",         b:"Noruega",   date:"Domingo 5 jul", time:"16:00", city:"Nueva York / Nueva Jersey", venue:"MetLife Stadium" },
+    { id:"m92", a:"México",         b:"Inglaterra",date:"Domingo 5 jul", time:"18:00", city:"Ciudad de México",        venue:"Estadio Azteca" },
+    { id:"m93", a:"Portugal",       b:"España",    date:"Lunes 6 jul",   time:"14:00", city:"Dallas (Arlington)",      venue:"AT&T Stadium" },
+    { id:"m94", a:"Estados Unidos", b:"Bélgica",   date:"Lunes 6 jul",   time:"17:00", city:"Seattle",                 venue:"Lumen Field" },
+    { id:"m95", a:"Argentina",      b:"Egipto",    date:"Martes 7 jul",  time:"12:00", city:"Atlanta",                 venue:"Mercedes-Benz Stadium" },
+    { id:"m96", a:"Suiza",          b:"Colombia",  date:"Martes 7 jul",  time:"13:00", city:"Vancouver",               venue:"BC Place" }
+  ],
+  qf: [
+    { id:"qf97",  from:["m89","m90"], date:"Jueves 9 jul",   time:"18:00", city:"Boston (Foxborough)",   venue:"Gillette Stadium" },
+    { id:"qf98",  from:["m93","m94"], date:"Viernes 10 jul", time:"18:00", city:"Los Ángeles (Inglewood)",venue:"SoFi Stadium" },
+    { id:"qf99",  from:["m91","m92"], date:"Sábado 11 jul",  time:"13:00", city:"Miami",                 venue:"Hard Rock Stadium" },
+    { id:"qf100", from:["m95","m96"], date:"Sábado 11 jul",  time:"17:00", city:"Kansas City",           venue:"Arrowhead Stadium" }
+  ],
+  sf: [
+    { id:"sf1", from:["qf97","qf98"],  date:"Martes 14 jul",   time:"18:00", city:"Dallas (Arlington)", venue:"AT&T Stadium" },
+    { id:"sf2", from:["qf99","qf100"], date:"Miércoles 15 jul",time:"18:00", city:"Atlanta",            venue:"Mercedes-Benz Stadium" }
+  ],
+  final: { id:"final", from:["sf1","sf2"], date:"Domingo 19 jul", time:"15:00", city:"Nueva York / Nueva Jersey", venue:"MetLife Stadium" }
+};
+const ALL = [...KO.r16, ...KO.qf, ...KO.sf, KO.final];
+const LABEL = { m89:"Octavo 1", m90:"Octavo 2", m91:"Octavo 3", m92:"Octavo 4", m93:"Octavo 5", m94:"Octavo 6", m95:"Octavo 7", m96:"Octavo 8", qf97:"Cuarto 1", qf98:"Cuarto 2", qf99:"Cuarto 3", qf100:"Cuarto 4", sf1:"Semifinal 1", sf2:"Semifinal 2" };
+
+/* ---- storage ---- */
+const KEY = "diegosWorldCup.picks.v2";
+let picks = {};
+try { picks = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e) { picks = {}; }
+const save = () => localStorage.setItem(KEY, JSON.stringify(picks));
+
+/* ---- winner of a match: fixed for played games, otherwise the user's pick ---- */
+function winnerOf(id) {
+  const m = ALL.find(x => x.id === id);
+  if (m && m.played) return m.winner;
+  return picks[id] || null;
+}
+/* ---- resolve the two teams of a match ---- */
+function teamsOf(m) {
+  if (m.from) {
+    return { a: winnerOf(m.from[0]), b: winnerOf(m.from[1]) };
+  }
+  return { a: m.a, b: m.b };
+}
+/* remove picks that are no longer valid (cascade when an earlier pick changes) */
+function validate() {
+  let changed = true;
+  while (changed) {
+    changed = false;
+    ALL.forEach(m => {
+      if (!m.played && picks[m.id]) {
+        const t = teamsOf(m);
+        if (picks[m.id] !== t.a && picks[m.id] !== t.b) { delete picks[m.id]; changed = true; }
+      }
+    });
+  }
+}
+
+/* ---- render one match card ---- */
+function matchCard(m) {
+  const t = teamsOf(m);
+  const played = !!m.played;
+  const chosen = played ? m.winner : (picks[m.id] || null);
+  const btn = (name, side) => {
+    if (!name) {
+      const src = m.from ? LABEL[side === "a" ? m.from[0] : m.from[1]] : "";
+      return `<button disabled class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/40 border border-slate-700 text-slate-500">
+        <span class="flag" style="font-size:1.25rem">❓</span>
+        <span class="flex-1 text-left text-xs">Ganador de ${src}</span>
+      </button>`;
+    }
+    const cls = chosen ? (chosen === name ? "win" : "lose") : "";
+    if (played) {
+      return `<div class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/60 border border-slate-700 ${cls}" style="cursor:default">
+        <span class="flag" style="font-size:1.35rem">${flag(name)}</span>
+        <span class="flex-1 text-left text-sm font-semibold truncate">${name}</span>
+        <span class="text-base w-4">${chosen === name ? "🏅" : ""}</span>
+      </div>`;
+    }
+    return `<button data-match="${m.id}" data-team="${name}"
+        class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 ${cls}">
+        <span class="flag" style="font-size:1.35rem">${flag(name)}</span>
+        <span class="flex-1 text-left text-sm font-semibold truncate">${name}</span>
+        <span class="text-base w-4">${chosen === name ? "🏅" : ""}</span>
+      </button>`;
+  };
+  const statusRight = played
+    ? `<span class="text-emerald-300 font-bold">✅ Final ${m.score}</span>`
+    : `<span class="text-yellow-300/90 font-medium">🕒 ${m.time}</span>`;
+  const wrap = document.createElement("article");
+  wrap.id = "card-" + m.id;
+  wrap.className = "bracket-card glass rounded-xl p-2" + (played ? " border-emerald-500/25" : "");
+  wrap.innerHTML = `
+    <div class="flex items-center justify-between mb-1.5 text-[10px]">
+      <span class="uppercase tracking-widest text-slate-500">${LABEL[m.id] || "Final"}</span>
+      ${statusRight}
+    </div>
+    <div class="space-y-1.5">
+      ${btn(t.a, "a")}
+      ${btn(t.b, "b")}
+    </div>
+    <div class="mt-1.5 pt-1.5 border-t border-white/5 text-[10px] text-slate-400 leading-tight">
+      <div>📅 ${m.date} · 🕒 ${m.time}</div>
+      <div>📍 ${m.city} · ${m.venue}</div>
+    </div>`;
+  return wrap;
+}
+
+/* ---- draw the connector lines as one SVG diagram ---- */
+const PAIRS = [
+  ["m89","qf97"],["m90","qf97"],["m93","qf98"],["m94","qf98"],
+  ["m91","qf99"],["m92","qf99"],["m95","qf100"],["m96","qf100"],
+  ["qf97","sf1"],["qf98","sf1"],["qf99","sf2"],["qf100","sf2"],
+  ["sf1","final"],["sf2","final"]
+];
+function drawConnectors() {
+  const bracket = document.getElementById("bracket");
+  const svg = document.getElementById("connectors");
+  if (!bracket || !svg) return;
+  const br = bracket.getBoundingClientRect();
+  const W = bracket.scrollWidth, H = bracket.scrollHeight;
+  svg.setAttribute("width", W);
+  svg.setAttribute("height", H);
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  let paths = "";
+  PAIRS.forEach(([f, t]) => {
+    const fe = document.getElementById("card-" + f);
+    const te = document.getElementById("card-" + t);
+    if (!fe || !te) return;
+    const fr = fe.getBoundingClientRect(), tr = te.getBoundingClientRect();
+    const x1 = fr.right - br.left, y1 = fr.top - br.top + fr.height / 2;
+    const x2 = tr.left - br.left,  y2 = tr.top - br.top + tr.height / 2;
+    const mx = (x1 + x2) / 2;
+    const active = !!winnerOf(f);
+    const color = active ? "#22c55e" : "rgba(148,163,184,.35)";
+    const w = active ? 3 : 2;
+    paths += `<path d="M${x1} ${y1} H${mx} V${y2} H${x2}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  });
+  svg.innerHTML = paths;
+}
+
+/* ---- confetti ---- */
+let confettiOn = false;
+function celebrate() {
+  const emojis = ["🎉","⚽","🏆","🎊","⭐","🥳"];
+  for (let i = 0; i < 60; i++) {
+    const d = document.createElement("div");
+    d.className = "confetti";
+    d.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    d.style.left = Math.random()*100 + "vw";
+    d.style.animation = `fall ${2.5 + Math.random()*2}s linear ${Math.random()*0.6}s forwards`;
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), 5200);
+  }
+}
+
+/* ---- render everything ---- */
+function render() {
+  validate();
+  const fill = (elId, list, isFinal) => {
+    const el = document.getElementById(elId);
+    el.innerHTML = "";
+    list.forEach(m => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      const inner = document.createElement("div");
+      inner.style.width = "100%";
+      if (isFinal) {
+        inner.innerHTML = `<div class="text-center text-3xl mb-1">🏆</div>`;
+        inner.appendChild(matchCard(m));
+      } else {
+        inner.appendChild(matchCard(m));
+      }
+      cell.appendChild(inner);
+      el.appendChild(cell);
+    });
+  };
+  fill("round-r16", KO.r16, false);
+  fill("round-qf", KO.qf, false);
+  fill("round-sf", KO.sf, false);
+  fill("round-final", [KO.final], true);
+  requestAnimationFrame(drawConnectors);
+
+  const banner = document.getElementById("champ-banner");
+  const champ = picks["final"];
+  if (champ) {
+    document.getElementById("champ-name").textContent = flag(champ) + "  " + champ;
+    banner.classList.remove("hidden");
+    banner.classList.add("pop");
+    if (!confettiOn) { confettiOn = true; celebrate(); }
+  } else {
+    banner.classList.add("hidden");
+    confettiOn = false;
+  }
+  save();
+}
+
+/* ---- click handling ---- */
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".team-btn[data-team]");
+  if (!btn) return;
+  const id = btn.dataset.match, team = btn.dataset.team;
+  if (picks[id] === team) { delete picks[id]; }   // tap again to unpick
+  else { picks[id] = team; }                       // pick this team
+  render();
+});
+
+document.getElementById("reset-all").addEventListener("click", () => {
+  if (!confirm("¿Empezar de nuevo y borrar todo lo que eligió Diego?")) return;
+  picks = {};
+  render();
+});
+
+let rz;
+window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(drawConnectors, 120); });
+window.addEventListener("load", drawConnectors);
+
+render();
+</script>
+</body>
+</html>
