@@ -123,8 +123,9 @@
     </p>
     <p class="text-xs text-slate-400 mt-2 max-w-2xl mx-auto">
       Octavos ya jugados: <b class="text-emerald-300">Marruecos</b> (3–0 a Canadá),
-      <b class="text-emerald-300">Francia</b> (1–0 a Paraguay) y
-      <b class="text-emerald-300">Noruega</b> (2–1 a Brasil). ¡Diego elige los partidos que faltan! 👇
+      <b class="text-emerald-300">Francia</b> (1–0 a Paraguay),
+      <b class="text-emerald-300">Noruega</b> (2–1 a Brasil) e
+      <b class="text-emerald-300">Inglaterra</b> (3–2 a México). ¡Diego elige los partidos que faltan! 👇
     </p>
   </div>
 </section>
@@ -159,7 +160,7 @@
 
 <footer class="max-w-5xl mx-auto px-4 pb-10 text-center text-xs text-slate-500 leading-relaxed">
   Hecho con cariño para Diego · Mundial 2026 (USA · México · Canadá).<br/>
-  Resultados reales de la fase de grupos, Ronda de 32 y los Octavos del 4 de julio (fuente: Wikipedia). Los partidos del 5 de julio en adelante los eliges tú. Horarios en hora local.
+  Resultados reales de la fase de grupos, Ronda de 32 y los Octavos ya jugados (fuente: Wikipedia). Los partidos que faltan los eliges tú. Todos los horarios en hora de Mérida / centro de México (UTC−6).
 </footer>
 
 <script>
@@ -263,26 +264,26 @@ R32.forEach(m => {
 /* ---------------- INTERACTIVE KNOCKOUT ---------------- */
 const KO = {
   r16: [
-    { id:"m89", a:"Canadá",         b:"Marruecos", date:"Sábado 4 jul",  time:"12:00", city:"Houston",                 venue:"NRG Stadium",              played:true, score:"0–3", winner:"Marruecos" },
-    { id:"m90", a:"Paraguay",       b:"Francia",   date:"Sábado 4 jul",  time:"17:00", city:"Filadelfia",              venue:"Lincoln Financial Field",  played:true, score:"0–1", winner:"Francia" },
-    { id:"m91", a:"Brasil",         b:"Noruega",   date:"Domingo 5 jul", time:"16:00", city:"Nueva York / Nueva Jersey", venue:"MetLife Stadium", played:true, score:"1–2", winner:"Noruega" },
-    { id:"m92", a:"México",         b:"Inglaterra",date:"Domingo 5 jul", time:"18:00", city:"Ciudad de México",        venue:"Estadio Azteca" },
-    { id:"m93", a:"Portugal",       b:"España",    date:"Lunes 6 jul",   time:"14:00", city:"Dallas (Arlington)",      venue:"AT&T Stadium" },
-    { id:"m94", a:"Estados Unidos", b:"Bélgica",   date:"Lunes 6 jul",   time:"17:00", city:"Seattle",                 venue:"Lumen Field" },
-    { id:"m95", a:"Argentina",      b:"Egipto",    date:"Martes 7 jul",  time:"12:00", city:"Atlanta",                 venue:"Mercedes-Benz Stadium" },
-    { id:"m96", a:"Suiza",          b:"Colombia",  date:"Martes 7 jul",  time:"13:00", city:"Vancouver",               venue:"BC Place" }
+    { id:"m89", a:"Canadá",         b:"Marruecos", date:"Sábado 4 jul",  time:"11:00", city:"Houston",                 venue:"NRG Stadium",              played:true, score:"0–3", winner:"Marruecos" },
+    { id:"m90", a:"Paraguay",       b:"Francia",   date:"Sábado 4 jul",  time:"15:00", city:"Filadelfia",              venue:"Lincoln Financial Field",  played:true, score:"0–1", winner:"Francia" },
+    { id:"m91", a:"Brasil",         b:"Noruega",   date:"Domingo 5 jul", time:"14:00", city:"Nueva York / Nueva Jersey", venue:"MetLife Stadium", played:true, score:"1–2", winner:"Noruega" },
+    { id:"m92", a:"México",         b:"Inglaterra",date:"Domingo 5 jul", time:"18:00", city:"Ciudad de México",        venue:"Estadio Azteca", played:true, score:"2–3", winner:"Inglaterra" },
+    { id:"m93", a:"Portugal",       b:"España",    date:"Lunes 6 jul",   time:"13:00", city:"Dallas (Arlington)",      venue:"AT&T Stadium" },
+    { id:"m94", a:"Estados Unidos", b:"Bélgica",   date:"Lunes 6 jul",   time:"18:00", city:"Seattle",                 venue:"Lumen Field" },
+    { id:"m95", a:"Argentina",      b:"Egipto",    date:"Martes 7 jul",  time:"10:00", city:"Atlanta",                 venue:"Mercedes-Benz Stadium" },
+    { id:"m96", a:"Suiza",          b:"Colombia",  date:"Martes 7 jul",  time:"14:00", city:"Vancouver",               venue:"BC Place" }
   ],
   qf: [
-    { id:"qf97",  from:["m89","m90"], date:"Jueves 9 jul",   time:"18:00", city:"Boston (Foxborough)",   venue:"Gillette Stadium" },
-    { id:"qf98",  from:["m93","m94"], date:"Viernes 10 jul", time:"18:00", city:"Los Ángeles (Inglewood)",venue:"SoFi Stadium" },
-    { id:"qf99",  from:["m91","m92"], date:"Sábado 11 jul",  time:"13:00", city:"Miami",                 venue:"Hard Rock Stadium" },
-    { id:"qf100", from:["m95","m96"], date:"Sábado 11 jul",  time:"17:00", city:"Kansas City",           venue:"Arrowhead Stadium" }
+    { id:"qf97",  from:["m89","m90"], date:"Jueves 9 jul",   time:"14:00", city:"Boston (Foxborough)",   venue:"Gillette Stadium" },
+    { id:"qf98",  from:["m93","m94"], date:"Viernes 10 jul", time:"13:00", city:"Los Ángeles (Inglewood)",venue:"SoFi Stadium" },
+    { id:"qf99",  from:["m91","m92"], date:"Sábado 11 jul",  time:"15:00", city:"Miami",                 venue:"Hard Rock Stadium" },
+    { id:"qf100", from:["m95","m96"], date:"Sábado 11 jul",  time:"19:00", city:"Kansas City",           venue:"Arrowhead Stadium" }
   ],
   sf: [
-    { id:"sf1", from:["qf97","qf98"],  date:"Martes 14 jul",   time:"18:00", city:"Dallas (Arlington)", venue:"AT&T Stadium" },
-    { id:"sf2", from:["qf99","qf100"], date:"Miércoles 15 jul",time:"18:00", city:"Atlanta",            venue:"Mercedes-Benz Stadium" }
+    { id:"sf1", from:["qf97","qf98"],  date:"Martes 14 jul",   time:"13:00", city:"Dallas (Arlington)", venue:"AT&T Stadium" },
+    { id:"sf2", from:["qf99","qf100"], date:"Miércoles 15 jul",time:"13:00", city:"Atlanta",            venue:"Mercedes-Benz Stadium" }
   ],
-  final: { id:"final", from:["sf1","sf2"], date:"Domingo 19 jul", time:"15:00", city:"Nueva York / Nueva Jersey", venue:"MetLife Stadium" },
+  final: { id:"final", from:["sf1","sf2"], date:"Domingo 19 jul", time:"13:00", city:"Nueva York / Nueva Jersey", venue:"MetLife Stadium" },
   third: { id:"third", fromLosers:["sf1","sf2"], date:"Sábado 18 jul", time:"15:00", city:"Miami", venue:"Hard Rock Stadium" }
 };
 const ALL = [...KO.r16, ...KO.qf, ...KO.sf, KO.final, KO.third];
@@ -379,7 +380,7 @@ function matchCard(m) {
       ${btn(t.b, "b")}
     </div>
     <div class="mt-1.5 pt-1.5 border-t border-white/10 text-[11px] leading-snug">
-      <div class="text-slate-300">📅 ${m.date} · 🕒 ${m.time}</div>
+      <div class="text-slate-300">📅 ${m.date} · 🕒 ${m.time} (hora MX)</div>
       <div class="text-yellow-200/90 font-medium">🏟️ ${m.venue}</div>
       <div class="text-slate-400">📍 ${m.city}</div>
     </div>`;
