@@ -36,7 +36,7 @@
   .bracket { position: relative; display: flex; align-items: stretch; min-width: 950px; }
   #connectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
   .round { flex: 1 1 0; display: flex; flex-direction: column; padding: 0 16px; }
-  .cell { flex: 1 1 0; min-height: 132px; display: flex; align-items: center; justify-content: center; }
+  .cell { flex: 1 1 0; min-height: 158px; display: flex; align-items: center; justify-content: center; }
   .bracket-card { position: relative; z-index: 10; width: 100%; }
   .head-row { display: flex; }
   .head-col { flex: 1 1 0; padding: 0 16px; text-align: center; }
@@ -164,21 +164,27 @@
 
 <script>
 /* ---------------- FLAGS ---------------- */
+/* Real flag images (flagcdn.com) — emoji flags do not render on Windows */
 const FLAGS = {
-  "México":"🇲🇽","Corea del Sur":"🇰🇷","Rep. Checa":"🇨🇿","Sudáfrica":"🇿🇦",
-  "Canadá":"🇨🇦","Catar":"🇶🇦","Suiza":"🇨🇭","Bosnia":"🇧🇦",
-  "Brasil":"🇧🇷","Escocia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Marruecos":"🇲🇦","Haití":"🇭🇹",
-  "Estados Unidos":"🇺🇸","Australia":"🇦🇺","Turquía":"🇹🇷","Paraguay":"🇵🇾",
-  "Alemania":"🇩🇪","Costa de Marfil":"🇨🇮","Ecuador":"🇪🇨","Curazao":"🇨🇼",
-  "Países Bajos":"🇳🇱","Suecia":"🇸🇪","Túnez":"🇹🇳","Japón":"🇯🇵",
-  "España":"🇪🇸","Arabia Saudita":"🇸🇦","Uruguay":"🇺🇾","Cabo Verde":"🇨🇻",
-  "Bélgica":"🇧🇪","Irán":"🇮🇷","Nueva Zelanda":"🇳🇿","Egipto":"🇪🇬",
-  "Francia":"🇫🇷","Irak":"🇮🇶","Noruega":"🇳🇴","Senegal":"🇸🇳",
-  "Argentina":"🇦🇷","Austria":"🇦🇹","Jordania":"🇯🇴","Argelia":"🇩🇿",
-  "Portugal":"🇵🇹","Uzbekistán":"🇺🇿","Colombia":"🇨🇴","RD Congo":"🇨🇩",
-  "Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Ghana":"🇬🇭","Panamá":"🇵🇦","Croacia":"🇭🇷"
+  "México":"mx","Corea del Sur":"kr","Rep. Checa":"cz","Sudáfrica":"za",
+  "Canadá":"ca","Catar":"qa","Suiza":"ch","Bosnia":"ba",
+  "Brasil":"br","Escocia":"gb-sct","Marruecos":"ma","Haití":"ht",
+  "Estados Unidos":"us","Australia":"au","Turquía":"tr","Paraguay":"py",
+  "Alemania":"de","Costa de Marfil":"ci","Ecuador":"ec","Curazao":"cw",
+  "Países Bajos":"nl","Suecia":"se","Túnez":"tn","Japón":"jp",
+  "España":"es","Arabia Saudita":"sa","Uruguay":"uy","Cabo Verde":"cv",
+  "Bélgica":"be","Irán":"ir","Nueva Zelanda":"nz","Egipto":"eg",
+  "Francia":"fr","Irak":"iq","Noruega":"no","Senegal":"sn",
+  "Argentina":"ar","Austria":"at","Jordania":"jo","Argelia":"dz",
+  "Portugal":"pt","Uzbekistán":"uz","Colombia":"co","RD Congo":"cd",
+  "Inglaterra":"gb-eng","Ghana":"gh","Panamá":"pa","Croacia":"hr"
 };
-const flag = n => FLAGS[n] || "⚽";
+const flag = (n, s = 24) => {
+  const c = FLAGS[n];
+  if (!c) return "⚽";
+  return `<img src="https://flagcdn.com/w80/${c}.png" alt="${n}" loading="lazy"
+    style="width:${s}px;height:auto;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.2);display:inline-block;vertical-align:middle">`;
+};
 
 /* ---------------- 48 TEAMS (groups) ---------------- */
 /* [name, advanced?] */
@@ -345,14 +351,14 @@ function matchCard(m) {
     const cls = chosen ? (chosen === name ? "win" : "lose") : "";
     if (played) {
       return `<div class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/60 border border-slate-700 ${cls}" style="cursor:default">
-        <span class="flag" style="font-size:1.35rem">${flag(name)}</span>
+        <span class="flag">${flag(name, 26)}</span>
         <span class="flex-1 text-left text-sm font-semibold truncate">${name}</span>
         <span class="text-base w-4">${chosen === name ? "🏅" : ""}</span>
       </div>`;
     }
     return `<button data-match="${m.id}" data-team="${name}"
         class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 ${cls}">
-        <span class="flag" style="font-size:1.35rem">${flag(name)}</span>
+        <span class="flag">${flag(name, 26)}</span>
         <span class="flex-1 text-left text-sm font-semibold truncate">${name}</span>
         <span class="text-base w-4">${chosen === name ? "🏅" : ""}</span>
       </button>`;
@@ -372,9 +378,10 @@ function matchCard(m) {
       ${btn(t.a, "a")}
       ${btn(t.b, "b")}
     </div>
-    <div class="mt-1.5 pt-1.5 border-t border-white/5 text-[10px] text-slate-400 leading-tight">
-      <div>📅 ${m.date} · 🕒 ${m.time}</div>
-      <div>📍 ${m.city} · ${m.venue}</div>
+    <div class="mt-1.5 pt-1.5 border-t border-white/10 text-[11px] leading-snug">
+      <div class="text-slate-300">📅 ${m.date} · 🕒 ${m.time}</div>
+      <div class="text-yellow-200/90 font-medium">🏟️ ${m.venue}</div>
+      <div class="text-slate-400">📍 ${m.city}</div>
     </div>`;
   return wrap;
 }
@@ -460,7 +467,7 @@ function render() {
   const banner = document.getElementById("champ-banner");
   const champ = picks["final"];
   if (champ) {
-    document.getElementById("champ-name").textContent = flag(champ) + "  " + champ;
+    document.getElementById("champ-name").innerHTML = flag(champ, 42) + " " + champ;
     banner.classList.remove("hidden");
     banner.classList.add("pop");
     if (!confettiOn) { confettiOn = true; celebrate(); }
