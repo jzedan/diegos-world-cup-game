@@ -34,12 +34,20 @@
   /* ---- bracket ---- */
   .bracket-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
   .bracket { position: relative; display: flex; align-items: stretch; min-width: 950px; }
-  #connectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
+  #connectors, #fconnectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
   .round { flex: 1 1 0; display: flex; flex-direction: column; padding: 0 16px; }
   .cell { flex: 1 1 0; min-height: 158px; display: flex; align-items: center; justify-content: center; }
   .bracket-card { position: relative; z-index: 10; width: 100%; }
   .head-row { display: flex; }
   .head-col { flex: 1 1 0; padding: 0 16px; text-align: center; }
+
+  /* ---- fantasy bracket (5 rounds, compact cards) ---- */
+  .fbracket .cell { min-height: 128px; }
+  .fbracket .round { padding: 0 10px; }
+
+  /* ---- tabs ---- */
+  .tab-btn { transition: background-color .15s ease, color .15s ease; }
+  .tab-btn.active { background: linear-gradient(135deg, #22c55e, #16a34a); color: #04140a; border-color: rgba(34,197,94,.6); font-weight: 800; }
 </style>
 </head>
 <body class="pitch-bg text-slate-200 min-h-screen">
@@ -75,12 +83,23 @@
     </div>
   </div>
 
-  <div class="mt-5 flex items-center justify-center gap-3 flex-wrap">
+  <div class="mt-6 flex items-center justify-center gap-2 flex-wrap">
+    <button id="tabbtn-real" class="tab-btn active text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      🏆 El Mundial real
+    </button>
+    <button id="tabbtn-fantasy" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      🎮 Inventa tu Mundial
+    </button>
+  </div>
+
+  <div class="mt-4 flex items-center justify-center gap-3 flex-wrap">
     <button id="reset-all" class="text-sm px-4 py-2 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       ↺ Empezar de nuevo
     </button>
   </div>
 </header>
+
+<div id="tab-real">
 
 <!-- ================= CHAMPION BANNER ================= -->
 <section class="max-w-3xl mx-auto px-4 pt-2 pb-2">
@@ -122,11 +141,12 @@
       ¿Te equivocaste? Tócalo <b>otra vez</b> para borrar y elegir el otro. 😉
     </p>
     <p class="text-xs text-slate-400 mt-2 max-w-2xl mx-auto">
-      Los Octavos, los Cuartos y la primera Semi ya se jugaron:
-      <b class="text-emerald-300">España</b> le ganó 2–0 a Francia
-      ¡y ya está en la <b class="text-yellow-300">Final</b>! 🎉
-      La otra Semi es <b class="text-white">Inglaterra vs Argentina</b> (miércoles 15).
-      ¡Ahora Diego elige quién gana esa Semi! 👇
+      ¡Las dos Semis ya se jugaron!
+      <b class="text-emerald-300">España</b> le ganó 2–0 a Francia y
+      <b class="text-emerald-300">Argentina</b> le ganó 2–1 a Inglaterra.
+      La <b class="text-yellow-300">Final</b> es <b class="text-white">España vs Argentina</b> (domingo 19). 🎉
+      ¡Ahora Diego elige al campeón del mundo! 👇
+      Y también quién gana el 3.º lugar: <b class="text-white">Francia vs Inglaterra</b>.
     </p>
   </div>
 </section>
@@ -158,10 +178,60 @@
   </div>
   <div id="round-third"></div>
 </section>
+</div><!-- /tab-real -->
+
+<!-- ================= TAB 2: FANTASY (Inventa tu Mundial) ================= -->
+<div id="tab-fantasy" class="hidden">
+
+<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego · ¡Aquí mandas tú!</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Inventa tu Mundial 🎮</h2>
+    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
+      En este juego <b>no cuentan los resultados reales</b>: empiezas desde la
+      <b class="text-emerald-300">Ronda de 32</b> con los mismos equipos del Mundial,
+      y tú tocas al equipo que <b class="text-yellow-300">tú quieres</b> que gane cada partido,
+      hasta elegir a tu campeón. ¿Podría Brasil haber llegado a la Final? ¡Pruébalo! 😄
+    </p>
+    <p class="text-xs text-slate-400 mt-2">¿Te equivocaste? Toca al equipo <b>otra vez</b> para borrar y elegir el otro. 😉</p>
+  </div>
+</section>
+
+<section class="max-w-3xl mx-auto px-4 pt-2 pb-2">
+  <div id="fchamp-banner" class="hidden glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
+    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Campeón del Mundial de Diego</div>
+    <div class="text-7xl mt-2">🏆</div>
+    <div id="fchamp-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
+    <div class="text-slate-300 mt-2">¡En tu Mundial este equipo es el campeón! 🎉</div>
+  </div>
+</section>
+
+<main class="max-w-7xl mx-auto px-2 sm:px-4 pb-10">
+  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
+  <div class="bracket-scroll">
+    <div class="head-row max-w-7xl mx-auto" style="min-width:1250px">
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">🌍 Ronda de 32</div><div class="text-[10px] text-slate-500">32 equipos</div></div>
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">quedan 16</div></div>
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">quedan 8</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">quedan 4</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">¡tu campeón!</div></div>
+    </div>
+    <div id="fbracket" class="bracket fbracket max-w-7xl mx-auto" style="min-width:1250px">
+      <svg id="fconnectors"></svg>
+      <div class="round" id="fround-r32"></div>
+      <div class="round" id="fround-r16"></div>
+      <div class="round" id="fround-qf"></div>
+      <div class="round" id="fround-sf"></div>
+      <div class="round" id="fround-final"></div>
+    </div>
+  </div>
+</main>
+
+</div><!-- /tab-fantasy -->
 
 <footer class="max-w-5xl mx-auto px-4 pb-10 text-center text-xs text-slate-500 leading-relaxed">
   Hecho con cariño para Diego · Mundial 2026 (USA · México · Canadá).<br/>
-  Resultados reales de la fase de grupos, Ronda de 32 y los Octavos ya jugados (fuente: Wikipedia). Los partidos que faltan los eliges tú. Todos los horarios en hora de Mérida / centro de México (UTC−6).
+  Resultados reales de todos los partidos ya jugados (fuente: Wikipedia). Los partidos que faltan los eliges tú. Todos los horarios en hora de Mérida / centro de México (UTC−6).
 </footer>
 
 <script>
@@ -282,7 +352,7 @@ const KO = {
   ],
   sf: [
     { id:"sf1", from:["qf97","qf98"],  date:"Martes 14 jul",   time:"13:00", city:"Dallas (Arlington)", venue:"AT&T Stadium", played:true, score:"0–2", winner:"España" },
-    { id:"sf2", from:["qf99","qf100"], date:"Miércoles 15 jul",time:"13:00", city:"Atlanta",            venue:"Mercedes-Benz Stadium" }
+    { id:"sf2", from:["qf99","qf100"], date:"Miércoles 15 jul",time:"13:00", city:"Atlanta",            venue:"Mercedes-Benz Stadium", played:true, score:"1–2", winner:"Argentina" }
   ],
   final: { id:"final", from:["sf1","sf2"], date:"Domingo 19 jul", time:"13:00", city:"Nueva York / Nueva Jersey", venue:"MetLife Stadium" },
   third: { id:"third", fromLosers:["sf1","sf2"], date:"Sábado 18 jul", time:"15:00", city:"Miami", venue:"Hard Rock Stadium" }
@@ -395,17 +465,18 @@ const PAIRS = [
   ["qf97","sf1"],["qf98","sf1"],["qf99","sf2"],["qf100","sf2"],
   ["sf1","final"],["sf2","final"]
 ];
-function drawConnectors() {
-  const bracket = document.getElementById("bracket");
-  const svg = document.getElementById("connectors");
+function drawLines(bracketId, svgId, pairs, winFn) {
+  const bracket = document.getElementById(bracketId);
+  const svg = document.getElementById(svgId);
   if (!bracket || !svg) return;
+  if (bracket.offsetWidth === 0) return; /* bracket is in a hidden tab */
   const br = bracket.getBoundingClientRect();
   const W = bracket.scrollWidth, H = bracket.scrollHeight;
   svg.setAttribute("width", W);
   svg.setAttribute("height", H);
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   let paths = "";
-  PAIRS.forEach(([f, t]) => {
+  pairs.forEach(([f, t]) => {
     const fe = document.getElementById("card-" + f);
     const te = document.getElementById("card-" + t);
     if (!fe || !te) return;
@@ -413,13 +484,14 @@ function drawConnectors() {
     const x1 = fr.right - br.left, y1 = fr.top - br.top + fr.height / 2;
     const x2 = tr.left - br.left,  y2 = tr.top - br.top + tr.height / 2;
     const mx = (x1 + x2) / 2;
-    const active = !!winnerOf(f);
+    const active = !!winFn(f);
     const color = active ? "#22c55e" : "rgba(148,163,184,.35)";
     const w = active ? 3 : 2;
     paths += `<path d="M${x1} ${y1} H${mx} V${y2} H${x2}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
   });
   svg.innerHTML = paths;
 }
+function drawConnectors() { drawLines("bracket", "connectors", PAIRS, winnerOf); }
 
 /* ---- confetti ---- */
 let confettiOn = false;
@@ -480,27 +552,176 @@ function render() {
   save();
 }
 
+/* ---------------- FANTASY MODE: Inventa tu Mundial (tab 2) ---------------- */
+/* Same 32 qualified teams and real pairings, but nothing is locked:
+   Diego picks every match from the Round of 32 to the final. */
+const F32 = R32.map((m, i) => ({ id: "w" + (i + 1), a: m.a, b: m.b }));
+const F16 = [];
+for (let i = 0; i < 8; i++) F16.push({ id: "w" + (17 + i), from: ["w" + (2*i + 1), "w" + (2*i + 2)] });
+/* quarterfinal pairings mirror the real bracket (qf97–qf100) */
+const FQF = [
+  { id:"w25", from:["w17","w18"] },
+  { id:"w26", from:["w21","w22"] },
+  { id:"w27", from:["w19","w20"] },
+  { id:"w28", from:["w23","w24"] }
+];
+const FSF = [
+  { id:"w29", from:["w25","w26"] },
+  { id:"w30", from:["w27","w28"] }
+];
+const FFINAL = { id:"w31", from:["w29","w30"] };
+const FALL = [...F32, ...F16, ...FQF, ...FSF, FFINAL];
+const FLABEL = {};
+F32.forEach((m, i) => FLABEL[m.id] = "Partido " + (i + 1));
+F16.forEach((m, i) => FLABEL[m.id] = "Octavo " + (i + 1));
+FQF.forEach((m, i) => FLABEL[m.id] = "Cuarto " + (i + 1));
+FSF.forEach((m, i) => FLABEL[m.id] = "Semifinal " + (i + 1));
+FLABEL["w31"] = "Final";
+const FPAIRS = [];
+[...F16, ...FQF, ...FSF, FFINAL].forEach(m => { FPAIRS.push([m.from[0], m.id], [m.from[1], m.id]); });
+
+const FKEY = "diegosWorldCup.fantasy.v1";
+let fpicks = {};
+try { fpicks = JSON.parse(localStorage.getItem(FKEY) || "{}"); } catch(e) { fpicks = {}; }
+const fsave = () => localStorage.setItem(FKEY, JSON.stringify(fpicks));
+
+function fWinnerOf(id) { return fpicks[id] || null; }
+function fTeamsOf(m) {
+  if (m.from) return { a: fWinnerOf(m.from[0]), b: fWinnerOf(m.from[1]) };
+  return { a: m.a, b: m.b };
+}
+function fValidate() {
+  let changed = true;
+  while (changed) {
+    changed = false;
+    FALL.forEach(m => {
+      if (fpicks[m.id]) {
+        const t = fTeamsOf(m);
+        if (fpicks[m.id] !== t.a && fpicks[m.id] !== t.b) { delete fpicks[m.id]; changed = true; }
+      }
+    });
+  }
+}
+
+/* compact card: no dates/venues, this bracket is imaginary */
+function fMatchCard(m) {
+  const t = fTeamsOf(m);
+  const chosen = fpicks[m.id] || null;
+  const btn = (name, side) => {
+    if (!name) {
+      const ph = "Ganador de " + FLABEL[side === "a" ? m.from[0] : m.from[1]];
+      return `<button disabled class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/40 border border-slate-700 text-slate-500">
+        <span class="flag" style="font-size:1.25rem">❓</span>
+        <span class="flex-1 text-left text-xs">${ph}</span>
+      </button>`;
+    }
+    const cls = chosen ? (chosen === name ? "win" : "lose") : "";
+    return `<button data-fmatch="${m.id}" data-team="${name}"
+        class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 ${cls}">
+        <span class="flag">${flag(name, 24)}</span>
+        <span class="flex-1 text-left text-sm font-semibold truncate">${name}</span>
+        <span class="text-base w-4">${chosen === name ? "🏅" : ""}</span>
+      </button>`;
+  };
+  const wrap = document.createElement("article");
+  wrap.id = "card-" + m.id;
+  wrap.className = "bracket-card glass rounded-xl p-2";
+  wrap.innerHTML = `
+    <div class="text-[10px] uppercase tracking-widest text-slate-500 mb-1.5">${FLABEL[m.id]}</div>
+    <div class="space-y-1.5">
+      ${btn(t.a, "a")}
+      ${btn(t.b, "b")}
+    </div>`;
+  return wrap;
+}
+
+function drawFConnectors() { drawLines("fbracket", "fconnectors", FPAIRS, fWinnerOf); }
+
+let fConfettiOn = false;
+function renderFantasy() {
+  fValidate();
+  const fill = (elId, list, isFinal) => {
+    const el = document.getElementById(elId);
+    el.innerHTML = "";
+    list.forEach(m => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      const inner = document.createElement("div");
+      inner.style.width = "100%";
+      if (isFinal) inner.innerHTML = `<div class="text-center text-3xl mb-1">🏆</div>`;
+      inner.appendChild(fMatchCard(m));
+      cell.appendChild(inner);
+      el.appendChild(cell);
+    });
+  };
+  fill("fround-r32", F32, false);
+  fill("fround-r16", F16, false);
+  fill("fround-qf", FQF, false);
+  fill("fround-sf", FSF, false);
+  fill("fround-final", [FFINAL], true);
+  requestAnimationFrame(drawFConnectors);
+
+  const banner = document.getElementById("fchamp-banner");
+  const champ = fpicks["w31"];
+  if (champ) {
+    document.getElementById("fchamp-name").innerHTML = flag(champ, 42) + " " + champ;
+    banner.classList.remove("hidden");
+    banner.classList.add("pop");
+    if (!fConfettiOn) { fConfettiOn = true; celebrate(); }
+  } else {
+    banner.classList.add("hidden");
+    fConfettiOn = false;
+  }
+  fsave();
+}
+
+/* ---------------- TABS ---------------- */
+let activeTab = "real";
+function showTab(name) {
+  activeTab = name;
+  document.getElementById("tab-real").classList.toggle("hidden", name !== "real");
+  document.getElementById("tab-fantasy").classList.toggle("hidden", name !== "fantasy");
+  document.getElementById("tabbtn-real").classList.toggle("active", name === "real");
+  document.getElementById("tabbtn-fantasy").classList.toggle("active", name === "fantasy");
+  /* connector lines can only be measured while the bracket is visible */
+  requestAnimationFrame(name === "real" ? drawConnectors : drawFConnectors);
+}
+document.getElementById("tabbtn-real").addEventListener("click", () => showTab("real"));
+document.getElementById("tabbtn-fantasy").addEventListener("click", () => showTab("fantasy"));
+
 /* ---- click handling ---- */
 document.addEventListener("click", (e) => {
   const btn = e.target.closest(".team-btn[data-team]");
   if (!btn) return;
-  const id = btn.dataset.match, team = btn.dataset.team;
-  if (picks[id] === team) { delete picks[id]; }   // tap again to unpick
-  else { picks[id] = team; }                       // pick this team
-  render();
+  const team = btn.dataset.team;
+  if (btn.dataset.match) {
+    const id = btn.dataset.match;
+    if (picks[id] === team) { delete picks[id]; }   // tap again to unpick
+    else { picks[id] = team; }                       // pick this team
+    render();
+  } else if (btn.dataset.fmatch) {
+    const id = btn.dataset.fmatch;
+    if (fpicks[id] === team) { delete fpicks[id]; }
+    else { fpicks[id] = team; }
+    renderFantasy();
+  }
 });
 
 document.getElementById("reset-all").addEventListener("click", () => {
   if (!confirm("¿Empezar de nuevo y borrar todo lo que eligió Diego?")) return;
-  picks = {};
-  render();
+  if (activeTab === "fantasy") { fpicks = {}; renderFantasy(); }
+  else { picks = {}; render(); }
 });
 
 let rz;
-window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(drawConnectors, 120); });
+window.addEventListener("resize", () => {
+  clearTimeout(rz);
+  rz = setTimeout(activeTab === "real" ? drawConnectors : drawFConnectors, 120);
+});
 window.addEventListener("load", drawConnectors);
 
 render();
+renderFantasy();
 </script>
 </body>
 </html>
