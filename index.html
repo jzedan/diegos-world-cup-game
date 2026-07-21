@@ -90,6 +90,9 @@
     <button id="tabbtn-fantasy" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       🎮 Inventa tu Mundial
     </button>
+    <button id="tabbtn-custom" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      🧩 Elige tu Ronda de 32
+    </button>
   </div>
 
   <div class="mt-4 flex items-center justify-center gap-3 flex-wrap">
@@ -228,6 +231,64 @@
 </main>
 
 </div><!-- /tab-fantasy -->
+
+<!-- ================= TAB 3: CUSTOM (Elige tu Ronda de 32) ================= -->
+<div id="tab-custom" class="hidden">
+
+<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego · ¡el sorteo lo haces tú!</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Elige tu Ronda de 32 🧩</h2>
+    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
+      Aquí <b>tú decides qué 32 equipos</b> juegan cada partido de la Ronda de 32 —
+      puedes meter equipos que <b class="text-emerald-300">no llegaron</b> a esta ronda en el Mundial real,
+      como <b class="text-white">Uruguay</b>. Los partidos quedan en el mismo lugar del cuadro que en el
+      Mundial real, así que cada equipo se enfrenta a quien le toque según su posición, camino a la Final. 👇
+    </p>
+    <p class="text-xs text-slate-400 mt-2">Cada equipo solo puede estar en un partido. Cuando elijas uno, desaparece de los demás menús.</p>
+  </div>
+  <div class="flex items-center justify-center mt-3">
+    <button id="reset-custom-teams" class="text-xs px-4 py-2 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      ↺ Restablecer a los 32 equipos reales
+    </button>
+  </div>
+</section>
+
+<section class="max-w-5xl mx-auto px-4 pt-4 pb-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="team-picker"></div>
+</section>
+
+<section class="max-w-3xl mx-auto px-4 pt-2 pb-2">
+  <div id="cchamp-banner" class="hidden glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
+    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Campeón del Mundial de Diego</div>
+    <div class="text-7xl mt-2">🏆</div>
+    <div id="cchamp-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
+    <div class="text-slate-300 mt-2">¡En tu propia Ronda de 32 este equipo es el campeón! 🎉</div>
+  </div>
+</section>
+
+<main class="max-w-7xl mx-auto px-2 sm:px-4 pb-10">
+  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
+  <div class="bracket-scroll">
+    <div class="head-row max-w-7xl mx-auto" style="min-width:1250px">
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">🌍 Ronda de 32</div><div class="text-[10px] text-slate-500">tus 32 equipos</div></div>
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">quedan 16</div></div>
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">quedan 8</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">quedan 4</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">¡tu campeón!</div></div>
+    </div>
+    <div id="cbracket" class="bracket fbracket max-w-7xl mx-auto" style="min-width:1250px">
+      <svg id="cconnectors"></svg>
+      <div class="round" id="cround-r32"></div>
+      <div class="round" id="cround-r16"></div>
+      <div class="round" id="cround-qf"></div>
+      <div class="round" id="cround-sf"></div>
+      <div class="round" id="cround-final"></div>
+    </div>
+  </div>
+</main>
+
+</div><!-- /tab-custom -->
 
 <footer class="max-w-5xl mx-auto px-4 pb-10 text-center text-xs text-slate-500 leading-relaxed">
   Hecho con cariño para Diego · Mundial 2026 (USA · México · Canadá).<br/>
@@ -675,19 +736,205 @@ function renderFantasy() {
   fsave();
 }
 
+/* ---------------- CUSTOM MODE: Elige tu Ronda de 32 (tab 3) ---------------- */
+/* Diego assigns ANY of the 48 teams (including ones eliminated in groups,
+   e.g. Uruguay) into the 32 Round-of-32 bracket slots. The slots keep the
+   exact same bracket geometry as the real tournament (same pairing order
+   as R32, and the same R16/QF pairings as the fantasy bracket), so whoever
+   Diego places in a slot faces whoever ends up in the paired slot, all the
+   way to the final. */
+const ALL_TEAMS = GROUPS.flatMap(gr => gr.teams.map(([name]) => ({ name, group: gr.g })))
+  .sort((a, b) => a.name.localeCompare(b.name, "es"));
+
+const CDEFAULT = {};
+R32.forEach((m, i) => { CDEFAULT["t" + (i + 1) + "a"] = m.a; CDEFAULT["t" + (i + 1) + "b"] = m.b; });
+
+const CTKEY = "diegosWorldCup.custom32.teams.v1";
+let customTeams = {};
+try { customTeams = JSON.parse(localStorage.getItem(CTKEY) || "null") || { ...CDEFAULT }; } catch(e) { customTeams = { ...CDEFAULT }; }
+const ctsave = () => localStorage.setItem(CTKEY, JSON.stringify(customTeams));
+
+const C32 = [];
+for (let i = 1; i <= 16; i++) C32.push({ id: "c" + i, aSlot: "t" + i + "a", bSlot: "t" + i + "b" });
+const C16 = [];
+for (let i = 0; i < 8; i++) C16.push({ id: "c" + (17 + i), from: ["c" + (2*i + 1), "c" + (2*i + 2)] });
+/* quarterfinal pairings mirror the real bracket (qf97–qf100 / w25–w28) */
+const CQF = [
+  { id:"c25", from:["c17","c18"] },
+  { id:"c26", from:["c21","c22"] },
+  { id:"c27", from:["c19","c20"] },
+  { id:"c28", from:["c23","c24"] }
+];
+const CSF = [
+  { id:"c29", from:["c25","c26"] },
+  { id:"c30", from:["c27","c28"] }
+];
+const CFINAL = { id:"c31", from:["c29","c30"] };
+const CALL = [...C32, ...C16, ...CQF, ...CSF, CFINAL];
+const CLABEL = {};
+C32.forEach((m, i) => CLABEL[m.id] = "Partido " + (i + 1));
+C16.forEach((m, i) => CLABEL[m.id] = "Octavo " + (i + 1));
+CQF.forEach((m, i) => CLABEL[m.id] = "Cuarto " + (i + 1));
+CSF.forEach((m, i) => CLABEL[m.id] = "Semifinal " + (i + 1));
+CLABEL["c31"] = "Final";
+const CPAIRS = [];
+[...C16, ...CQF, ...CSF, CFINAL].forEach(m => { CPAIRS.push([m.from[0], m.id], [m.from[1], m.id]); });
+
+const CKEY = "diegosWorldCup.custom32.picks.v1";
+let cpicks = {};
+try { cpicks = JSON.parse(localStorage.getItem(CKEY) || "{}"); } catch(e) { cpicks = {}; }
+const csave = () => localStorage.setItem(CKEY, JSON.stringify(cpicks));
+
+function cWinnerOf(id) { return cpicks[id] || null; }
+function cTeamsOf(m) {
+  if (m.aSlot) return { a: customTeams[m.aSlot] || null, b: customTeams[m.bSlot] || null };
+  return { a: cWinnerOf(m.from[0]), b: cWinnerOf(m.from[1]) };
+}
+function cValidate() {
+  let changed = true;
+  while (changed) {
+    changed = false;
+    CALL.forEach(m => {
+      if (cpicks[m.id]) {
+        const t = cTeamsOf(m);
+        if (cpicks[m.id] !== t.a && cpicks[m.id] !== t.b) { delete cpicks[m.id]; changed = true; }
+      }
+    });
+  }
+}
+
+function cMatchCard(m) {
+  const t = cTeamsOf(m);
+  const chosen = cpicks[m.id] || null;
+  const btn = (name, side) => {
+    if (!name) {
+      const ph = m.aSlot ? "Elige un equipo arriba 👆" : "Ganador de " + CLABEL[side === "a" ? m.from[0] : m.from[1]];
+      return `<button disabled class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/40 border border-slate-700 text-slate-500">
+        <span class="flag" style="font-size:1.25rem">❓</span>
+        <span class="flex-1 text-left text-xs">${ph}</span>
+      </button>`;
+    }
+    const cls = chosen ? (chosen === name ? "win" : "lose") : "";
+    return `<button data-cmatch="${m.id}" data-team="${name}"
+        class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 ${cls}">
+        <span class="flag">${flag(name, 24)}</span>
+        <span class="flex-1 text-left text-sm font-semibold truncate">${name}</span>
+        <span class="text-base w-4">${chosen === name ? "🏅" : ""}</span>
+      </button>`;
+  };
+  const wrap = document.createElement("article");
+  wrap.id = "card-" + m.id;
+  wrap.className = "bracket-card glass rounded-xl p-2";
+  wrap.innerHTML = `
+    <div class="text-[10px] uppercase tracking-widest text-slate-500 mb-1.5">${CLABEL[m.id]}</div>
+    <div class="space-y-1.5">
+      ${btn(t.a, "a")}
+      ${btn(t.b, "b")}
+    </div>`;
+  return wrap;
+}
+
+function drawCConnectors() { drawLines("cbracket", "cconnectors", CPAIRS, cWinnerOf); }
+
+let cConfettiOn = false;
+function renderCustom() {
+  cValidate();
+  const fill = (elId, list, isFinal) => {
+    const el = document.getElementById(elId);
+    el.innerHTML = "";
+    list.forEach(m => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      const inner = document.createElement("div");
+      inner.style.width = "100%";
+      if (isFinal) inner.innerHTML = `<div class="text-center text-3xl mb-1">🏆</div>`;
+      inner.appendChild(cMatchCard(m));
+      cell.appendChild(inner);
+      el.appendChild(cell);
+    });
+  };
+  fill("cround-r32", C32, false);
+  fill("cround-r16", C16, false);
+  fill("cround-qf", CQF, false);
+  fill("cround-sf", CSF, false);
+  fill("cround-final", [CFINAL], true);
+  requestAnimationFrame(drawCConnectors);
+
+  const banner = document.getElementById("cchamp-banner");
+  const champ = cpicks["c31"];
+  if (champ) {
+    document.getElementById("cchamp-name").innerHTML = flag(champ, 42) + " " + champ;
+    banner.classList.remove("hidden");
+    banner.classList.add("pop");
+    if (!cConfettiOn) { cConfettiOn = true; celebrate(); }
+  } else {
+    banner.classList.add("hidden");
+    cConfettiOn = false;
+  }
+  csave();
+}
+
+/* ---- team picker: choose which of the 48 teams fills each R32 slot ---- */
+function teamOptionsHtml(selectedName) {
+  return ALL_TEAMS.map(t => {
+    const usedElsewhere = t.name !== selectedName && Object.values(customTeams).includes(t.name);
+    return `<option value="${t.name}" ${t.name === selectedName ? "selected" : ""} ${usedElsewhere ? "disabled" : ""}>${t.name} (Grupo ${t.group})</option>`;
+  }).join("");
+}
+function renderTeamPicker() {
+  const el = document.getElementById("team-picker");
+  el.innerHTML = "";
+  for (let i = 1; i <= 16; i++) {
+    const slotA = "t" + i + "a", slotB = "t" + i + "b";
+    const row = document.createElement("div");
+    row.className = "glass rounded-2xl p-3";
+    row.innerHTML = `
+      <div class="text-[10px] uppercase tracking-widest text-slate-500 mb-2 text-center">Partido ${i}</div>
+      <div class="space-y-2">
+        <select data-slot="${slotA}" class="team-select w-full text-xs sm:text-sm bg-slate-800/60 border border-slate-700 rounded-lg px-2 py-2 text-slate-100">
+          ${teamOptionsHtml(customTeams[slotA])}
+        </select>
+        <select data-slot="${slotB}" class="team-select w-full text-xs sm:text-sm bg-slate-800/60 border border-slate-700 rounded-lg px-2 py-2 text-slate-100">
+          ${teamOptionsHtml(customTeams[slotB])}
+        </select>
+      </div>`;
+    el.appendChild(row);
+  }
+}
+document.addEventListener("change", (e) => {
+  const sel = e.target.closest(".team-select");
+  if (!sel) return;
+  customTeams[sel.dataset.slot] = sel.value;
+  ctsave();
+  cValidate();
+  renderTeamPicker();
+  renderCustom();
+});
+document.getElementById("reset-custom-teams").addEventListener("click", () => {
+  if (!confirm("¿Restablecer los 32 equipos a los que jugaron el Mundial real?")) return;
+  customTeams = { ...CDEFAULT };
+  cpicks = {};
+  ctsave(); csave();
+  renderTeamPicker();
+  renderCustom();
+});
+
 /* ---------------- TABS ---------------- */
 let activeTab = "real";
 function showTab(name) {
   activeTab = name;
   document.getElementById("tab-real").classList.toggle("hidden", name !== "real");
   document.getElementById("tab-fantasy").classList.toggle("hidden", name !== "fantasy");
+  document.getElementById("tab-custom").classList.toggle("hidden", name !== "custom");
   document.getElementById("tabbtn-real").classList.toggle("active", name === "real");
   document.getElementById("tabbtn-fantasy").classList.toggle("active", name === "fantasy");
+  document.getElementById("tabbtn-custom").classList.toggle("active", name === "custom");
   /* connector lines can only be measured while the bracket is visible */
-  requestAnimationFrame(name === "real" ? drawConnectors : drawFConnectors);
+  requestAnimationFrame(name === "real" ? drawConnectors : (name === "fantasy" ? drawFConnectors : drawCConnectors));
 }
 document.getElementById("tabbtn-real").addEventListener("click", () => showTab("real"));
 document.getElementById("tabbtn-fantasy").addEventListener("click", () => showTab("fantasy"));
+document.getElementById("tabbtn-custom").addEventListener("click", () => showTab("custom"));
 
 /* ---- click handling ---- */
 document.addEventListener("click", (e) => {
@@ -704,24 +951,33 @@ document.addEventListener("click", (e) => {
     if (fpicks[id] === team) { delete fpicks[id]; }
     else { fpicks[id] = team; }
     renderFantasy();
+  } else if (btn.dataset.cmatch) {
+    const id = btn.dataset.cmatch;
+    if (cpicks[id] === team) { delete cpicks[id]; }
+    else { cpicks[id] = team; }
+    renderCustom();
   }
 });
 
 document.getElementById("reset-all").addEventListener("click", () => {
   if (!confirm("¿Empezar de nuevo y borrar todo lo que eligió Diego?")) return;
   if (activeTab === "fantasy") { fpicks = {}; renderFantasy(); }
+  else if (activeTab === "custom") { cpicks = {}; renderCustom(); }
   else { picks = {}; render(); }
 });
 
 let rz;
 window.addEventListener("resize", () => {
   clearTimeout(rz);
-  rz = setTimeout(activeTab === "real" ? drawConnectors : drawFConnectors, 120);
+  const fn = activeTab === "real" ? drawConnectors : (activeTab === "fantasy" ? drawFConnectors : drawCConnectors);
+  rz = setTimeout(fn, 120);
 });
 window.addEventListener("load", drawConnectors);
 
 render();
 renderFantasy();
+renderTeamPicker();
+renderCustom();
 </script>
 </body>
 </html>
