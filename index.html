@@ -232,6 +232,15 @@
   </div>
 </main>
 
+<section class="max-w-sm mx-auto px-4 pt-2 pb-10">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-amber-300/80">Extra</div>
+    <h3 class="text-xl font-black text-amber-300 mt-1">🥉 Partido por el 3.º lugar</h3>
+    <p class="text-xs text-slate-400 mt-1">Lo juegan los dos equipos que <b class="text-slate-200">pierden</b> las semifinales de tu Mundial inventado.</p>
+  </div>
+  <div id="fround-third"></div>
+</section>
+
 </div><!-- /tab-fantasy -->
 
 <!-- ================= TAB 3: CUSTOM (Elige tu Ronda de 32) ================= -->
@@ -659,13 +668,16 @@ const FSF = [
   { id:"w30", from:["w27","w28"], date:KO.sf[1].date, time:KO.sf[1].time, city:KO.sf[1].city, venue:KO.sf[1].venue }
 ];
 const FFINAL = { id:"w31", from:["w29","w30"], date:KO.final.date, time:KO.final.time, city:KO.final.city, venue:KO.final.venue };
-const FALL = [...F32, ...F16, ...FQF, ...FSF, FFINAL];
+/* 3rd place: played by the two fantasy semifinal losers, same slot as the real KO.third */
+const FTHIRD = { id:"w32", fromLosers:["w29","w30"], date:KO.third.date, time:KO.third.time, city:KO.third.city, venue:KO.third.venue };
+const FALL = [...F32, ...F16, ...FQF, ...FSF, FFINAL, FTHIRD];
 const FLABEL = {};
 F32.forEach((m, i) => FLABEL[m.id] = "Partido " + (i + 1));
 F16.forEach((m, i) => FLABEL[m.id] = "Octavo " + (i + 1));
 FQF.forEach((m, i) => FLABEL[m.id] = "Cuarto " + (i + 1));
 FSF.forEach((m, i) => FLABEL[m.id] = "Semifinal " + (i + 1));
 FLABEL["w31"] = "Final";
+FLABEL["w32"] = "3.º lugar";
 const FPAIRS = [];
 [...F16, ...FQF, ...FSF, FFINAL].forEach(m => { FPAIRS.push([m.from[0], m.id], [m.from[1], m.id]); });
 
@@ -679,7 +691,17 @@ function fWinnerOf(id) {
   if (m && m.played) return m.winner;
   return fpicks[id] || null;
 }
+/* the team that is NOT the winner of a resolved semifinal (used for the 3rd-place match) */
+function fLoserOf(id) {
+  const m = FALL.find(x => x.id === id);
+  if (!m) return null;
+  const w = fWinnerOf(id);
+  if (!w) return null;
+  const t = fTeamsOf(m);
+  return w === t.a ? t.b : t.a;
+}
 function fTeamsOf(m) {
+  if (m.fromLosers) return { a: fLoserOf(m.fromLosers[0]), b: fLoserOf(m.fromLosers[1]) };
   if (m.from) return { a: fWinnerOf(m.from[0]), b: fWinnerOf(m.from[1]) };
   return { a: m.a, b: m.b };
 }
@@ -706,7 +728,8 @@ function fMatchCard(m) {
   const chosen = played ? m.winner : (fpicks[m.id] || null);
   const btn = (name, side) => {
     if (!name) {
-      const ph = "Ganador de " + FLABEL[side === "a" ? m.from[0] : m.from[1]];
+      let ph = "Ganador de " + FLABEL[side === "a" ? m.from[0] : m.from[1]];
+      if (m.fromLosers) ph = "Perdedor de " + FLABEL[side === "a" ? m.fromLosers[0] : m.fromLosers[1]];
       return `<button disabled class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/40 border border-slate-700 text-slate-500">
         <span class="flag" style="font-size:1.25rem">❓</span>
         <span class="flex-1 text-left text-xs">${ph}</span>
@@ -774,6 +797,9 @@ function renderFantasy() {
   fill("fround-qf", FQF, false);
   fill("fround-sf", FSF, false);
   fill("fround-final", [FFINAL], true);
+  const fthirdEl = document.getElementById("fround-third");
+  fthirdEl.innerHTML = "";
+  fthirdEl.appendChild(fMatchCard(FTHIRD));
   requestAnimationFrame(drawFConnectors);
 
   const banner = document.getElementById("fchamp-banner");
