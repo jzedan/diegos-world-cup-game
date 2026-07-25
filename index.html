@@ -44,6 +44,8 @@
   /* ---- fantasy bracket (5 rounds, compact cards) ---- */
   .fbracket .cell { min-height: 128px; }
   .fbracket .round { padding: 0 10px; }
+  /* Round of 32 cards carry a locked-result date/venue footer, so they need more height */
+  #fround-r32 .cell { min-height: 172px; }
 
   /* ---- tabs ---- */
   .tab-btn { transition: background-color .15s ease, color .15s ease; }
@@ -191,9 +193,10 @@
     <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego · ¡Aquí mandas tú!</div>
     <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Inventa tu Mundial 🎮</h2>
     <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
-      En este juego <b>no cuentan los resultados reales</b>: empiezas desde la
-      <b class="text-emerald-300">Ronda de 32</b> con los mismos equipos del Mundial,
-      y tú tocas al equipo que <b class="text-yellow-300">tú quieres</b> que gane cada partido,
+      La <b class="text-emerald-300">Ronda de 32</b> aquí es la <b>real</b> — ya se jugó, con su fecha,
+      hora y estadio, y el equipo que perdió aparece <b>transparente</b>. Pero desde los
+      <b class="text-emerald-300">Octavos</b> en adelante <b>no cuentan los resultados reales</b>:
+      tú tocas al equipo que <b class="text-yellow-300">tú quieres</b> que gane cada partido,
       hasta elegir a tu campeón. ¿Podría Brasil haber llegado a la Final? ¡Pruébalo! 😄
     </p>
     <p class="text-xs text-slate-400 mt-2">¿Te equivocaste? Toca al equipo <b>otra vez</b> para borrar y elegir el otro. 😉</p>
@@ -213,8 +216,8 @@
   <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
   <div class="bracket-scroll">
     <div class="head-row max-w-7xl mx-auto" style="min-width:1250px">
-      <div class="head-col"><div class="text-sm font-black text-emerald-300">🌍 Ronda de 32</div><div class="text-[10px] text-slate-500">32 equipos</div></div>
-      <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">quedan 16</div></div>
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">🌍 Ronda de 32</div><div class="text-[10px] text-slate-500">real · ya jugada</div></div>
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">quedan 16 · eliges tú</div></div>
       <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">quedan 8</div></div>
       <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">quedan 4</div></div>
       <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">¡tu campeón!</div></div>
@@ -358,23 +361,40 @@ GROUPS.forEach(gr => {
 
 /* ---------------- ROUND OF 32 (real results) ---------------- */
 /* winner is the team that advanced to Round of 16 (ordered by the R16 match they feed) */
+/* date/time/city/venue sourced from Wikipedia "2026 FIFA World Cup round of 32"; time converted to hora MX (UTC−6, no DST) */
 const R32 = [
-  { a:"Sudáfrica",      b:"Canadá",     score:"0–1",           winner:"Canadá" },
-  { a:"Países Bajos",   b:"Marruecos",  score:"1–1 (2–3 pen)", winner:"Marruecos" },
-  { a:"Alemania",       b:"Paraguay",   score:"1–1 (3–4 pen)", winner:"Paraguay" },
-  { a:"Francia",        b:"Suecia",     score:"3–0",           winner:"Francia" },
-  { a:"Brasil",         b:"Japón",      score:"2–1",           winner:"Brasil" },
-  { a:"Costa de Marfil",b:"Noruega",    score:"1–2",           winner:"Noruega" },
-  { a:"México",         b:"Ecuador",    score:"2–0",           winner:"México" },
-  { a:"Inglaterra",     b:"RD Congo",   score:"2–1",           winner:"Inglaterra" },
-  { a:"Portugal",       b:"Croacia",    score:"2–1",           winner:"Portugal" },
-  { a:"España",         b:"Austria",    score:"3–0",           winner:"España" },
-  { a:"Estados Unidos", b:"Bosnia",     score:"2–0",           winner:"Estados Unidos" },
-  { a:"Bélgica",        b:"Senegal",    score:"3–2 (pró.)",    winner:"Bélgica" },
-  { a:"Argentina",      b:"Cabo Verde", score:"3–2 (pró.)",    winner:"Argentina" },
-  { a:"Australia",      b:"Egipto",     score:"1–1 (2–4 pen)", winner:"Egipto" },
-  { a:"Suiza",          b:"Argelia",    score:"2–0",           winner:"Suiza" },
-  { a:"Colombia",       b:"Ghana",      score:"1–0",           winner:"Colombia" }
+  { a:"Sudáfrica",      b:"Canadá",     score:"0–1",           winner:"Canadá",
+    date:"Domingo 28 jun", time:"13:00", city:"Los Ángeles (Inglewood)",   venue:"SoFi Stadium" },
+  { a:"Países Bajos",   b:"Marruecos",  score:"1–1 (2–3 pen)", winner:"Marruecos",
+    date:"Lunes 29 jun",   time:"19:00", city:"Monterrey",                 venue:"Estadio BBVA" },
+  { a:"Alemania",       b:"Paraguay",   score:"1–1 (3–4 pen)", winner:"Paraguay",
+    date:"Lunes 29 jun",   time:"14:30", city:"Boston (Foxborough)",       venue:"Gillette Stadium" },
+  { a:"Francia",        b:"Suecia",     score:"3–0",           winner:"Francia",
+    date:"Martes 30 jun",  time:"15:00", city:"Nueva York / Nueva Jersey", venue:"MetLife Stadium" },
+  { a:"Brasil",         b:"Japón",      score:"2–1",           winner:"Brasil",
+    date:"Lunes 29 jun",   time:"11:00", city:"Houston",                  venue:"NRG Stadium" },
+  { a:"Costa de Marfil",b:"Noruega",    score:"1–2",           winner:"Noruega",
+    date:"Martes 30 jun",  time:"11:00", city:"Dallas (Arlington)",       venue:"AT&T Stadium" },
+  { a:"México",         b:"Ecuador",    score:"2–0",           winner:"México",
+    date:"Martes 30 jun",  time:"20:00", city:"Ciudad de México",         venue:"Estadio Azteca" },
+  { a:"Inglaterra",     b:"RD Congo",   score:"2–1",           winner:"Inglaterra",
+    date:"Miércoles 1 jul",time:"10:00", city:"Atlanta",                  venue:"Mercedes-Benz Stadium" },
+  { a:"Portugal",       b:"Croacia",    score:"2–1",           winner:"Portugal",
+    date:"Jueves 2 jul",   time:"17:00", city:"Toronto",                  venue:"BMO Field" },
+  { a:"España",         b:"Austria",    score:"3–0",           winner:"España",
+    date:"Jueves 2 jul",   time:"13:00", city:"Los Ángeles (Inglewood)",  venue:"SoFi Stadium" },
+  { a:"Estados Unidos", b:"Bosnia",     score:"2–0",           winner:"Estados Unidos",
+    date:"Miércoles 1 jul",time:"18:00", city:"San Francisco (Santa Clara)", venue:"Levi's Stadium" },
+  { a:"Bélgica",        b:"Senegal",    score:"3–2 (pró.)",    winner:"Bélgica",
+    date:"Miércoles 1 jul",time:"14:00", city:"Seattle",                  venue:"Lumen Field" },
+  { a:"Argentina",      b:"Cabo Verde", score:"3–2 (pró.)",    winner:"Argentina",
+    date:"Viernes 3 jul",  time:"16:00", city:"Miami",                    venue:"Hard Rock Stadium" },
+  { a:"Australia",      b:"Egipto",     score:"1–1 (2–4 pen)", winner:"Egipto",
+    date:"Viernes 3 jul",  time:"12:00", city:"Dallas (Arlington)",       venue:"AT&T Stadium" },
+  { a:"Suiza",          b:"Argelia",    score:"2–0",           winner:"Suiza",
+    date:"Jueves 2 jul",   time:"21:00", city:"Vancouver",                venue:"BC Place" },
+  { a:"Colombia",       b:"Ghana",      score:"1–0",           winner:"Colombia",
+    date:"Viernes 3 jul",  time:"19:30", city:"Kansas City",              venue:"Arrowhead Stadium" }
 ];
 const r32El = document.getElementById("r32");
 R32.forEach(m => {
@@ -614,9 +634,14 @@ function render() {
 }
 
 /* ---------------- FANTASY MODE: Inventa tu Mundial (tab 2) ---------------- */
-/* Same 32 qualified teams and real pairings, but nothing is locked:
-   Diego picks every match from the Round of 32 to the final. */
-const F32 = R32.map((m, i) => ({ id: "w" + (i + 1), a: m.a, b: m.b }));
+/* The Round of 32 here is locked to the real results (same as the real bracket:
+   loser shown greyed out, with real date/time/venue). From the Round of 16
+   onward nothing is locked — Diego picks every match up to the final. */
+const F32 = R32.map((m, i) => ({
+  id: "w" + (i + 1), a: m.a, b: m.b,
+  played: true, score: m.score, winner: m.winner,
+  date: m.date, time: m.time, city: m.city, venue: m.venue
+}));
 const F16 = [];
 for (let i = 0; i < 8; i++) F16.push({ id: "w" + (17 + i), from: ["w" + (2*i + 1), "w" + (2*i + 2)] });
 /* quarterfinal pairings mirror the real bracket (qf97–qf100) */
@@ -646,7 +671,11 @@ let fpicks = {};
 try { fpicks = JSON.parse(localStorage.getItem(FKEY) || "{}"); } catch(e) { fpicks = {}; }
 const fsave = () => localStorage.setItem(FKEY, JSON.stringify(fpicks));
 
-function fWinnerOf(id) { return fpicks[id] || null; }
+function fWinnerOf(id) {
+  const m = FALL.find(x => x.id === id);
+  if (m && m.played) return m.winner;
+  return fpicks[id] || null;
+}
 function fTeamsOf(m) {
   if (m.from) return { a: fWinnerOf(m.from[0]), b: fWinnerOf(m.from[1]) };
   return { a: m.a, b: m.b };
@@ -656,7 +685,7 @@ function fValidate() {
   while (changed) {
     changed = false;
     FALL.forEach(m => {
-      if (fpicks[m.id]) {
+      if (!m.played && fpicks[m.id]) {
         const t = fTeamsOf(m);
         if (fpicks[m.id] !== t.a && fpicks[m.id] !== t.b) { delete fpicks[m.id]; changed = true; }
       }
@@ -664,10 +693,13 @@ function fValidate() {
   }
 }
 
-/* compact card: no dates/venues, this bracket is imaginary */
+/* Round of 32 (w1–w16) is locked to the real result, with date/time/venue,
+   just like the real bracket's matchCard(). Round of 16 onward stays a
+   plain clickable card — no dates, this part of the bracket is imaginary. */
 function fMatchCard(m) {
   const t = fTeamsOf(m);
-  const chosen = fpicks[m.id] || null;
+  const played = !!m.played;
+  const chosen = played ? m.winner : (fpicks[m.id] || null);
   const btn = (name, side) => {
     if (!name) {
       const ph = "Ganador de " + FLABEL[side === "a" ? m.from[0] : m.from[1]];
@@ -677,6 +709,13 @@ function fMatchCard(m) {
       </button>`;
     }
     const cls = chosen ? (chosen === name ? "win" : "lose") : "";
+    if (played) {
+      return `<div class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/60 border border-slate-700 ${cls}" style="cursor:default">
+        <span class="flag">${flag(name, 24)}</span>
+        <span class="flex-1 text-left text-sm font-semibold truncate">${name}</span>
+        <span class="text-base w-4">${chosen === name ? "🏅" : ""}</span>
+      </div>`;
+    }
     return `<button data-fmatch="${m.id}" data-team="${name}"
         class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 ${cls}">
         <span class="flag">${flag(name, 24)}</span>
@@ -686,13 +725,21 @@ function fMatchCard(m) {
   };
   const wrap = document.createElement("article");
   wrap.id = "card-" + m.id;
-  wrap.className = "bracket-card glass rounded-xl p-2";
+  wrap.className = "bracket-card glass rounded-xl p-2" + (played ? " border-emerald-500/25" : "");
   wrap.innerHTML = `
-    <div class="text-[10px] uppercase tracking-widest text-slate-500 mb-1.5">${FLABEL[m.id]}</div>
+    <div class="flex items-center justify-between mb-1.5 text-[10px]">
+      <span class="uppercase tracking-widest text-slate-500">${FLABEL[m.id]}</span>
+      ${played ? `<span class="text-emerald-300 font-bold">✅ ${m.score}</span>` : ""}
+    </div>
     <div class="space-y-1.5">
       ${btn(t.a, "a")}
       ${btn(t.b, "b")}
-    </div>`;
+    </div>
+    ${played ? `<div class="mt-1.5 pt-1.5 border-t border-white/10 text-[11px] leading-snug">
+      <div class="text-slate-300">📅 ${m.date} · 🕒 ${m.time} (hora MX)</div>
+      <div class="text-yellow-200/90 font-medium">🏟️ ${m.venue}</div>
+      <div class="text-slate-400">📍 ${m.city}</div>
+    </div>` : ""}`;
   return wrap;
 }
 
