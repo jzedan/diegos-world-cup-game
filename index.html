@@ -728,8 +728,9 @@ function fMatchCard(m) {
   const chosen = played ? m.winner : (fpicks[m.id] || null);
   const btn = (name, side) => {
     if (!name) {
-      let ph = "Ganador de " + FLABEL[side === "a" ? m.from[0] : m.from[1]];
-      if (m.fromLosers) ph = "Perdedor de " + FLABEL[side === "a" ? m.fromLosers[0] : m.fromLosers[1]];
+      const ph = m.fromLosers
+        ? "Perdedor de " + FLABEL[side === "a" ? m.fromLosers[0] : m.fromLosers[1]]
+        : "Ganador de " + FLABEL[side === "a" ? m.from[0] : m.from[1]];
       return `<button disabled class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/40 border border-slate-700 text-slate-500">
         <span class="flag" style="font-size:1.25rem">❓</span>
         <span class="flex-1 text-left text-xs">${ph}</span>
