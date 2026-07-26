@@ -192,9 +192,8 @@
     <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego · ¡Aquí mandas tú!</div>
     <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Inventa tu Mundial 🎮</h2>
     <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
-      La <b class="text-emerald-300">Ronda de 32</b> aquí es la <b>real</b> — ya se jugó, con su fecha,
-      hora y estadio, y el equipo que perdió aparece <b>transparente</b>. Pero desde los
-      <b class="text-emerald-300">Octavos</b> en adelante <b>no cuentan los resultados reales</b>:
+      Los <b class="text-emerald-300">Octavos</b> aquí empiezan con los equipos que <b>de verdad</b>
+      pasaron la Ronda de 32 real. Pero desde ahí <b>no cuentan los resultados reales</b>:
       tú tocas al equipo que <b class="text-yellow-300">tú quieres</b> que gane cada partido,
       hasta elegir a tu campeón. ¿Podría Brasil haber llegado a la Final? ¡Pruébalo! 😄
     </p>
@@ -214,16 +213,14 @@
 <main class="max-w-7xl mx-auto px-2 sm:px-4 pb-10">
   <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
   <div class="bracket-scroll">
-    <div class="head-row max-w-7xl mx-auto" style="min-width:1250px">
-      <div class="head-col"><div class="text-sm font-black text-emerald-300">🌍 Ronda de 32</div><div class="text-[10px] text-slate-500">real · ya jugada</div></div>
+    <div class="head-row max-w-7xl mx-auto" style="min-width:1000px">
       <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">quedan 16 · eliges tú</div></div>
       <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">quedan 8</div></div>
       <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">quedan 4</div></div>
       <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">¡tu campeón!</div></div>
     </div>
-    <div id="fbracket" class="bracket fbracket max-w-7xl mx-auto" style="min-width:1250px">
+    <div id="fbracket" class="bracket fbracket max-w-7xl mx-auto" style="min-width:1000px">
       <svg id="fconnectors"></svg>
-      <div class="round" id="fround-r32"></div>
       <div class="round" id="fround-r16"></div>
       <div class="round" id="fround-qf"></div>
       <div class="round" id="fround-sf"></div>
@@ -793,7 +790,6 @@ function renderFantasy() {
       el.appendChild(cell);
     });
   };
-  fill("fround-r32", F32, false);
   fill("fround-r16", F16, false);
   fill("fround-qf", FQF, false);
   fill("fround-sf", FSF, false);
