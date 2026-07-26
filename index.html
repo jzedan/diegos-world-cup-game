@@ -94,6 +94,9 @@
     <button id="tabbtn-custom" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       🧩 Elige tu Ronda de 32
     </button>
+    <button id="tabbtn-elim" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      🗺️ Eliminatorias 2030
+    </button>
   </div>
 
   <div class="mt-4 flex items-center justify-center gap-3 flex-wrap">
@@ -298,6 +301,54 @@
 
 </div><!-- /tab-custom -->
 
+<!-- ================= TAB 4: ELIMINATORIAS 2030 (CONCACAF) ================= -->
+<div id="tab-elim" class="hidden">
+
+<section class="max-w-4xl mx-auto px-4 pt-6 pb-2">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-emerald-400/80">Rumbo a España · Portugal · Marruecos 2030</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Eliminatorias 2030 · Concacaf
+      <img src="https://flagcdn.com/w80/sv.png" alt="El Salvador" style="height:0.9em;vertical-align:-1px;border-radius:2px;display:inline-block;box-shadow:0 0 0 1px rgba(255,255,255,.2)"></h2>
+    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
+      El camino de <b class="text-white">El Salvador</b> (La Selecta) para clasificar al
+      <b class="text-emerald-300">Mundial 2030</b>. Concacaf tendrá <b class="text-yellow-300">6 cupos directos</b>
+      + <b class="text-yellow-300">1 más</b> por repechaje: hasta <b>7</b> equipos de la región al Mundial.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+    <div class="glass rounded-2xl p-4 border-emerald-500/25">
+      <div class="text-emerald-300 font-black text-sm mb-1">✅ Ya está definido</div>
+      <p class="text-xs text-slate-300 leading-snug">El <b>formato</b>, las <b>rondas</b>, las <b>fechas</b> y los <b>cupos</b>. Concacaf lo anunció el <b class="text-slate-100">6 de febrero de 2026</b>.</p>
+    </div>
+    <div class="glass rounded-2xl p-4 border-amber-500/25">
+      <div class="text-amber-300 font-black text-sm mb-1">❌ Todavía NO se sabe</div>
+      <p class="text-xs text-slate-300 leading-snug">Contra <b>quién</b> juega El Salvador. Los rivales salen de un <b>sorteo</b> por ranking FIFA, más cerca de <b class="text-slate-100">septiembre de 2027</b>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="max-w-4xl mx-auto px-4 pt-2 pb-10">
+  <p class="text-center text-xs text-slate-400 mb-4">👇 El camino de La Selecta, ronda por ronda. <b class="text-emerald-300">Si sigue ganando</b>, avanza hacia abajo hasta el Mundial.</p>
+  <div id="elim-roadmap" class="space-y-3"></div>
+
+  <div class="glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40 mt-6">
+    <div class="text-5xl">🏆</div>
+    <div class="text-xl sm:text-2xl font-black text-white mt-2">¡Mundial 2030!
+      <img src="https://flagcdn.com/w80/es.png" alt="España"   style="height:0.85em;vertical-align:-1px;border-radius:2px;display:inline-block">
+      <img src="https://flagcdn.com/w80/pt.png" alt="Portugal" style="height:0.85em;vertical-align:-1px;border-radius:2px;display:inline-block">
+      <img src="https://flagcdn.com/w80/ma.png" alt="Marruecos" style="height:0.85em;vertical-align:-1px;border-radius:2px;display:inline-block"></div>
+    <p class="text-sm text-slate-300 mt-2">Si El Salvador gana su grupo en la Ronda Final (o queda buen 2.º), va <b class="text-emerald-300">directo</b> al Mundial de España, Portugal y Marruecos.</p>
+    <p class="text-[11px] text-slate-500 mt-2">Con partidos de aniversario en Uruguay, Argentina y Paraguay.</p>
+  </div>
+
+  <p class="text-center text-[11px] text-slate-500 mt-4 max-w-2xl mx-auto">
+    Fuente: formato oficial de Concacaf (anunciado el 6 de febrero de 2026). Las fechas son las ventanas FIFA previstas; los rivales de El Salvador aún no se sortean.
+  </p>
+</section>
+
+</div><!-- /tab-elim -->
+
 <footer class="max-w-5xl mx-auto px-4 pb-10 text-center text-xs text-slate-500 leading-relaxed">
   Hecho con cariño para Diego · Mundial 2026 (USA · México · Canadá).<br/>
   Resultados reales de todos los partidos ya jugados (fuente: Wikipedia). Los partidos que faltan los eliges tú. Todos los horarios en hora de Mérida / centro de México (UTC−6).
@@ -307,6 +358,8 @@
 /* ---------------- FLAGS ---------------- */
 /* Real flag images (flagcdn.com) — emoji flags do not render on Windows */
 const FLAGS = {
+  /* CONCACAF (Eliminatorias 2030 tab) */
+  "El Salvador":"sv","Costa Rica":"cr","Honduras":"hn","Jamaica":"jm","Guatemala":"gt",
   "México":"mx","Corea del Sur":"kr","Rep. Checa":"cz","Sudáfrica":"za",
   "Canadá":"ca","Catar":"qa","Suiza":"ch","Bosnia":"ba",
   "Brasil":"br","Escocia":"gb-sct","Marruecos":"ma","Haití":"ht",
@@ -996,6 +1049,67 @@ document.getElementById("reset-custom-teams").addEventListener("click", () => {
   renderCustom();
 });
 
+/* ---------------- ELIMINATORIAS 2030 (CONCACAF) — informational, tab 4 ---------------- */
+/* Format announced by Concacaf on 2026-02-06. The draw has NOT happened yet, so specific
+   opponents are unknown — this shows El Salvador's roadmap (rounds, dates, how to advance),
+   not fixtures. */
+const ELIM = [
+  {
+    n: "Ronda 1", when: "Sep–Oct 2027", icon: "🎫", faded: true,
+    tag: "El Salvador casi seguro NO juega aquí",
+    teams: "22 equipos (puestos 14–35 de Concacaf)",
+    format: "11 llaves de ida y vuelta (mejor vs. peor). Ganan 11 y suben a la Ronda 2.",
+    sv: "Si La Selecta queda entre los <b>13 mejores</b> de Concacaf (lo más probable), <b>se salta</b> esta ronda y entra directo a la Ronda 2."
+  },
+  {
+    n: "Ronda 2", when: "Sep–Oct 2027 · Nov 2027 · Mar 2028", icon: "🥅",
+    tag: "Aquí arranca La Selecta",
+    teams: "24 equipos: los 11 ganadores de la Ronda 1 + los 13 mejores de Concacaf",
+    format: "6 grupos de 4. Todos contra todos, ida y vuelta (6 partidos cada equipo).",
+    sv: "Si El Salvador queda <b>1.º o 2.º</b> de su grupo → pasa a la Ronda Final (avanzan 12).",
+    rivals: "Rivales: <b>por sortear</b> — se definen por ranking FIFA cerca de 2027."
+  },
+  {
+    n: "Ronda Final", when: "Jun 2028 · Sep–Oct 2029", icon: "⚔️",
+    tag: "El boleto al Mundial 🎟️",
+    teams: "12 equipos en 3 grupos de 4, ida y vuelta",
+    format: "Los <b>3 primeros de grupo</b> + los <b>3 mejores segundos</b> = <b class='text-emerald-300'>6 boletos DIRECTOS</b> al Mundial.",
+    sv: "Si El Salvador gana su grupo o queda buen 2.º → <b class='text-emerald-300'>¡Mundial directo!</b> Si queda entre los 2 mejores 3.º → Play-In.",
+    rivals: "Aquí aparecen los grandes: EE. UU., México, Canadá, Panamá, Costa Rica, Honduras, Jamaica… (aún sin sorteo)."
+  },
+  {
+    n: "Play-In", when: "Nov 2029", icon: "🎯",
+    tag: "La última oportunidad",
+    teams: "2 equipos (los 2 mejores terceros de la Ronda Final)",
+    format: "Serie de ida y vuelta. El ganador va al <b>Repechaje Intercontinental</b> de FIFA (mar 2030).",
+    sv: "Gana el Play-In → repechaje mundial → última chance de meterse al Mundial 2030."
+  }
+];
+function renderElim() {
+  const el = document.getElementById("elim-roadmap");
+  if (!el) return;
+  const svFlag = flag("El Salvador", 16);
+  el.innerHTML = ELIM.map((r, i) => `
+    <div class="glass rounded-2xl p-4 ${r.faded ? "opacity-60" : ""}">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="text-2xl">${r.icon}</div>
+        <div class="flex-1">
+          <div class="text-base sm:text-lg font-black text-white">${r.n}</div>
+          <div class="text-[11px] text-emerald-300 font-semibold">${r.tag}</div>
+        </div>
+        <div class="text-right text-[11px] text-yellow-200/90 font-medium">📅 ${r.when}</div>
+      </div>
+      <div class="text-xs text-slate-300 leading-snug space-y-1">
+        <div>👥 ${r.teams}</div>
+        <div>⚙️ ${r.format}</div>
+        <div class="text-slate-100 flex items-start gap-1.5">${svFlag}<span>${r.sv}</span></div>
+        ${r.rivals ? `<div class="text-slate-400">❓ ${r.rivals}</div>` : ""}
+      </div>
+    </div>
+    ${i < ELIM.length - 1 ? `<div class="text-center text-emerald-400/60 text-lg leading-none">↓</div>` : ""}
+  `).join("");
+}
+
 /* ---------------- TABS ---------------- */
 let activeTab = "real";
 function showTab(name) {
@@ -1003,15 +1117,21 @@ function showTab(name) {
   document.getElementById("tab-real").classList.toggle("hidden", name !== "real");
   document.getElementById("tab-fantasy").classList.toggle("hidden", name !== "fantasy");
   document.getElementById("tab-custom").classList.toggle("hidden", name !== "custom");
+  document.getElementById("tab-elim").classList.toggle("hidden", name !== "elim");
   document.getElementById("tabbtn-real").classList.toggle("active", name === "real");
   document.getElementById("tabbtn-fantasy").classList.toggle("active", name === "fantasy");
   document.getElementById("tabbtn-custom").classList.toggle("active", name === "custom");
-  /* connector lines can only be measured while the bracket is visible */
-  requestAnimationFrame(name === "real" ? drawConnectors : (name === "fantasy" ? drawFConnectors : drawCConnectors));
+  document.getElementById("tabbtn-elim").classList.toggle("active", name === "elim");
+  /* the "Empezar de nuevo" button has nothing to reset on the info tab */
+  document.getElementById("reset-all").classList.toggle("hidden", name === "elim");
+  /* connector lines can only be measured while a bracket is visible (elim tab has none) */
+  const drawFn = name === "real" ? drawConnectors : name === "fantasy" ? drawFConnectors : name === "custom" ? drawCConnectors : null;
+  if (drawFn) requestAnimationFrame(drawFn);
 }
 document.getElementById("tabbtn-real").addEventListener("click", () => showTab("real"));
 document.getElementById("tabbtn-fantasy").addEventListener("click", () => showTab("fantasy"));
 document.getElementById("tabbtn-custom").addEventListener("click", () => showTab("custom"));
+document.getElementById("tabbtn-elim").addEventListener("click", () => showTab("elim"));
 
 /* ---- click handling ---- */
 document.addEventListener("click", (e) => {
@@ -1046,8 +1166,8 @@ document.getElementById("reset-all").addEventListener("click", () => {
 let rz;
 window.addEventListener("resize", () => {
   clearTimeout(rz);
-  const fn = activeTab === "real" ? drawConnectors : (activeTab === "fantasy" ? drawFConnectors : drawCConnectors);
-  rz = setTimeout(fn, 120);
+  const fn = activeTab === "real" ? drawConnectors : activeTab === "fantasy" ? drawFConnectors : activeTab === "custom" ? drawCConnectors : null;
+  if (fn) rz = setTimeout(fn, 120);
 });
 window.addEventListener("load", drawConnectors);
 
@@ -1055,6 +1175,7 @@ render();
 renderFantasy();
 renderTeamPicker();
 renderCustom();
+renderElim();
 </script>
 </body>
 </html>
