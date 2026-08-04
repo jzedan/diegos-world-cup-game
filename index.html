@@ -377,14 +377,16 @@
     <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
       Un <b>Mundial de práctica</b> con <b class="text-emerald-300">48 equipos</b> en
       <b>12 grupos de 4</b>, igual que el formato oficial de 2030. Los equipos son
-      <b>inventados</b> (el sorteo real es en ~2029) y los resultados salen
-      <b class="text-yellow-300">al azar</b>. ¡Toca 🎲 y mira quién sale campeón!
+      <b>inventados</b> (el sorteo real es en ~2029). La <b class="text-yellow-300">fase de grupos
+      se juega sola</b> 🎲, y desde la <b class="text-emerald-300">Ronda de 32</b> ¡el campeón lo
+      eliges tú! 👆🏆
     </p>
     <p class="text-[11px] text-slate-400 mt-2">FIFA confirmó <b>48 equipos</b> para 2030 (la idea de 64 no fue aprobada). Sedes: España, Portugal y Marruecos, con 3 partidos de aniversario en Uruguay, Argentina y Paraguay.</p>
   </div>
   <div id="wc30-legend" class="flex flex-wrap items-center justify-center gap-2 mt-3"></div>
   <div class="flex items-center justify-center mt-4">
-    <button id="wc30-sim" class="text-sm px-5 py-2.5 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-400/40 text-emerald-100 font-black">🎲 Simular Mundial 2030</button>
+    <button id="wc30-sim" class="text-sm px-5 py-2.5 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-400/40 text-emerald-100 font-black">🎲 Simular grupos de nuevo</button>
+    <p class="w-full text-center text-[11px] text-slate-500 mt-1">(vuelve a jugar la fase de grupos y reinicia tus elecciones)</p>
   </div>
 </section>
 
@@ -1316,10 +1318,8 @@ const WC30_TEAMS = [
   ["Nueva Zelanda","OFC",3],
   ["Chile","CONMEBOL",5],["Jamaica","CONCACAF",4]  /* repechaje intercontinental */
 ];
-const WC30_CITIES = ["Madrid","Barcelona","Sevilla","Lisboa","Oporto","Casablanca","Rabat","Tánger","Montevideo","Buenos Aires","Asunción"];
 const GLET = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 const rnd = n => Math.floor(Math.random() * n);
-const pickCity = () => WC30_CITIES[rnd(WC30_CITIES.length)];
 let wc30 = null;
 
 function wc30Score(sa, sb) {
@@ -1329,16 +1329,54 @@ function wc30Score(sa, sb) {
   const win = 1 + rnd(3), lose = rnd(win);
   return ra > rb ? { ga: win, gb: lose, draw: false } : { ga: lose, gb: win, draw: false };
 }
-function wc30KO(sa, sb) {
-  /* knockout: no draws; returns {ga, gb, w, extra} */
-  const ra = sa.str + Math.random() * 8, rb = sb.str + Math.random() * 8;
-  const close = Math.abs(ra - rb) < 1;
-  let win = 1 + rnd(3), lose = close ? win - 1 : rnd(win);
-  if (lose < 0) lose = 0;
-  const aWon = ra >= rb;
-  return { ga: aWon ? win : lose, gb: aWon ? lose : win, w: aWon ? sa.name : sb.name, extra: close ? " (pen.)" : "" };
+/* ---- interactive knockout: group stage is simulated, but from the Round of 32
+   onward DIEGO picks the winners (like the other tabs). ---- */
+let WKO = null;            /* knockout structure, rebuilt each simulation */
+let wpicks = {};           /* Diego's winner picks (in-memory; reset on re-sim) */
+let wChampCelebrated = false;
+
+function buildWc30KO(qNames) {
+  const w32 = [];
+  for (let i = 0; i < 16; i++) w32.push({ id: "wk" + (i + 1), a: qNames[2 * i], b: qNames[2 * i + 1] });
+  const w16 = [];
+  for (let i = 0; i < 8; i++) w16.push({ id: "wk" + (17 + i), from: ["wk" + (2 * i + 1), "wk" + (2 * i + 2)] });
+  const wqf = [
+    { id: "wk25", from: ["wk17", "wk18"] }, { id: "wk26", from: ["wk19", "wk20"] },
+    { id: "wk27", from: ["wk21", "wk22"] }, { id: "wk28", from: ["wk23", "wk24"] }
+  ];
+  const wsf = [{ id: "wk29", from: ["wk25", "wk26"] }, { id: "wk30", from: ["wk27", "wk28"] }];
+  const wfinal = { id: "wk31", from: ["wk29", "wk30"] };
+  const wthird = { id: "wk32", fromLosers: ["wk29", "wk30"] };
+  const label = {};
+  w32.forEach((m, i) => label[m.id] = "Partido " + (i + 1));
+  w16.forEach((m, i) => label[m.id] = "Octavo " + (i + 1));
+  wqf.forEach((m, i) => label[m.id] = "Cuarto " + (i + 1));
+  wsf.forEach((m, i) => label[m.id] = "Semifinal " + (i + 1));
+  label["wk31"] = "Final"; label["wk32"] = "3.º lugar";
+  WKO = { w32, w16, wqf, wsf, wfinal, wthird, all: [...w32, ...w16, ...wqf, ...wsf, wfinal, wthird], label };
 }
-function simulateWc30(withConfetti) {
+function wWinnerOf(id) { return wpicks[id] || null; }
+function wTeamsOf(m) {
+  if (m.a !== undefined) return { a: m.a, b: m.b };
+  if (m.fromLosers) return { a: wLoserOf(m.fromLosers[0]), b: wLoserOf(m.fromLosers[1]) };
+  return { a: wWinnerOf(m.from[0]), b: wWinnerOf(m.from[1]) };
+}
+function wLoserOf(id) {
+  const m = WKO.all.find(x => x.id === id); if (!m) return null;
+  const w = wWinnerOf(id); if (!w) return null;
+  const t = wTeamsOf(m); return w === t.a ? t.b : t.a;
+}
+function wValidate() {
+  let changed = true;
+  while (changed) {
+    changed = false;
+    WKO.all.forEach(m => {
+      if (wpicks[m.id]) { const t = wTeamsOf(m); if (wpicks[m.id] !== t.a && wpicks[m.id] !== t.b) { delete wpicks[m.id]; changed = true; } }
+    });
+  }
+}
+
+function simulateWc30() {
   /* fresh sim-team objects so re-runs start clean */
   const teams = WC30_TEAMS.map(([name, conf, str]) => ({ name, conf, str, pts: 0, gf: 0, ga: 0 }));
   /* pot draw: 4 strength tiers, one per group → balanced groups */
@@ -1365,31 +1403,12 @@ function simulateWc30(withConfetti) {
   const thirdSet = new Set(bestThirds.map(t => t.name));
   groups.forEach(g => g.teams.forEach((t, i) => { t.status = i < 2 ? "top2" : (i === 2 && thirdSet.has(t.name) ? "third-in" : (i === 2 ? "third-out" : "out")); }));
 
-  /* knockout: 32 qualifiers, shuffled pairing, single elimination */
-  let alive = simShuffle([...groups.flatMap(g => g.teams.slice(0, 2)), ...bestThirds]);
-  const byName = {}; teams.forEach(t => byName[t.name] = t);
-  const playRound = (list) => {
-    const out = [];
-    for (let i = 0; i < list.length; i += 2) {
-      const a = list[i], b = list[i + 1], r = wc30KO(a, b);
-      out.push({ a: a.name, b: b.name, ga: r.ga, gb: r.gb, w: r.w, extra: r.extra, city: pickCity() });
-    }
-    return out;
-  };
-  const winners = ms => ms.map(m => byName[m.w]);
-  const r32 = playRound(alive);
-  const r16 = playRound(winners(r32));
-  const qf  = playRound(winners(r16));
-  const sf  = playRound(winners(qf));
-  const sfW = winners(sf);
-  const sfL = sf.map(m => byName[m.a === m.w ? m.b : m.a]);
-  const thirdM = playRound(sfL); thirdM[0].city = pickCity();
-  const finalM = playRound(sfW); finalM[0].city = "Madrid";
-
-  wc30 = { groups, ko: { r32, r16, qf, sf, third: thirdM[0], final: finalM[0] },
-           champ: finalM[0].w, bronze: thirdM[0].w };
+  /* 32 qualifiers (shuffled for pairing variety) seed the interactive bracket */
+  const qNames = simShuffle([...groups.flatMap(g => g.teams.slice(0, 2)), ...bestThirds]).map(t => t.name);
+  buildWc30KO(qNames);
+  wpicks = {}; wChampCelebrated = false;
+  wc30 = { groups };
   renderWc30();
-  if (withConfetti) celebrate();
 }
 
 function wc30Dot(conf) {
@@ -1402,28 +1421,57 @@ function renderWc30Legend() {
     `<span class="inline-flex items-center gap-1.5 text-[11px] text-slate-300 bg-slate-800/50 border border-slate-700 rounded-full px-2.5 py-1">${wc30Dot(c)} ${WC30_CONF[c].label}</span>`
   ).join("");
 }
-function wc30MatchRow(m) {
-  const fa = flag(m.a, 20), fb = flag(m.b, 20);
-  const aW = m.w === m.a, bW = m.w === m.b;
-  return `<div class="glass rounded-xl p-2 flex items-center gap-2 text-sm">
-    <span class="flex items-center gap-1.5 flex-1 justify-end text-right ${aW ? "font-black text-emerald-200" : "text-slate-400"}">${m.a}${aW ? " 🏅" : ""} <span class="flag">${fa}</span></span>
-    <span class="text-xs font-bold text-slate-200 whitespace-nowrap px-1">${m.ga}–${m.gb}${m.extra}</span>
-    <span class="flex items-center gap-1.5 flex-1 ${bW ? "font-black text-emerald-200" : "text-slate-400"}"><span class="flag">${fb}</span> ${m.b}${bW ? " 🏅" : ""}</span>
-  </div>`;
+/* interactive knockout card — Diego taps the winner (tap again to unpick) */
+function wc30MatchCard(m) {
+  const t = wTeamsOf(m);
+  const chosen = wpicks[m.id] || null;
+  const btn = (name, side) => {
+    if (!name) {
+      const ph = m.fromLosers
+        ? "Perdedor de " + WKO.label[side === "a" ? m.fromLosers[0] : m.fromLosers[1]]
+        : "Ganador de " + WKO.label[side === "a" ? m.from[0] : m.from[1]];
+      return `<button disabled class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/40 border border-slate-700 text-slate-500">
+        <span class="flag" style="font-size:1.1rem">❓</span>
+        <span class="flex-1 text-left text-xs">${ph}</span>
+      </button>`;
+    }
+    const cls = chosen ? (chosen === name ? "win" : "lose") : "";
+    return `<button data-wmatch="${m.id}" data-team="${name}"
+        class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 ${cls}">
+        <span class="flag">${flag(name, 22)}</span>
+        <span class="flex-1 text-left text-sm font-semibold truncate">${name}</span>
+        <span class="text-base w-4">${chosen === name ? "🏅" : ""}</span>
+      </button>`;
+  };
+  return `<article class="glass rounded-xl p-2">
+    <div class="text-[10px] uppercase tracking-widest text-slate-500 mb-1.5">${WKO.label[m.id]}</div>
+    <div class="space-y-1.5">${btn(t.a, "a")}${btn(t.b, "b")}</div>
+  </article>`;
 }
 function renderWc30() {
   if (!document.getElementById("wc30-groups")) return;
-  if (!wc30) return;
+  if (!wc30 || !WKO) return;
+  wValidate();
 
-  /* champion banner */
-  document.getElementById("wc30-champ").innerHTML = `
-    <div class="glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
-      <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Campeón del Mundial 2030</div>
-      <div class="text-6xl mt-2">🏆</div>
-      <div class="text-2xl sm:text-3xl font-black text-white mt-2">${flag(wc30.champ, 40)} ${wc30.champ}</div>
-      <div class="text-sm text-slate-300 mt-1">🥉 3.º lugar: ${flag(wc30.bronze, 20)} <b>${wc30.bronze}</b></div>
-      <div class="text-[11px] text-slate-500 mt-1">Final en Madrid · simulación al azar</div>
-    </div>`;
+  /* champion banner (from Diego's picks) */
+  const champ = wWinnerOf("wk31"), bronze = wWinnerOf("wk32");
+  const cel = document.getElementById("wc30-champ");
+  if (champ) {
+    cel.innerHTML = `
+      <div class="glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
+        <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Campeón del Mundial 2030</div>
+        <div class="text-6xl mt-2">🏆</div>
+        <div class="text-2xl sm:text-3xl font-black text-white mt-2">${flag(champ, 40)} ${champ}</div>
+        ${bronze ? `<div class="text-sm text-slate-300 mt-1">🥉 3.º lugar: ${flag(bronze, 20)} <b>${bronze}</b></div>` : ""}
+        <div class="text-[11px] text-slate-500 mt-1">¡Diego eligió al campeón! · Final en Madrid</div>
+      </div>`;
+    if (!wChampCelebrated) { wChampCelebrated = true; celebrate(); }
+  } else {
+    cel.innerHTML = `<div class="glass rounded-2xl p-4 text-center border-slate-600/40 text-sm text-slate-300">
+      La <b>fase de grupos</b> ya se jugó 🎲. Ahora <b class="text-emerald-300">eliges tú</b> los ganadores desde la
+      <b class="text-emerald-300">Ronda de 32</b> hasta la Final para coronar al campeón. 👇</div>`;
+    wChampCelebrated = false;
+  }
 
   /* groups */
   const groupsEl = document.getElementById("wc30-groups");
@@ -1448,23 +1496,22 @@ function renderWc30() {
       </div>
     </div>`).join("");
 
-  /* knockout */
-  const ko = wc30.ko;
-  const section = (title, matches) => `
+  /* interactive knockout — Diego picks winners from the Round of 32 onward */
+  const grid = (title, matches, cols) => `
     <div>
-      <div class="text-sm font-black text-slate-200 mb-1.5">${title}</div>
-      <div class="space-y-1.5">${matches.map(wc30MatchRow).join("")}</div>
+      <div class="text-sm font-black text-slate-200 mb-2">${title}</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 ${cols} gap-2">${matches.map(wc30MatchCard).join("")}</div>
     </div>`;
   document.getElementById("wc30-ko").innerHTML =
-    section("🌍 Ronda de 32", ko.r32) +
-    section("🥅 Octavos", ko.r16) +
-    section("⚔️ Cuartos", ko.qf) +
-    section("🔥 Semifinales", ko.sf) +
-    section("🥉 3.º lugar", [ko.third]) +
+    grid("🌍 Ronda de 32 · toca al ganador", WKO.w32, "lg:grid-cols-4") +
+    grid("🥅 Octavos", WKO.w16, "lg:grid-cols-4") +
+    grid("⚔️ Cuartos", WKO.wqf, "lg:grid-cols-4") +
+    grid("🔥 Semifinales", WKO.wsf, "lg:grid-cols-2") +
+    grid("🥉 3.º lugar", [WKO.wthird], "lg:grid-cols-2") +
     `<div class="text-center text-3xl">🏆</div>` +
-    section("🏆 FINAL", [ko.final]);
+    grid("🏆 Final", [WKO.wfinal], "lg:grid-cols-2");
 }
-document.getElementById("wc30-sim").addEventListener("click", () => simulateWc30(true));
+document.getElementById("wc30-sim").addEventListener("click", simulateWc30);
 
 /* ---------------- TABS ---------------- */
 let activeTab = "real";
@@ -1514,6 +1561,11 @@ document.addEventListener("click", (e) => {
     renderCustom();
   } else if (btn.dataset.sim) {
     simToggle(btn.dataset.sim, team);
+  } else if (btn.dataset.wmatch) {
+    const id = btn.dataset.wmatch;
+    if (wpicks[id] === team) { delete wpicks[id]; }
+    else { wpicks[id] = team; }
+    renderWc30();
   }
 });
 
@@ -1539,7 +1591,7 @@ renderCustom();
 renderElim();
 renderSim();
 renderWc30Legend();
-simulateWc30(false);
+simulateWc30();
 </script>
 </body>
 </html>
