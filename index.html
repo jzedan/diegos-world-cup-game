@@ -148,12 +148,12 @@
       ¿Te equivocaste? Tócalo <b>otra vez</b> para borrar y elegir el otro. 😉
     </p>
     <p class="text-xs text-slate-400 mt-2 max-w-2xl mx-auto">
-      ¡Las dos Semis ya se jugaron!
-      <b class="text-emerald-300">España</b> le ganó 2–0 a Francia y
-      <b class="text-emerald-300">Argentina</b> le ganó 2–1 a Inglaterra.
-      La <b class="text-yellow-300">Final</b> es <b class="text-white">España vs Argentina</b> (domingo 19). 🎉
-      ¡Ahora Diego elige al campeón del mundo! 👇
-      Y también quién gana el 3.º lugar: <b class="text-white">Francia vs Inglaterra</b>.
+      ¡El Mundial ya terminó! 🎉 En la <b class="text-yellow-300">Final</b>,
+      <b class="text-emerald-300">España</b> le ganó <b>2–1</b> a Argentina y se coronó
+      <b class="text-yellow-300">campeona del mundo</b> 🏆.
+      En el partido por el <b class="text-white">3.º lugar</b>,
+      <b class="text-emerald-300">Inglaterra</b> le ganó <b>2–1</b> a Francia.
+      ¡Todos los partidos anteriores los jugó y eligió Diego! 👇
     </p>
   </div>
 </section>
@@ -508,8 +508,8 @@ const KO = {
     { id:"sf1", from:["qf97","qf98"],  date:"Martes 14 jul",   time:"13:00", city:"Dallas (Arlington)", venue:"AT&T Stadium", played:true, score:"0–2", winner:"España" },
     { id:"sf2", from:["qf99","qf100"], date:"Miércoles 15 jul",time:"13:00", city:"Atlanta",            venue:"Mercedes-Benz Stadium", played:true, score:"1–2", winner:"Argentina" }
   ],
-  final: { id:"final", from:["sf1","sf2"], date:"Domingo 19 jul", time:"13:00", city:"Nueva York / Nueva Jersey", venue:"MetLife Stadium" },
-  third: { id:"third", fromLosers:["sf1","sf2"], date:"Sábado 18 jul", time:"15:00", city:"Miami", venue:"Hard Rock Stadium" }
+  final: { id:"final", from:["sf1","sf2"], date:"Domingo 19 jul", time:"13:00", city:"Nueva York / Nueva Jersey", venue:"MetLife Stadium", played:true, score:"2–1", winner:"España" },
+  third: { id:"third", fromLosers:["sf1","sf2"], date:"Sábado 18 jul", time:"15:00", city:"Miami", venue:"Hard Rock Stadium", played:true, score:"1–2", winner:"Inglaterra" }
 };
 const ALL = [...KO.r16, ...KO.qf, ...KO.sf, KO.final, KO.third];
 const LABEL = { m89:"Octavo 1", m90:"Octavo 2", m91:"Octavo 3", m92:"Octavo 4", m93:"Octavo 5", m94:"Octavo 6", m95:"Octavo 7", m96:"Octavo 8", qf97:"Cuarto 1", qf98:"Cuarto 2", qf99:"Cuarto 3", qf100:"Cuarto 4", sf1:"Semifinal 1", sf2:"Semifinal 2", third:"3.º lugar" };
@@ -693,7 +693,7 @@ function render() {
   requestAnimationFrame(drawConnectors);
 
   const banner = document.getElementById("champ-banner");
-  const champ = picks["final"];
+  const champ = winnerOf("final");
   if (champ) {
     document.getElementById("champ-name").innerHTML = flag(champ, 42) + " " + champ;
     banner.classList.remove("hidden");
