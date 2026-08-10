@@ -34,7 +34,7 @@
   /* ---- bracket ---- */
   .bracket-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
   .bracket { position: relative; display: flex; align-items: stretch; min-width: 950px; }
-  #connectors, #fconnectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
+  #connectors, #fconnectors, #oconnectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
   .round { flex: 1 1 0; display: flex; flex-direction: column; padding: 0 16px; }
   .cell { flex: 1 1 0; min-height: 158px; display: flex; align-items: center; justify-content: center; }
   .bracket-card { position: relative; z-index: 10; width: 100%; }
@@ -45,6 +45,11 @@
   /* every round shows a date/venue footer now, so cards need more height than a bare 2-button card */
   .fbracket .cell { min-height: 172px; }
   .fbracket .round { padding: 0 10px; }
+
+  /* ---- octavos bracket (3-letter code + big flag, side by side) ---- */
+  .obracket .cell { min-height: 228px; }
+  .obracket .round { padding: 0 10px; }
+  .code3 { font-size: 1.05rem; font-weight: 900; letter-spacing: .08em; line-height: 1; }
 
   /* ---- tabs ---- */
   .tab-btn { transition: background-color .15s ease, color .15s ease; }
@@ -99,6 +104,12 @@
     </button>
     <button id="tabbtn-wc30" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       🌐 Mundial 2030
+    </button>
+    <button id="tabbtn-groups" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      🧮 Fase de grupos
+    </button>
+    <button id="tabbtn-oct" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      🥅 Elige tus Octavos
     </button>
   </div>
 
@@ -406,6 +417,99 @@
 </section>
 
 </div><!-- /tab-wc30 -->
+
+<!-- ================= TAB 6: FASE DE GRUPOS (Diego elige clasificados) ================= -->
+<div id="tab-groups" class="hidden">
+<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego · ¡tú decides quién pasa!</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Fase de grupos · Mundial 2030 🧮</h2>
+    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
+      Los mismos <b class="text-emerald-300">48 equipos</b> en <b>12 grupos de 4</b>, pero
+      <b>nada está decidido</b>. En cada grupo toca a los equipos <b>en orden</b>:
+      el <b class="text-emerald-300">1.º</b> y el <b class="text-emerald-300">2.º</b> pasan directo,
+      y de los <b class="text-amber-300">12 terceros</b> tú eliges los <b class="text-emerald-300">8 mejores</b>.
+      ¡En total <b class="text-yellow-300">32 equipos</b> a la Ronda de 32! 👇
+    </p>
+    <p class="text-[11px] text-slate-400 mt-2">¿Te equivocaste? Toca un equipo ya ordenado para quitarlo.</p>
+  </div>
+  <div id="groups-legend" class="flex flex-wrap items-center justify-center gap-2 mt-3"></div>
+</section>
+<section class="max-w-3xl mx-auto px-4 pt-2 pb-2"><div id="groups-summary"></div></section>
+<section class="max-w-6xl mx-auto px-4 pt-2 pb-4">
+  <div id="groups-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+</section>
+<section class="max-w-3xl mx-auto px-4 pt-2 pb-12">
+  <h3 class="text-lg font-black text-amber-300 text-center mb-1">🥉 Los mejores terceros</h3>
+  <p class="text-center text-[11px] text-slate-400 mb-3">De los 12 terceros de cada grupo, elige los <b>8</b> que también pasan.</p>
+  <div id="groups-thirds"></div>
+</section>
+</div><!-- /tab-groups -->
+
+<!-- ================= TAB 7: OCTAVOS (Elige tus Octavos) ================= -->
+<div id="tab-oct" class="hidden">
+
+<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego · tu propio camino</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Elige tus Octavos 🥅</h2>
+    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
+      Empezamos directo en los <b class="text-emerald-300">Octavos de final</b>, ya llenos con los
+      <b>16 equipos que de verdad</b> llegaron. Si quieres, <b class="text-yellow-300">quita a un país</b>
+      y pon a <b>cualquiera de los 48</b> del Mundial — y después tocas quién gana cada partido
+      hasta la Final. 👇
+    </p>
+    <p class="text-xs text-slate-400 mt-2">Cada equipo solo puede estar en un partido. Toca un equipo <b>otra vez</b> para borrar tu elección.</p>
+  </div>
+  <div class="flex items-center justify-center mt-3">
+    <button id="reset-oct-teams" class="text-xs px-4 py-2 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      ↺ Restablecer a los 16 equipos reales
+    </button>
+  </div>
+</section>
+
+<section class="max-w-5xl mx-auto px-4 pt-4 pb-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="oct-picker"></div>
+</section>
+
+<section class="max-w-3xl mx-auto px-4 pt-2 pb-2">
+  <div id="ochamp-banner" class="hidden glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
+    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Campeón de tus Octavos</div>
+    <div class="text-7xl mt-2">🏆</div>
+    <div id="ochamp-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
+    <div class="text-slate-300 mt-2">¡Este equipo ganó tu Mundial desde los Octavos! 🎉</div>
+  </div>
+</section>
+
+<main class="max-w-7xl mx-auto px-2 sm:px-4 pb-10">
+  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
+  <div class="bracket-scroll">
+    <div class="head-row max-w-7xl mx-auto" style="min-width:1050px">
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">tus 16 equipos</div></div>
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">quedan 8</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">quedan 4</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">¡tu campeón!</div></div>
+    </div>
+    <div id="obracket" class="bracket obracket max-w-7xl mx-auto" style="min-width:1050px">
+      <svg id="oconnectors"></svg>
+      <div class="round" id="oround-r16"></div>
+      <div class="round" id="oround-qf"></div>
+      <div class="round" id="oround-sf"></div>
+      <div class="round" id="oround-final"></div>
+    </div>
+  </div>
+</main>
+
+<section class="max-w-sm mx-auto px-4 pt-2 pb-10">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-amber-300/80">Extra</div>
+    <h3 class="text-xl font-black text-amber-300 mt-1">🥉 Partido por el 3.º lugar</h3>
+    <p class="text-xs text-slate-400 mt-1">Lo juegan los dos equipos que <b class="text-slate-200">pierden</b> tus semifinales.</p>
+  </div>
+  <div id="oround-third"></div>
+</section>
+
+</div><!-- /tab-oct -->
 
 <footer class="max-w-5xl mx-auto px-4 pb-10 text-center text-xs text-slate-500 leading-relaxed">
   Hecho con cariño para Diego · Mundial 2026 (USA · México · Canadá).<br/>
@@ -1109,6 +1213,222 @@ document.getElementById("reset-custom-teams").addEventListener("click", () => {
   renderCustom();
 });
 
+/* ---------------- OCTAVOS MODE: Elige tus Octavos (tab 7) ---------------- */
+/* Starts at the Round of 16 (not the Round of 32): the 8 octavos come pre-filled
+   with the 16 teams that really got there, but Diego can swap any slot for any of
+   the 48 teams. Cards show the team's 3-letter code with a big flag underneath,
+   plus the real date / venue / city of that bracket position (reused from KO). */
+
+/* 3-letter codes: the first three letters of the Spanish name, with overrides
+   where that would be ambiguous (Argentina/Argelia, Australia/Austria,
+   Irán/Irak) or unclear. All 48 codes are unique. */
+const CODE3 = {
+  "Estados Unidos":"EUA", "Costa de Marfil":"CDM", "Rep. Checa":"CHE", "Países Bajos":"PBA",
+  "RD Congo":"CGO", "Argelia":"ALG", "Austria":"AUT", "Irán":"IRN", "Irak":"IRQ", "Nueva Zelanda":"NZL"
+};
+const code3 = (name) => CODE3[name]
+  || name.normalize("NFD").replace(/[\u0300-\u036f.]/g, "").slice(0, 3).toUpperCase();
+
+const ODEFAULT = {};
+KO.r16.forEach((m, i) => { ODEFAULT["os" + (i + 1) + "a"] = m.a; ODEFAULT["os" + (i + 1) + "b"] = m.b; });
+
+const OTKEY = "diegosWorldCup.oct16.teams.v1";
+let octTeams = {};
+try { octTeams = JSON.parse(localStorage.getItem(OTKEY) || "null") || { ...ODEFAULT }; } catch(e) { octTeams = { ...ODEFAULT }; }
+const otsave = () => localStorage.setItem(OTKEY, JSON.stringify(octTeams));
+
+/* the 8 octavos keep the real bracket positions, so each slot inherits that
+   match's real date/time/city/venue (o1 = m89, o2 = m90, …) */
+const O16 = KO.r16.map((real, i) => ({
+  id: "o" + (i + 1), aSlot: "os" + (i + 1) + "a", bSlot: "os" + (i + 1) + "b",
+  date: real.date, time: real.time, city: real.city, venue: real.venue
+}));
+/* quarterfinal pairings mirror the real bracket (qf97–qf100) */
+const OQF = [
+  { id:"o9",  from:["o1","o2"] },
+  { id:"o10", from:["o5","o6"] },
+  { id:"o11", from:["o3","o4"] },
+  { id:"o12", from:["o7","o8"] }
+].map((m, i) => ({ ...m, date:KO.qf[i].date, time:KO.qf[i].time, city:KO.qf[i].city, venue:KO.qf[i].venue }));
+const OSF = [
+  { id:"o13", from:["o9","o10"] },
+  { id:"o14", from:["o11","o12"] }
+].map((m, i) => ({ ...m, date:KO.sf[i].date, time:KO.sf[i].time, city:KO.sf[i].city, venue:KO.sf[i].venue }));
+const OFINAL = { id:"o15", from:["o13","o14"], date:KO.final.date, time:KO.final.time, city:KO.final.city, venue:KO.final.venue };
+const OTHIRD = { id:"o16", fromLosers:["o13","o14"], date:KO.third.date, time:KO.third.time, city:KO.third.city, venue:KO.third.venue };
+const OALL = [...O16, ...OQF, ...OSF, OFINAL, OTHIRD];
+const OLABEL = {};
+O16.forEach((m, i) => OLABEL[m.id] = "Octavo " + (i + 1));
+OQF.forEach((m, i) => OLABEL[m.id] = "Cuarto " + (i + 1));
+OSF.forEach((m, i) => OLABEL[m.id] = "Semifinal " + (i + 1));
+OLABEL["o15"] = "Final";
+OLABEL["o16"] = "3.º lugar";
+const OPAIRS = [];
+[...OQF, ...OSF, OFINAL].forEach(m => { OPAIRS.push([m.from[0], m.id], [m.from[1], m.id]); });
+
+const OKEY = "diegosWorldCup.oct16.picks.v1";
+let opicks = {};
+try { opicks = JSON.parse(localStorage.getItem(OKEY) || "{}"); } catch(e) { opicks = {}; }
+const osave = () => localStorage.setItem(OKEY, JSON.stringify(opicks));
+
+function oWinnerOf(id) { return opicks[id] || null; }
+function oLoserOf(id) {
+  const w = oWinnerOf(id);
+  if (!w) return null;
+  const m = OALL.find(x => x.id === id);
+  const t = oTeamsOf(m);
+  if (!t.a || !t.b) return null;
+  return w === t.a ? t.b : t.a;
+}
+function oTeamsOf(m) {
+  if (m.aSlot) return { a: octTeams[m.aSlot] || null, b: octTeams[m.bSlot] || null };
+  if (m.fromLosers) return { a: oLoserOf(m.fromLosers[0]), b: oLoserOf(m.fromLosers[1]) };
+  return { a: oWinnerOf(m.from[0]), b: oWinnerOf(m.from[1]) };
+}
+function oValidate() {
+  let changed = true;
+  while (changed) {
+    changed = false;
+    OALL.forEach(m => {
+      if (opicks[m.id]) {
+        const t = oTeamsOf(m);
+        if (opicks[m.id] !== t.a && opicks[m.id] !== t.b) { delete opicks[m.id]; changed = true; }
+      }
+    });
+  }
+}
+
+function oMatchCard(m) {
+  const t = oTeamsOf(m);
+  const chosen = opicks[m.id] || null;
+  const btn = (name, side) => {
+    if (!name) {
+      const ph = m.aSlot
+        ? "Elige un equipo arriba 👆"
+        : m.fromLosers
+          ? "Perdedor de " + OLABEL[side === "a" ? m.fromLosers[0] : m.fromLosers[1]]
+          : "Ganador de " + OLABEL[side === "a" ? m.from[0] : m.from[1]];
+      return `<div class="team-btn flex-1 flex flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 bg-slate-800/40 border border-slate-700 text-slate-500">
+        <div class="text-2xl">❓</div>
+        <div class="text-[10px] text-center leading-tight">${ph}</div>
+      </div>`;
+    }
+    const cls = chosen ? (chosen === name ? "win" : "lose") : "";
+    return `<button data-omatch="${m.id}" data-team="${name}" title="${name}"
+        class="team-btn flex-1 flex flex-col items-center gap-1.5 rounded-xl px-1 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 ${cls}">
+        <div class="code3">${code3(name)}</div>
+        ${flag(name, 56)}
+        <div class="text-sm" style="height:1.15rem">${chosen === name ? "🏅" : ""}</div>
+      </button>`;
+  };
+  const wrap = document.createElement("article");
+  wrap.id = "card-" + m.id;
+  wrap.className = "bracket-card glass rounded-xl p-2";
+  wrap.innerHTML = `
+    <div class="flex items-center justify-between mb-1.5 text-[10px]">
+      <span class="uppercase tracking-widest text-slate-500">${OLABEL[m.id]}</span>
+      ${m.time ? `<span class="text-yellow-300/90 font-medium">🕒 ${m.time}</span>` : ""}
+    </div>
+    <div class="flex items-stretch gap-1">
+      ${btn(t.a, "a")}
+      <div class="flex items-center text-[10px] font-black text-slate-500">VS</div>
+      ${btn(t.b, "b")}
+    </div>
+    ${m.date ? `<div class="mt-1.5 pt-1.5 border-t border-white/10 text-[11px] leading-snug">
+      <div class="text-slate-300">📅 ${m.date} · 🕒 ${m.time} (hora MX)</div>
+      <div class="text-yellow-200/90 font-medium">🏟️ ${m.venue}</div>
+      <div class="text-slate-400">📍 ${m.city}</div>
+    </div>` : ""}`;
+  return wrap;
+}
+
+function drawOConnectors() { drawLines("obracket", "oconnectors", OPAIRS, oWinnerOf); }
+
+let oConfettiOn = false;
+function renderOct() {
+  oValidate();
+  const fill = (elId, list, isFinal) => {
+    const el = document.getElementById(elId);
+    el.innerHTML = "";
+    list.forEach(m => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      const inner = document.createElement("div");
+      inner.style.width = "100%";
+      if (isFinal) inner.innerHTML = `<div class="text-center text-3xl mb-1">🏆</div>`;
+      inner.appendChild(oMatchCard(m));
+      cell.appendChild(inner);
+      el.appendChild(cell);
+    });
+  };
+  fill("oround-r16", O16, false);
+  fill("oround-qf", OQF, false);
+  fill("oround-sf", OSF, false);
+  fill("oround-final", [OFINAL], true);
+  const othirdEl = document.getElementById("oround-third");
+  othirdEl.innerHTML = "";
+  othirdEl.appendChild(oMatchCard(OTHIRD));
+  requestAnimationFrame(drawOConnectors);
+
+  const banner = document.getElementById("ochamp-banner");
+  const champ = opicks["o15"];
+  if (champ) {
+    document.getElementById("ochamp-name").innerHTML = flag(champ, 42) + " " + champ;
+    banner.classList.remove("hidden");
+    banner.classList.add("pop");
+    if (!oConfettiOn) { oConfettiOn = true; celebrate(); }
+  } else {
+    banner.classList.add("hidden");
+    oConfettiOn = false;
+  }
+  osave();
+}
+
+/* ---- team picker: choose which of the 48 teams fills each octavos slot ---- */
+function octOptionsHtml(selectedName) {
+  return ALL_TEAMS.map(t => {
+    const usedElsewhere = t.name !== selectedName && Object.values(octTeams).includes(t.name);
+    return `<option value="${t.name}" ${t.name === selectedName ? "selected" : ""} ${usedElsewhere ? "disabled" : ""}>${code3(t.name)} · ${t.name}</option>`;
+  }).join("");
+}
+function renderOctPicker() {
+  const el = document.getElementById("oct-picker");
+  el.innerHTML = "";
+  for (let i = 1; i <= 8; i++) {
+    const slotA = "os" + i + "a", slotB = "os" + i + "b";
+    const row = document.createElement("div");
+    row.className = "glass rounded-2xl p-3";
+    row.innerHTML = `
+      <div class="text-[10px] uppercase tracking-widest text-slate-500 mb-2 text-center">Octavo ${i}</div>
+      <div class="space-y-2">
+        <select data-oslot="${slotA}" class="oct-select w-full text-xs sm:text-sm bg-slate-800/60 border border-slate-700 rounded-lg px-2 py-2 text-slate-100">
+          ${octOptionsHtml(octTeams[slotA])}
+        </select>
+        <select data-oslot="${slotB}" class="oct-select w-full text-xs sm:text-sm bg-slate-800/60 border border-slate-700 rounded-lg px-2 py-2 text-slate-100">
+          ${octOptionsHtml(octTeams[slotB])}
+        </select>
+      </div>`;
+    el.appendChild(row);
+  }
+}
+document.addEventListener("change", (e) => {
+  const sel = e.target.closest(".oct-select");
+  if (!sel) return;
+  octTeams[sel.dataset.oslot] = sel.value;
+  otsave();
+  oValidate();
+  renderOctPicker();
+  renderOct();
+});
+document.getElementById("reset-oct-teams").addEventListener("click", () => {
+  if (!confirm("¿Restablecer los 16 equipos a los que jugaron los Octavos reales?")) return;
+  octTeams = { ...ODEFAULT };
+  opicks = {};
+  otsave(); osave();
+  renderOctPicker();
+  renderOct();
+});
+
 /* ---------------- ELIMINATORIAS 2030 (CONCACAF) — informational, tab 4 ---------------- */
 /* Format announced by Concacaf on 2026-02-06. The draw has NOT happened yet, so specific
    opponents are unknown — this shows El Salvador's roadmap (rounds, dates, how to advance),
@@ -1513,6 +1833,115 @@ function renderWc30() {
 }
 document.getElementById("wc30-sim").addEventListener("click", simulateWc30);
 
+/* ---------------- FASE DE GRUPOS · Diego elige los clasificados (tab 6) ---------------- */
+/* Same 48 teams as Mundial 2030, in a FIXED (deterministic) 12-group draw — nothing
+   simulated. Diego ranks each group (1º/2º/3º), then picks the 8 best thirds → 32 pasan. */
+const TEAM_CONF = {}; WC30_TEAMS.forEach(([name, conf]) => TEAM_CONF[name] = conf);
+const GRP_SEEDED = WC30_TEAMS.map(([name, , str]) => ({ name, str })).sort((a, b) => b.str - a.str);
+const GRP_POTS = [0, 1, 2, 3].map(p => GRP_SEEDED.slice(p * 12, p * 12 + 12));
+const GRP_GROUPS = [];
+for (let i = 0; i < 12; i++) GRP_GROUPS.push({ letter: GLET[i], teams: [GRP_POTS[0][i].name, GRP_POTS[1][i].name, GRP_POTS[2][i].name, GRP_POTS[3][i].name] });
+
+const GKEY = "diegosWorldCup.groups.v1";
+let gStand = {}, gThirds = [], gCelebrated = false;
+try { const s = JSON.parse(localStorage.getItem(GKEY) || "{}"); gStand = s.stand || {}; gThirds = s.thirds || []; } catch (e) { gStand = {}; gThirds = []; }
+const gsave = () => localStorage.setItem(GKEY, JSON.stringify({ stand: gStand, thirds: gThirds }));
+
+const currentThirds = () => GRP_GROUPS.map(g => (gStand[g.letter] || [])[2]).filter(Boolean);
+function syncThirds() { const valid = new Set(currentThirds()); gThirds = gThirds.filter(n => valid.has(n)); }
+function grpToggle(letter, name) {
+  const arr = gStand[letter] || (gStand[letter] = []);
+  const i = arr.indexOf(name);
+  if (i >= 0) arr.splice(i, 1);         /* tap again to unrank */
+  else if (arr.length < 3) arr.push(name);  /* rank next position (1º→2º→3º) */
+  syncThirds();
+  gsave(); renderGroups();
+}
+function grpThirdToggle(name) {
+  const i = gThirds.indexOf(name);
+  if (i >= 0) gThirds.splice(i, 1);
+  else if (gThirds.length < 8) gThirds.push(name);
+  gsave(); renderGroups();
+}
+const groupsComplete = () => GRP_GROUPS.every(g => (gStand[g.letter] || []).length === 3);
+const directQualified = () => GRP_GROUPS.flatMap(g => (gStand[g.letter] || []).slice(0, 2));
+
+function renderGroups() {
+  if (!document.getElementById("groups-grid")) return;
+
+  const leg = document.getElementById("groups-legend");
+  leg.innerHTML = Object.keys(WC30_CONF).map(c =>
+    `<span class="inline-flex items-center gap-1.5 text-[11px] text-slate-300 bg-slate-800/50 border border-slate-700 rounded-full px-2.5 py-1">${wc30Dot(c)} ${WC30_CONF[c].label}</span>`
+  ).join("");
+
+  /* group cards */
+  document.getElementById("groups-grid").innerHTML = GRP_GROUPS.map(g => {
+    const arr = gStand[g.letter] || [];
+    const rows = g.teams.map(name => {
+      const idx = arr.indexOf(name);
+      const pos = idx >= 0 ? idx : (arr.length === 3 ? -2 : -1);
+      const badge = pos === 0 ? '<span class="text-emerald-300 text-[11px] font-bold">🥇 1.º · PASA</span>'
+        : pos === 1 ? '<span class="text-emerald-300 text-[11px] font-bold">🥈 2.º · PASA</span>'
+        : pos === 2 ? '<span class="text-amber-300 text-[11px] font-bold">🥉 3.º</span>'
+        : pos === -2 ? '<span class="text-slate-500 text-[10px]">4.º ❌</span>'
+        : '<span class="text-slate-500 text-[10px]">toca 👆</span>';
+      const hl = pos === 0 || pos === 1 ? "bg-emerald-500/15" : pos === 2 ? "bg-amber-500/10" : "opacity-70";
+      return `<button data-grp="${g.letter}" data-team="${name}"
+        class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-1.5 border border-slate-700 ${hl} hover:bg-slate-700/40">
+        ${wc30Dot(TEAM_CONF[name])}
+        <span class="flag">${flag(name, 18)}</span>
+        <span class="flex-1 text-left text-xs text-slate-100 truncate">${name}</span>
+        ${badge}
+      </button>`;
+    }).join("");
+    return `<div class="glass rounded-2xl p-3">
+      <div class="text-xs uppercase tracking-widest text-slate-400 mb-2 text-center">Grupo ${g.letter}</div>
+      <div class="space-y-1">${rows}</div>
+    </div>`;
+  }).join("");
+
+  /* thirds picker */
+  const thirds = currentThirds();
+  const thirdsEl = document.getElementById("groups-thirds");
+  if (thirds.length === 0) {
+    thirdsEl.innerHTML = `<p class="text-center text-sm text-slate-500">Ordena los grupos (elige un 3.º en cada uno) para desbloquear a los terceros. 👆</p>`;
+  } else {
+    const btns = thirds.map(name => {
+      const on = gThirds.includes(name);
+      return `<button data-grpthird="1" data-team="${name}"
+        class="team-btn flex items-center gap-2 rounded-lg px-2 py-2 border ${on ? "bg-emerald-500/20 border-emerald-400/50" : "bg-slate-800/60 border-slate-700 hover:bg-slate-700/60"}">
+        ${wc30Dot(TEAM_CONF[name])}
+        <span class="flag">${flag(name, 18)}</span>
+        <span class="flex-1 text-left text-xs text-slate-100 truncate">${name}</span>
+        <span class="text-[10px] font-bold ${on ? "text-emerald-300" : "text-slate-600"}">${on ? "PASA ✅" : ""}</span>
+      </button>`;
+    }).join("");
+    thirdsEl.innerHTML = `
+      <div class="text-center text-xs text-slate-300 mb-2">Elegidos: <b class="text-emerald-300">${gThirds.length}/8</b>${thirds.length < 12 ? ` · faltan grupos por ordenar (${thirds.length}/12 terceros)` : ""}</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${btns}</div>`;
+  }
+
+  /* summary + confetti */
+  const complete = groupsComplete() && gThirds.length === 8;
+  const sumEl = document.getElementById("groups-summary");
+  if (complete) {
+    const qualified = [...directQualified(), ...gThirds];
+    sumEl.innerHTML = `
+      <div class="glass champ-glow rounded-3xl p-5 text-center border-yellow-400/40">
+        <div class="text-4xl">🎉</div>
+        <div class="text-lg font-black text-white mt-1">¡32 clasificados a la Ronda de 32!</div>
+        <div class="flex flex-wrap justify-center gap-1.5 mt-3">
+          ${qualified.map(n => `<span class="inline-flex items-center gap-1 text-[11px] bg-emerald-500/15 border border-emerald-400/30 rounded-full px-2 py-0.5">${flag(n, 14)} ${n}</span>`).join("")}
+        </div>
+      </div>`;
+    if (!gCelebrated) { gCelebrated = true; celebrate(); }
+  } else {
+    const dir = directQualified().length;
+    sumEl.innerHTML = `<div class="glass rounded-2xl p-3 text-center text-sm text-slate-300">Directos elegidos: <b class="text-emerald-300">${dir}/24</b> · Terceros: <b class="text-emerald-300">${gThirds.length}/8</b> → faltan para los 32.</div>`;
+    gCelebrated = false;
+  }
+}
+
 /* ---------------- TABS ---------------- */
 let activeTab = "real";
 function showTab(name) {
@@ -1522,15 +1951,19 @@ function showTab(name) {
   document.getElementById("tab-custom").classList.toggle("hidden", name !== "custom");
   document.getElementById("tab-elim").classList.toggle("hidden", name !== "elim");
   document.getElementById("tab-wc30").classList.toggle("hidden", name !== "wc30");
+  document.getElementById("tab-groups").classList.toggle("hidden", name !== "groups");
+  document.getElementById("tab-oct").classList.toggle("hidden", name !== "oct");
   document.getElementById("tabbtn-real").classList.toggle("active", name === "real");
   document.getElementById("tabbtn-fantasy").classList.toggle("active", name === "fantasy");
   document.getElementById("tabbtn-custom").classList.toggle("active", name === "custom");
   document.getElementById("tabbtn-elim").classList.toggle("active", name === "elim");
   document.getElementById("tabbtn-wc30").classList.toggle("active", name === "wc30");
+  document.getElementById("tabbtn-groups").classList.toggle("active", name === "groups");
+  document.getElementById("tabbtn-oct").classList.toggle("active", name === "oct");
   /* the "Empezar de nuevo" button has nothing to reset on the info/sim tabs */
   document.getElementById("reset-all").classList.toggle("hidden", name === "elim" || name === "wc30");
   /* connector lines can only be measured while a bracket is visible (elim tab has none) */
-  const drawFn = name === "real" ? drawConnectors : name === "fantasy" ? drawFConnectors : name === "custom" ? drawCConnectors : null;
+  const drawFn = name === "real" ? drawConnectors : name === "fantasy" ? drawFConnectors : name === "custom" ? drawCConnectors : name === "oct" ? drawOConnectors : null;
   if (drawFn) requestAnimationFrame(drawFn);
 }
 document.getElementById("tabbtn-real").addEventListener("click", () => showTab("real"));
@@ -1538,6 +1971,8 @@ document.getElementById("tabbtn-fantasy").addEventListener("click", () => showTa
 document.getElementById("tabbtn-custom").addEventListener("click", () => showTab("custom"));
 document.getElementById("tabbtn-elim").addEventListener("click", () => showTab("elim"));
 document.getElementById("tabbtn-wc30").addEventListener("click", () => showTab("wc30"));
+document.getElementById("tabbtn-groups").addEventListener("click", () => showTab("groups"));
+document.getElementById("tabbtn-oct").addEventListener("click", () => showTab("oct"));
 
 /* ---- click handling ---- */
 document.addEventListener("click", (e) => {
@@ -1566,6 +2001,15 @@ document.addEventListener("click", (e) => {
     if (wpicks[id] === team) { delete wpicks[id]; }
     else { wpicks[id] = team; }
     renderWc30();
+  } else if (btn.dataset.grp) {
+    grpToggle(btn.dataset.grp, team);
+  } else if (btn.dataset.grpthird) {
+    grpThirdToggle(team);
+  } else if (btn.dataset.omatch) {
+    const id = btn.dataset.omatch;
+    if (opicks[id] === team) { delete opicks[id]; }
+    else { opicks[id] = team; }
+    renderOct();
   }
 });
 
@@ -1573,13 +2017,15 @@ document.getElementById("reset-all").addEventListener("click", () => {
   if (!confirm("¿Empezar de nuevo y borrar todo lo que eligió Diego?")) return;
   if (activeTab === "fantasy") { fpicks = {}; renderFantasy(); }
   else if (activeTab === "custom") { cpicks = {}; renderCustom(); }
+  else if (activeTab === "groups") { gStand = {}; gThirds = []; gsave(); renderGroups(); }
+  else if (activeTab === "oct") { opicks = {}; renderOct(); }
   else { picks = {}; render(); }
 });
 
 let rz;
 window.addEventListener("resize", () => {
   clearTimeout(rz);
-  const fn = activeTab === "real" ? drawConnectors : activeTab === "fantasy" ? drawFConnectors : activeTab === "custom" ? drawCConnectors : null;
+  const fn = activeTab === "real" ? drawConnectors : activeTab === "fantasy" ? drawFConnectors : activeTab === "custom" ? drawCConnectors : activeTab === "oct" ? drawOConnectors : null;
   if (fn) rz = setTimeout(fn, 120);
 });
 window.addEventListener("load", drawConnectors);
@@ -1592,6 +2038,9 @@ renderElim();
 renderSim();
 renderWc30Legend();
 simulateWc30();
+renderGroups();
+renderOctPicker();
+renderOct();
 </script>
 </body>
 </html>
