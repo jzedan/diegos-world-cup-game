@@ -34,7 +34,7 @@
   /* ---- bracket ---- */
   .bracket-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
   .bracket { position: relative; display: flex; align-items: stretch; min-width: 950px; }
-  #connectors, #fconnectors, #oconnectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
+  #connectors, #fconnectors, #cconnectors, #oconnectors, #qconnectors, #pconnectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
   .round { flex: 1 1 0; display: flex; flex-direction: column; padding: 0 16px; }
   .cell { flex: 1 1 0; min-height: 158px; display: flex; align-items: center; justify-content: center; }
   .bracket-card { position: relative; z-index: 10; width: 100%; }
@@ -45,6 +45,10 @@
   /* every round shows a date/venue footer now, so cards need more height than a bare 2-button card */
   .fbracket .cell { min-height: 172px; }
   .fbracket .round { padding: 0 10px; }
+
+  /* ---- Catar 2022 brackets (date/venue footer on every card) ---- */
+  .qbracket .cell { min-height: 200px; }
+  .qbracket .round { padding: 0 10px; }
 
   /* ---- octavos bracket (3-letter code + big flag, side by side) ---- */
   .obracket .cell { min-height: 228px; }
@@ -110,6 +114,9 @@
     </button>
     <button id="tabbtn-oct" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       🥅 Elige tus Octavos
+    </button>
+    <button id="tabbtn-q22" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      🕌 Mundial Catar 2022
     </button>
   </div>
 
@@ -511,6 +518,159 @@
 
 </div><!-- /tab-oct -->
 
+<div id="tab-q22" class="hidden">
+
+<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-rose-300/80">Historia · el Mundial pasado</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Mundial Catar 2022 🕌</h2>
+    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
+      El Mundial que ganó <b class="text-yellow-300">Argentina</b> con Messi, en el desierto de Catar.
+      Jugaron <b class="text-emerald-300">32 equipos</b> en 8 grupos. Mira
+      <b>todo lo que pasó de verdad</b>… o quédate con los <b>16 que pasaron</b> y
+      <b class="text-yellow-300">juega tú las eliminatorias</b>. 👇
+    </p>
+  </div>
+  <div class="flex items-center justify-center gap-2 flex-wrap mt-4">
+    <button id="q22btn-real" class="tab-btn active text-sm px-4 py-2 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      📖 Lo que pasó de verdad
+    </button>
+    <button id="q22btn-play" class="tab-btn text-sm px-4 py-2 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      🎮 Juega las eliminatorias
+    </button>
+  </div>
+</section>
+
+<!-- ---------- sub-mode 1: the real 2022 World Cup ---------- -->
+<div id="q22-real">
+
+<section class="max-w-3xl mx-auto px-4 pt-2 pb-2">
+  <div id="qchamp-banner" class="glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
+    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Campeón del Mundo 2022</div>
+    <div class="text-7xl mt-2">🏆</div>
+    <div id="qchamp-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
+    <div class="text-slate-300 mt-2">Ganó la final 4–2 en penales contra Francia. ¡El Mundial de Messi! ⭐</div>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 pt-6 pb-4">
+  <div class="text-center mb-4">
+    <div class="text-xs uppercase tracking-[0.3em] text-emerald-300/80">Paso 1</div>
+    <h3 class="text-xl sm:text-2xl font-black text-white mt-1">La fase de grupos 📋</h3>
+    <p class="text-sm text-slate-300 mt-2 max-w-2xl mx-auto">
+      8 grupos de 4 equipos. Cada equipo jugó <b>3 partidos</b> y los
+      <b class="text-emerald-300">2 mejores de cada grupo</b> pasaron a los Octavos de final.
+    </p>
+    <p class="text-[11px] text-slate-500 mt-2">
+      Orden de la tabla: puntos, luego diferencia de goles, luego goles a favor.
+      PJ = partidos jugados · G = ganados · E = empatados · P = perdidos · GF = goles a favor · GC = goles en contra.
+    </p>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" id="q22-groups"></div>
+</section>
+
+<main class="max-w-7xl mx-auto px-2 sm:px-4 pb-6">
+  <div class="text-center mb-4">
+    <div class="text-xs uppercase tracking-[0.3em] text-emerald-300/80">Paso 2</div>
+    <h3 class="text-xl sm:text-2xl font-black text-white mt-1">Las eliminatorias 🔥</h3>
+    <p class="text-sm text-slate-300 mt-2 max-w-2xl mx-auto">
+      Aquí ya no hay empates: el que pierde se va a casa. Así fue el camino de verdad
+      hasta la final de Lusail.
+    </p>
+  </div>
+  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
+  <div class="bracket-scroll">
+    <div class="head-row max-w-7xl mx-auto" style="min-width:1000px">
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">16 equipos</div></div>
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">quedan 8</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">quedan 4</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">¡el campeón!</div></div>
+    </div>
+    <div id="qbracket" class="bracket qbracket max-w-7xl mx-auto" style="min-width:1000px">
+      <svg id="qconnectors"></svg>
+      <div class="round" id="qround-r16"></div>
+      <div class="round" id="qround-qf"></div>
+      <div class="round" id="qround-sf"></div>
+      <div class="round" id="qround-final"></div>
+    </div>
+  </div>
+</main>
+
+<section class="max-w-sm mx-auto px-4 pt-2 pb-10">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-amber-300/80">Extra</div>
+    <h3 class="text-xl font-black text-amber-300 mt-1">🥉 Partido por el 3.º lugar</h3>
+    <p class="text-xs text-slate-400 mt-1">Lo jugaron los dos equipos que <b class="text-slate-200">perdieron</b> las semifinales.</p>
+  </div>
+  <div id="qround-third"></div>
+</section>
+
+</div><!-- /q22-real -->
+
+<!-- ---------- sub-mode 2: Diego plays the knockout rounds ---------- -->
+<div id="q22-play" class="hidden">
+
+<section class="max-w-3xl mx-auto px-4 pt-2 pb-2">
+  <div id="pchamp-banner" class="hidden glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
+    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Tu campeón de Catar 2022</div>
+    <div class="text-7xl mt-2">🏆</div>
+    <div id="pchamp-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
+    <div class="text-slate-300 mt-2">¡Este equipo ganó tu Mundial de Catar! 🎉</div>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 pt-4 pb-2">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-emerald-300/80">Los 16 que pasaron</div>
+    <h3 class="text-xl sm:text-2xl font-black text-white mt-1">Estos son los clasificados ✅</h3>
+    <p class="text-sm text-slate-300 mt-2 max-w-2xl mx-auto">
+      Los <b class="text-emerald-300">2 mejores de cada grupo</b>, tal como pasó de verdad.
+      La fase de grupos no se cambia — de aquí en adelante <b class="text-yellow-300">tú decides</b>.
+    </p>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2" id="q22-qualified"></div>
+</section>
+
+<main class="max-w-7xl mx-auto px-2 sm:px-4 pb-6">
+  <div class="text-center mt-6 mb-4">
+    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego</div>
+    <h3 class="text-xl sm:text-2xl font-black text-white mt-1">Toca quién gana 👆</h3>
+    <p class="text-sm text-slate-300 mt-2 max-w-2xl mx-auto">
+      Los Octavos están con los partidos <b>reales</b> de Catar 2022, pero el ganador lo eliges tú.
+      Toca un equipo <b>otra vez</b> para borrar tu elección.
+    </p>
+  </div>
+  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
+  <div class="bracket-scroll">
+    <div class="head-row max-w-7xl mx-auto" style="min-width:1000px">
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">los 16 reales</div></div>
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">quedan 8</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">quedan 4</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">¡tu campeón!</div></div>
+    </div>
+    <div id="pbracket" class="bracket qbracket max-w-7xl mx-auto" style="min-width:1000px">
+      <svg id="pconnectors"></svg>
+      <div class="round" id="pround-r16"></div>
+      <div class="round" id="pround-qf"></div>
+      <div class="round" id="pround-sf"></div>
+      <div class="round" id="pround-final"></div>
+    </div>
+  </div>
+</main>
+
+<section class="max-w-sm mx-auto px-4 pt-2 pb-10">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-amber-300/80">Extra</div>
+    <h3 class="text-xl font-black text-amber-300 mt-1">🥉 Partido por el 3.º lugar</h3>
+    <p class="text-xs text-slate-400 mt-1">Lo juegan los dos equipos que <b class="text-slate-200">pierden</b> tus semifinales.</p>
+  </div>
+  <div id="pround-third"></div>
+</section>
+
+</div><!-- /q22-play -->
+
+</div><!-- /tab-q22 -->
+
 <footer class="max-w-5xl mx-auto px-4 pb-10 text-center text-xs text-slate-500 leading-relaxed">
   Hecho con cariño para Diego · Mundial 2026 (USA · México · Canadá).<br/>
   Resultados reales de todos los partidos ya jugados (fuente: Wikipedia). Los partidos que faltan los eliges tú. Todos los horarios en hora de Mérida / centro de México (UTC−6).
@@ -522,6 +682,8 @@
 const FLAGS = {
   /* CONCACAF (Eliminatorias 2030 tab) */
   "El Salvador":"sv","Costa Rica":"cr","Honduras":"hn","Jamaica":"jm","Guatemala":"gt","Trinidad y Tobago":"tt","Surinam":"sr",
+  /* extra nations for the Mundial Catar 2022 tab */
+  "Gales":"gb-wls","Polonia":"pl","Dinamarca":"dk","Serbia":"rs","Camerún":"cm",
   /* extra nations for the Mundial 2030 pool */
   "Italia":"it","Nigeria":"ng","Chile":"cl","Perú":"pe",
   "México":"mx","Corea del Sur":"kr","Rep. Checa":"cz","Sudáfrica":"za",
@@ -1942,6 +2104,464 @@ function renderGroups() {
   }
 }
 
+/* ---------------- MUNDIAL CATAR 2022 (tab 8) ---------------- */
+/* Two sub-modes inside one tab:
+   · "Lo que pasó de verdad" — the whole 2022 tournament locked to real results:
+     8 groups (every match + a standings table computed from those results) and
+     the full knockout bracket through the final.
+   · "Juega las eliminatorias" — the 16 teams that really qualified are fixed in
+     their real Round-of-16 pairings, and Diego picks every winner from there on.
+   All data from Wikipedia (the 8 "2022 FIFA World Cup Group X" articles and
+   "2022 FIFA World Cup knockout stage"). Kickoff times are the real Qatar local
+   times (UTC+3); hora MX (UTC−6) is shown next to them = Catar − 9 h. */
+
+/* the 8 stadiums: key -> [name, city] */
+const Q22V = {
+  bayt:    ["Estadio Al Bayt", "Al Khor"],
+  thumama: ["Estadio Al Thumama", "Doha"],
+  khalifa: ["Estadio Internacional Khalifa", "Al Rayyan"],
+  ahmad:   ["Estadio Ahmad bin Ali", "Al Rayyan"],
+  educ:    ["Estadio Ciudad de la Educación", "Al Rayyan"],
+  s974:    ["Estadio 974", "Doha"],
+  janoub:  ["Estadio Al Janoub", "Al Wakrah"],
+  lusail:  ["Estadio de Lusail", "Lusail"]
+};
+const Q22_DAYS = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+const Q22_MON = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+/* "2022-11-20" -> "Domingo 20 nov" (midday avoids any timezone day-shift) */
+const q22date = (iso) => {
+  const d = new Date(iso + "T12:00:00");
+  return `${Q22_DAYS[d.getDay()]} ${d.getDate()} ${Q22_MON[d.getMonth()]}`;
+};
+/* Qatar local time -> hora MX (every kickoff was 13:00 or later, so no day rolls back) */
+const q22mx = (t) => {
+  const [h, m] = t.split(":").map(Number);
+  return String(h - 9).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+};
+/* the date / time / stadium line shared by every 2022 card */
+const q22Footer = (m) => {
+  const [venue, city] = Q22V[m.v];
+  return `<div class="mt-1.5 pt-1.5 border-t border-white/10 text-[11px] leading-snug">
+      <div class="text-slate-300">📅 ${q22date(m.date)} · 🕒 ${m.time} Catar / ${q22mx(m.time)} MX</div>
+      <div class="text-yellow-200/90 font-medium">🏟️ ${venue}</div>
+      <div class="text-slate-400">📍 ${city}</div>
+    </div>`;
+};
+
+/* ---- group stage: 32 teams, 8 groups, all 48 matches with real results ---- */
+const Q22_GROUPS = [
+  { g:"A", teams:["Catar","Ecuador","Senegal","Países Bajos"], matches:[
+    { a:"Catar",         b:"Ecuador",        score:"0–2", date:"2022-11-20", time:"19:00", v:"bayt" },
+    { a:"Senegal",       b:"Países Bajos",   score:"0–2", date:"2022-11-21", time:"19:00", v:"thumama" },
+    { a:"Catar",         b:"Senegal",        score:"1–3", date:"2022-11-25", time:"16:00", v:"thumama" },
+    { a:"Países Bajos",  b:"Ecuador",        score:"1–1", date:"2022-11-25", time:"19:00", v:"khalifa" },
+    { a:"Ecuador",       b:"Senegal",        score:"1–2", date:"2022-11-29", time:"18:00", v:"khalifa" },
+    { a:"Países Bajos",  b:"Catar",          score:"2–0", date:"2022-11-29", time:"18:00", v:"bayt" }
+  ]},
+  { g:"B", teams:["Inglaterra","Irán","Estados Unidos","Gales"], matches:[
+    { a:"Inglaterra",     b:"Irán",           score:"6–2", date:"2022-11-21", time:"16:00", v:"khalifa" },
+    { a:"Estados Unidos", b:"Gales",          score:"1–1", date:"2022-11-21", time:"22:00", v:"ahmad" },
+    { a:"Gales",          b:"Irán",           score:"0–2", date:"2022-11-25", time:"13:00", v:"ahmad" },
+    { a:"Inglaterra",     b:"Estados Unidos", score:"0–0", date:"2022-11-25", time:"22:00", v:"bayt" },
+    { a:"Gales",          b:"Inglaterra",     score:"0–3", date:"2022-11-29", time:"22:00", v:"ahmad" },
+    { a:"Irán",           b:"Estados Unidos", score:"0–1", date:"2022-11-29", time:"22:00", v:"thumama" }
+  ]},
+  { g:"C", teams:["Argentina","Arabia Saudita","México","Polonia"], matches:[
+    { a:"Argentina",      b:"Arabia Saudita", score:"1–2", date:"2022-11-22", time:"13:00", v:"lusail" },
+    { a:"México",         b:"Polonia",        score:"0–0", date:"2022-11-22", time:"19:00", v:"s974" },
+    { a:"Polonia",        b:"Arabia Saudita", score:"2–0", date:"2022-11-26", time:"16:00", v:"educ" },
+    { a:"Argentina",      b:"México",         score:"2–0", date:"2022-11-26", time:"22:00", v:"lusail" },
+    { a:"Polonia",        b:"Argentina",      score:"0–2", date:"2022-11-30", time:"22:00", v:"s974" },
+    { a:"Arabia Saudita", b:"México",         score:"1–2", date:"2022-11-30", time:"22:00", v:"lusail" }
+  ]},
+  { g:"D", teams:["Francia","Australia","Túnez","Dinamarca"], matches:[
+    { a:"Dinamarca", b:"Túnez",      score:"0–0", date:"2022-11-22", time:"16:00", v:"educ" },
+    { a:"Francia",   b:"Australia",  score:"4–1", date:"2022-11-22", time:"22:00", v:"janoub" },
+    { a:"Túnez",     b:"Australia",  score:"0–1", date:"2022-11-26", time:"13:00", v:"janoub" },
+    { a:"Francia",   b:"Dinamarca",  score:"2–1", date:"2022-11-26", time:"19:00", v:"s974" },
+    { a:"Australia", b:"Dinamarca",  score:"1–0", date:"2022-11-30", time:"18:00", v:"janoub" },
+    { a:"Túnez",     b:"Francia",    score:"1–0", date:"2022-11-30", time:"18:00", v:"educ" }
+  ]},
+  { g:"E", teams:["Japón","España","Alemania","Costa Rica"], matches:[
+    { a:"Alemania",   b:"Japón",      score:"1–2", date:"2022-11-23", time:"16:00", v:"khalifa" },
+    { a:"España",     b:"Costa Rica", score:"7–0", date:"2022-11-23", time:"19:00", v:"thumama" },
+    { a:"Japón",      b:"Costa Rica", score:"0–1", date:"2022-11-27", time:"13:00", v:"ahmad" },
+    { a:"España",     b:"Alemania",   score:"1–1", date:"2022-11-27", time:"22:00", v:"bayt" },
+    { a:"Japón",      b:"España",     score:"2–1", date:"2022-12-01", time:"22:00", v:"khalifa" },
+    { a:"Costa Rica", b:"Alemania",   score:"2–4", date:"2022-12-01", time:"22:00", v:"bayt" }
+  ]},
+  { g:"F", teams:["Marruecos","Croacia","Bélgica","Canadá"], matches:[
+    { a:"Marruecos", b:"Croacia",   score:"0–0", date:"2022-11-23", time:"13:00", v:"bayt" },
+    { a:"Bélgica",   b:"Canadá",    score:"1–0", date:"2022-11-23", time:"22:00", v:"ahmad" },
+    { a:"Bélgica",   b:"Marruecos", score:"0–2", date:"2022-11-27", time:"16:00", v:"thumama" },
+    { a:"Croacia",   b:"Canadá",    score:"4–1", date:"2022-11-27", time:"19:00", v:"khalifa" },
+    { a:"Croacia",   b:"Bélgica",   score:"0–0", date:"2022-12-01", time:"18:00", v:"ahmad" },
+    { a:"Canadá",    b:"Marruecos", score:"1–2", date:"2022-12-01", time:"18:00", v:"thumama" }
+  ]},
+  { g:"G", teams:["Brasil","Suiza","Camerún","Serbia"], matches:[
+    { a:"Suiza",    b:"Camerún", score:"1–0", date:"2022-11-24", time:"13:00", v:"janoub" },
+    { a:"Brasil",   b:"Serbia",  score:"2–0", date:"2022-11-24", time:"22:00", v:"lusail" },
+    { a:"Camerún",  b:"Serbia",  score:"3–3", date:"2022-11-28", time:"13:00", v:"janoub" },
+    { a:"Brasil",   b:"Suiza",   score:"1–0", date:"2022-11-28", time:"19:00", v:"s974" },
+    { a:"Serbia",   b:"Suiza",   score:"2–3", date:"2022-12-02", time:"22:00", v:"s974" },
+    { a:"Camerún",  b:"Brasil",  score:"1–0", date:"2022-12-02", time:"22:00", v:"lusail" }
+  ]},
+  { g:"H", teams:["Portugal","Corea del Sur","Uruguay","Ghana"], matches:[
+    { a:"Uruguay",       b:"Corea del Sur", score:"0–0", date:"2022-11-24", time:"16:00", v:"educ" },
+    { a:"Portugal",      b:"Ghana",         score:"3–2", date:"2022-11-24", time:"19:00", v:"s974" },
+    { a:"Corea del Sur", b:"Ghana",         score:"2–3", date:"2022-11-28", time:"16:00", v:"educ" },
+    { a:"Portugal",      b:"Uruguay",       score:"2–0", date:"2022-11-28", time:"22:00", v:"lusail" },
+    { a:"Ghana",         b:"Uruguay",       score:"0–2", date:"2022-12-02", time:"18:00", v:"janoub" },
+    { a:"Corea del Sur", b:"Portugal",      score:"2–1", date:"2022-12-02", time:"18:00", v:"educ" }
+  ]}
+];
+
+/* standings straight from the results: points, then goal difference, then goals
+   scored — the real FIFA order, which reproduces every 2022 group exactly
+   (Poland over Mexico on GD, South Korea over Uruguay on goals scored) */
+function q22Standings(gr) {
+  const rows = {};
+  gr.teams.forEach(n => rows[n] = { name:n, pj:0, g:0, e:0, p:0, gf:0, gc:0 });
+  gr.matches.forEach(m => {
+    const [ga, gb] = m.score.split("–").map(Number);
+    const A = rows[m.a], B = rows[m.b];
+    A.pj++; B.pj++;
+    A.gf += ga; A.gc += gb; B.gf += gb; B.gc += ga;
+    if (ga > gb) { A.g++; B.p++; }
+    else if (gb > ga) { B.g++; A.p++; }
+    else { A.e++; B.e++; }
+  });
+  return Object.values(rows)
+    .map(r => ({ ...r, pts: r.g * 3 + r.e, dg: r.gf - r.gc }))
+    .sort((x, y) => y.pts - x.pts || y.dg - x.dg || y.gf - x.gf);
+}
+
+function q22GroupRow(m) {
+  const [ga, gb] = m.score.split("–").map(Number);
+  const [venue, city] = Q22V[m.v];
+  const nameCls = (mine, other) => mine > other ? "text-emerald-200 font-semibold" : "text-slate-400";
+  return `<div class="rounded-lg bg-slate-800/40 border border-slate-700/60 px-2 py-1.5">
+    <div class="flex items-center justify-between gap-2 text-[11px]">
+      <div class="flex-1 flex items-center justify-end gap-1.5 text-right">
+        <span class="${nameCls(ga, gb)}">${m.a}</span>${flag(m.a, 20)}
+      </div>
+      <div class="px-2 py-0.5 rounded bg-slate-900/70 font-black text-slate-100 text-xs whitespace-nowrap">${m.score}</div>
+      <div class="flex-1 flex items-center gap-1.5">
+        ${flag(m.b, 20)}<span class="${nameCls(gb, ga)}">${m.b}</span>
+      </div>
+    </div>
+    <div class="text-[10px] text-slate-500 text-center mt-1">
+      📅 ${q22date(m.date)} · 🕒 ${m.time} Catar / ${q22mx(m.time)} MX · 🏟️ ${venue} · 📍 ${city}
+    </div>
+  </div>`;
+}
+
+function renderQ22Groups() {
+  const el = document.getElementById("q22-groups");
+  el.innerHTML = "";
+  Q22_GROUPS.forEach(gr => {
+    const st = q22Standings(gr);
+    const card = document.createElement("div");
+    card.className = "glass rounded-2xl p-4";
+    card.innerHTML = `
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-full bg-rose-500/15 border border-rose-400/30 flex items-center justify-center text-rose-300 font-black">${gr.g}</div>
+        <div class="text-xs uppercase tracking-widest text-slate-400">Grupo ${gr.g}</div>
+      </div>
+      <table class="w-full text-[11px] mb-3">
+        <thead><tr class="text-slate-500 text-[10px]">
+          <th class="text-left font-medium pb-1">Equipo</th>
+          <th class="font-medium pb-1 w-6">PJ</th><th class="font-medium pb-1 w-5">G</th>
+          <th class="font-medium pb-1 w-5">E</th><th class="font-medium pb-1 w-5">P</th>
+          <th class="font-medium pb-1 w-7">GF</th><th class="font-medium pb-1 w-7">GC</th>
+          <th class="font-medium pb-1 w-8">Pts</th><th class="pb-1 w-5"></th>
+        </tr></thead>
+        <tbody>
+          ${st.map((r, i) => {
+            const adv = i < 2;
+            return `<tr class="${adv ? "bg-emerald-500/10" : "opacity-45"}">
+              <td class="py-1 pl-1 rounded-l-md">
+                <span class="inline-flex items-center gap-1.5">${flag(r.name, 20)}<span class="${adv ? "text-slate-100 font-semibold" : "text-slate-400"}">${r.name}</span></span>
+              </td>
+              <td class="text-center">${r.pj}</td><td class="text-center">${r.g}</td>
+              <td class="text-center">${r.e}</td><td class="text-center">${r.p}</td>
+              <td class="text-center">${r.gf}</td><td class="text-center">${r.gc}</td>
+              <td class="text-center font-black ${adv ? "text-emerald-300" : "text-slate-400"}">${r.pts}</td>
+              <td class="text-center rounded-r-md">${adv ? "✅" : "❌"}</td>
+            </tr>`;
+          }).join("")}
+        </tbody>
+      </table>
+      <div class="space-y-1.5">${gr.matches.map(q22GroupRow).join("")}</div>`;
+    el.appendChild(card);
+  });
+}
+
+/* ---- the real knockout bracket, every match locked ----
+   Order of the Round of 16 column is the real bracket order, so the connector
+   lines never cross: q1+q2 -> q9, q3+q4 -> q10, q5+q6 -> q11, q7+q8 -> q12.
+   Scores read left-to-right as the card shows them (team a first). */
+const Q22KO = {
+  r16: [
+    { id:"q1", a:"Países Bajos", b:"Estados Unidos", score:"3–1",             winner:"Países Bajos", date:"2022-12-03", time:"18:00", v:"khalifa" },
+    { id:"q2", a:"Argentina",    b:"Australia",      score:"2–1",             winner:"Argentina",    date:"2022-12-03", time:"22:00", v:"ahmad" },
+    { id:"q3", a:"Japón",        b:"Croacia",        score:"1–1 (1–3 pen)",   winner:"Croacia",      date:"2022-12-05", time:"18:00", v:"janoub" },
+    { id:"q4", a:"Brasil",       b:"Corea del Sur",  score:"4–1",             winner:"Brasil",       date:"2022-12-05", time:"22:00", v:"s974" },
+    { id:"q5", a:"Marruecos",    b:"España",         score:"0–0 (3–0 pen)",   winner:"Marruecos",    date:"2022-12-06", time:"18:00", v:"educ" },
+    { id:"q6", a:"Portugal",     b:"Suiza",          score:"6–1",             winner:"Portugal",     date:"2022-12-06", time:"22:00", v:"lusail" },
+    { id:"q7", a:"Francia",      b:"Polonia",        score:"3–1",             winner:"Francia",      date:"2022-12-04", time:"18:00", v:"thumama" },
+    { id:"q8", a:"Inglaterra",   b:"Senegal",        score:"3–0",             winner:"Inglaterra",   date:"2022-12-04", time:"22:00", v:"bayt" }
+  ],
+  qf: [
+    { id:"q9",  from:["q1","q2"], score:"2–2 (3–4 pen)", winner:"Argentina", date:"2022-12-09", time:"22:00", v:"lusail" },
+    { id:"q10", from:["q3","q4"], score:"1–1 (4–2 pen)", winner:"Croacia",   date:"2022-12-09", time:"18:00", v:"educ" },
+    { id:"q11", from:["q5","q6"], score:"1–0",           winner:"Marruecos", date:"2022-12-10", time:"18:00", v:"thumama" },
+    { id:"q12", from:["q7","q8"], score:"2–1",           winner:"Francia",   date:"2022-12-10", time:"22:00", v:"bayt" }
+  ],
+  sf: [
+    { id:"q13", from:["q9","q10"],  score:"3–0", winner:"Argentina", date:"2022-12-13", time:"22:00", v:"lusail" },
+    { id:"q14", from:["q11","q12"], score:"0–2", winner:"Francia",   date:"2022-12-14", time:"22:00", v:"bayt" }
+  ],
+  final: { id:"q15", from:["q13","q14"],       score:"3–3 (4–2 pen)", winner:"Argentina", date:"2022-12-18", time:"18:00", v:"lusail" },
+  third: { id:"q16", fromLosers:["q13","q14"], score:"2–1",           winner:"Croacia",   date:"2022-12-17", time:"18:00", v:"khalifa" }
+};
+const QALL = [...Q22KO.r16, ...Q22KO.qf, ...Q22KO.sf, Q22KO.final, Q22KO.third];
+const QLABEL = {};
+Q22KO.r16.forEach((m, i) => QLABEL[m.id] = "Octavo " + (i + 1));
+Q22KO.qf.forEach((m, i) => QLABEL[m.id] = "Cuarto " + (i + 1));
+Q22KO.sf.forEach((m, i) => QLABEL[m.id] = "Semifinal " + (i + 1));
+QLABEL["q15"] = "Final";
+QLABEL["q16"] = "3.º lugar";
+
+/* every 2022 match was played, so the winner is always known */
+const qWinnerOf = (id) => { const m = QALL.find(x => x.id === id); return m ? m.winner : null; };
+function qLoserOf(id) {
+  const m = QALL.find(x => x.id === id);
+  if (!m) return null;
+  const t = qTeamsOf(m);
+  return m.winner === t.a ? t.b : t.a;
+}
+function qTeamsOf(m) {
+  if (m.fromLosers) return { a: qLoserOf(m.fromLosers[0]), b: qLoserOf(m.fromLosers[1]) };
+  if (m.from) return { a: qWinnerOf(m.from[0]), b: qWinnerOf(m.from[1]) };
+  return { a: m.a, b: m.b };
+}
+function qMatchCard(m) {
+  const t = qTeamsOf(m);
+  const row = (name) => `<div class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/60 border border-slate-700 ${m.winner === name ? "win" : "lose"}" style="cursor:default">
+      <span class="flag">${flag(name, 26)}</span>
+      <span class="flex-1 text-left text-sm font-semibold truncate">${name}</span>
+      <span class="text-base w-4">${m.winner === name ? "🏅" : ""}</span>
+    </div>`;
+  const wrap = document.createElement("article");
+  wrap.id = "card-" + m.id;
+  wrap.className = "bracket-card glass rounded-xl p-2 border-emerald-500/25";
+  wrap.innerHTML = `
+    <div class="flex items-center justify-between mb-1.5 text-[10px]">
+      <span class="uppercase tracking-widest text-slate-500">${QLABEL[m.id]}</span>
+      <span class="text-emerald-300 font-bold">✅ Final ${m.score}</span>
+    </div>
+    <div class="space-y-1.5">${row(t.a)}${row(t.b)}</div>
+    ${q22Footer(m)}`;
+  return wrap;
+}
+const QPAIRS = [];
+[...Q22KO.qf, ...Q22KO.sf, Q22KO.final].forEach(m => { QPAIRS.push([m.from[0], m.id], [m.from[1], m.id]); });
+function drawQConnectors() { drawLines("qbracket", "qconnectors", QPAIRS, qWinnerOf); }
+
+function renderQ22Real() {
+  const fill = (elId, list, isFinal) => {
+    const el = document.getElementById(elId);
+    el.innerHTML = "";
+    list.forEach(m => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      const inner = document.createElement("div");
+      inner.style.width = "100%";
+      if (isFinal) inner.innerHTML = `<div class="text-center text-3xl mb-1">🏆</div>`;
+      inner.appendChild(qMatchCard(m));
+      cell.appendChild(inner);
+      el.appendChild(cell);
+    });
+  };
+  fill("qround-r16", Q22KO.r16, false);
+  fill("qround-qf", Q22KO.qf, false);
+  fill("qround-sf", Q22KO.sf, false);
+  fill("qround-final", [Q22KO.final], true);
+  const thirdEl = document.getElementById("qround-third");
+  thirdEl.innerHTML = "";
+  thirdEl.appendChild(qMatchCard(Q22KO.third));
+  requestAnimationFrame(drawQConnectors);
+  /* the champion is history, not a pick — show the banner, but no confetti on load */
+  document.getElementById("qchamp-name").innerHTML = flag(Q22KO.final.winner, 42) + " " + Q22KO.final.winner;
+}
+
+/* ---- play mode: the real 16 qualifiers, Diego picks every winner ----
+   Each slot keeps the real date / time / stadium of that bracket position
+   (reused 1:1 from Q22KO: p1..p8 = q1..q8, p9..p12 = q9..q12, …). */
+const QP16 = Q22KO.r16.map((m, i) => ({ id:"p" + (i + 1), a:m.a, b:m.b, date:m.date, time:m.time, v:m.v }));
+const QPQF = [
+  { id:"p9",  from:["p1","p2"] },
+  { id:"p10", from:["p3","p4"] },
+  { id:"p11", from:["p5","p6"] },
+  { id:"p12", from:["p7","p8"] }
+].map((m, i) => ({ ...m, date:Q22KO.qf[i].date, time:Q22KO.qf[i].time, v:Q22KO.qf[i].v }));
+const QPSF = [
+  { id:"p13", from:["p9","p10"] },
+  { id:"p14", from:["p11","p12"] }
+].map((m, i) => ({ ...m, date:Q22KO.sf[i].date, time:Q22KO.sf[i].time, v:Q22KO.sf[i].v }));
+const QPFINAL = { id:"p15", from:["p13","p14"], date:Q22KO.final.date, time:Q22KO.final.time, v:Q22KO.final.v };
+const QPTHIRD = { id:"p16", fromLosers:["p13","p14"], date:Q22KO.third.date, time:Q22KO.third.time, v:Q22KO.third.v };
+const QPALL = [...QP16, ...QPQF, ...QPSF, QPFINAL, QPTHIRD];
+const QPLABEL = {};
+QP16.forEach((m, i) => QPLABEL[m.id] = "Octavo " + (i + 1));
+QPQF.forEach((m, i) => QPLABEL[m.id] = "Cuarto " + (i + 1));
+QPSF.forEach((m, i) => QPLABEL[m.id] = "Semifinal " + (i + 1));
+QPLABEL["p15"] = "Final";
+QPLABEL["p16"] = "3.º lugar";
+const QPPAIRS = [];
+[...QPQF, ...QPSF, QPFINAL].forEach(m => { QPPAIRS.push([m.from[0], m.id], [m.from[1], m.id]); });
+
+const QPKEY = "diegosWorldCup.qatar2022.picks.v1";
+let ppicks = {};
+try { ppicks = JSON.parse(localStorage.getItem(QPKEY) || "{}"); } catch(e) { ppicks = {}; }
+const psave = () => localStorage.setItem(QPKEY, JSON.stringify(ppicks));
+
+const pWinnerOf = (id) => ppicks[id] || null;
+function pLoserOf(id) {
+  const w = pWinnerOf(id);
+  if (!w) return null;
+  const t = pTeamsOf(QPALL.find(x => x.id === id));
+  if (!t.a || !t.b) return null;
+  return w === t.a ? t.b : t.a;
+}
+function pTeamsOf(m) {
+  if (m.fromLosers) return { a: pLoserOf(m.fromLosers[0]), b: pLoserOf(m.fromLosers[1]) };
+  if (m.from) return { a: pWinnerOf(m.from[0]), b: pWinnerOf(m.from[1]) };
+  return { a: m.a, b: m.b };
+}
+function pValidate() {
+  let changed = true;
+  while (changed) {
+    changed = false;
+    QPALL.forEach(m => {
+      if (ppicks[m.id]) {
+        const t = pTeamsOf(m);
+        if (ppicks[m.id] !== t.a && ppicks[m.id] !== t.b) { delete ppicks[m.id]; changed = true; }
+      }
+    });
+  }
+}
+function pMatchCard(m) {
+  const t = pTeamsOf(m);
+  const chosen = ppicks[m.id] || null;
+  const btn = (name, side) => {
+    if (!name) {
+      const ph = m.fromLosers
+        ? "Perdedor de " + QPLABEL[side === "a" ? m.fromLosers[0] : m.fromLosers[1]]
+        : "Ganador de " + QPLABEL[side === "a" ? m.from[0] : m.from[1]];
+      return `<button disabled class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/40 border border-slate-700 text-slate-500">
+        <span class="flag" style="font-size:1.25rem">❓</span>
+        <span class="flex-1 text-left text-xs">${ph}</span>
+      </button>`;
+    }
+    const cls = chosen ? (chosen === name ? "win" : "lose") : "";
+    return `<button data-pmatch="${m.id}" data-team="${name}"
+        class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 ${cls}">
+        <span class="flag">${flag(name, 26)}</span>
+        <span class="flex-1 text-left text-sm font-semibold truncate">${name}</span>
+        <span class="text-base w-4">${chosen === name ? "🏅" : ""}</span>
+      </button>`;
+  };
+  const wrap = document.createElement("article");
+  wrap.id = "card-" + m.id;
+  wrap.className = "bracket-card glass rounded-xl p-2";
+  wrap.innerHTML = `
+    <div class="flex items-center justify-between mb-1.5 text-[10px]">
+      <span class="uppercase tracking-widest text-slate-500">${QPLABEL[m.id]}</span>
+      <span class="text-yellow-300/90 font-medium">🕒 ${m.time} Catar</span>
+    </div>
+    <div class="space-y-1.5">${btn(t.a, "a")}${btn(t.b, "b")}</div>
+    ${q22Footer(m)}`;
+  return wrap;
+}
+function drawPConnectors() { drawLines("pbracket", "pconnectors", QPPAIRS, pWinnerOf); }
+
+/* the 16 that really qualified, shown as a strip above the play bracket */
+function renderQ22Qualified() {
+  const el = document.getElementById("q22-qualified");
+  el.innerHTML = "";
+  Q22_GROUPS.forEach(gr => {
+    const st = q22Standings(gr);
+    const card = document.createElement("div");
+    card.className = "glass rounded-xl p-2.5";
+    card.innerHTML = `
+      <div class="text-[10px] uppercase tracking-widest text-slate-500 text-center mb-1.5">Grupo ${gr.g}</div>
+      ${st.slice(0, 2).map((r, i) => `
+        <div class="flex items-center gap-1.5 text-[11px] rounded px-1 py-1 bg-emerald-500/10">
+          <span class="text-slate-500 font-black w-3">${i + 1}</span>
+          ${flag(r.name, 20)}
+          <span class="flex-1 text-slate-100 font-medium truncate" title="${r.name}">${r.name}</span>
+        </div>`).join("")}`;
+    el.appendChild(card);
+  });
+}
+
+let pConfettiOn = false;
+function renderQ22Play() {
+  pValidate();
+  const fill = (elId, list, isFinal) => {
+    const el = document.getElementById(elId);
+    el.innerHTML = "";
+    list.forEach(m => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      const inner = document.createElement("div");
+      inner.style.width = "100%";
+      if (isFinal) inner.innerHTML = `<div class="text-center text-3xl mb-1">🏆</div>`;
+      inner.appendChild(pMatchCard(m));
+      cell.appendChild(inner);
+      el.appendChild(cell);
+    });
+  };
+  fill("pround-r16", QP16, false);
+  fill("pround-qf", QPQF, false);
+  fill("pround-sf", QPSF, false);
+  fill("pround-final", [QPFINAL], true);
+  const thirdEl = document.getElementById("pround-third");
+  thirdEl.innerHTML = "";
+  thirdEl.appendChild(pMatchCard(QPTHIRD));
+  requestAnimationFrame(drawPConnectors);
+
+  const banner = document.getElementById("pchamp-banner");
+  const champ = ppicks["p15"];
+  if (champ) {
+    document.getElementById("pchamp-name").innerHTML = flag(champ, 42) + " " + champ;
+    banner.classList.remove("hidden");
+    banner.classList.add("pop");
+    if (!pConfettiOn) { pConfettiOn = true; celebrate(); }
+  } else {
+    banner.classList.add("hidden");
+    pConfettiOn = false;
+  }
+  psave();
+}
+
+/* ---- the two sub-modes of the 2022 tab ---- */
+let q22Mode = "real";
+function showQ22(mode) {
+  q22Mode = mode;
+  document.getElementById("q22-real").classList.toggle("hidden", mode !== "real");
+  document.getElementById("q22-play").classList.toggle("hidden", mode !== "play");
+  document.getElementById("q22btn-real").classList.toggle("active", mode === "real");
+  document.getElementById("q22btn-play").classList.toggle("active", mode === "play");
+  /* nothing to reset while you are just reading the real results */
+  document.getElementById("reset-all").classList.toggle("hidden", mode === "real");
+  requestAnimationFrame(mode === "real" ? drawQConnectors : drawPConnectors);
+}
+document.getElementById("q22btn-real").addEventListener("click", () => showQ22("real"));
+document.getElementById("q22btn-play").addEventListener("click", () => showQ22("play"));
+
 /* ---------------- TABS ---------------- */
 let activeTab = "real";
 function showTab(name) {
@@ -1953,6 +2573,7 @@ function showTab(name) {
   document.getElementById("tab-wc30").classList.toggle("hidden", name !== "wc30");
   document.getElementById("tab-groups").classList.toggle("hidden", name !== "groups");
   document.getElementById("tab-oct").classList.toggle("hidden", name !== "oct");
+  document.getElementById("tab-q22").classList.toggle("hidden", name !== "q22");
   document.getElementById("tabbtn-real").classList.toggle("active", name === "real");
   document.getElementById("tabbtn-fantasy").classList.toggle("active", name === "fantasy");
   document.getElementById("tabbtn-custom").classList.toggle("active", name === "custom");
@@ -1960,10 +2581,12 @@ function showTab(name) {
   document.getElementById("tabbtn-wc30").classList.toggle("active", name === "wc30");
   document.getElementById("tabbtn-groups").classList.toggle("active", name === "groups");
   document.getElementById("tabbtn-oct").classList.toggle("active", name === "oct");
+  document.getElementById("tabbtn-q22").classList.toggle("active", name === "q22");
   /* the "Empezar de nuevo" button has nothing to reset on the info/sim tabs */
-  document.getElementById("reset-all").classList.toggle("hidden", name === "elim" || name === "wc30");
+  document.getElementById("reset-all").classList.toggle("hidden",
+    name === "elim" || name === "wc30" || (name === "q22" && q22Mode === "real"));
   /* connector lines can only be measured while a bracket is visible (elim tab has none) */
-  const drawFn = name === "real" ? drawConnectors : name === "fantasy" ? drawFConnectors : name === "custom" ? drawCConnectors : name === "oct" ? drawOConnectors : null;
+  const drawFn = name === "real" ? drawConnectors : name === "fantasy" ? drawFConnectors : name === "custom" ? drawCConnectors : name === "oct" ? drawOConnectors : name === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : null;
   if (drawFn) requestAnimationFrame(drawFn);
 }
 document.getElementById("tabbtn-real").addEventListener("click", () => showTab("real"));
@@ -1973,6 +2596,7 @@ document.getElementById("tabbtn-elim").addEventListener("click", () => showTab("
 document.getElementById("tabbtn-wc30").addEventListener("click", () => showTab("wc30"));
 document.getElementById("tabbtn-groups").addEventListener("click", () => showTab("groups"));
 document.getElementById("tabbtn-oct").addEventListener("click", () => showTab("oct"));
+document.getElementById("tabbtn-q22").addEventListener("click", () => showTab("q22"));
 
 /* ---- click handling ---- */
 document.addEventListener("click", (e) => {
@@ -2005,6 +2629,11 @@ document.addEventListener("click", (e) => {
     grpToggle(btn.dataset.grp, team);
   } else if (btn.dataset.grpthird) {
     grpThirdToggle(team);
+  } else if (btn.dataset.pmatch) {
+    const id = btn.dataset.pmatch;
+    if (ppicks[id] === team) { delete ppicks[id]; }
+    else { ppicks[id] = team; }
+    renderQ22Play();
   } else if (btn.dataset.omatch) {
     const id = btn.dataset.omatch;
     if (opicks[id] === team) { delete opicks[id]; }
@@ -2019,13 +2648,14 @@ document.getElementById("reset-all").addEventListener("click", () => {
   else if (activeTab === "custom") { cpicks = {}; renderCustom(); }
   else if (activeTab === "groups") { gStand = {}; gThirds = []; gsave(); renderGroups(); }
   else if (activeTab === "oct") { opicks = {}; renderOct(); }
+  else if (activeTab === "q22") { ppicks = {}; renderQ22Play(); }
   else { picks = {}; render(); }
 });
 
 let rz;
 window.addEventListener("resize", () => {
   clearTimeout(rz);
-  const fn = activeTab === "real" ? drawConnectors : activeTab === "fantasy" ? drawFConnectors : activeTab === "custom" ? drawCConnectors : activeTab === "oct" ? drawOConnectors : null;
+  const fn = activeTab === "real" ? drawConnectors : activeTab === "fantasy" ? drawFConnectors : activeTab === "custom" ? drawCConnectors : activeTab === "oct" ? drawOConnectors : activeTab === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : null;
   if (fn) rz = setTimeout(fn, 120);
 });
 window.addEventListener("load", drawConnectors);
@@ -2041,6 +2671,10 @@ simulateWc30();
 renderGroups();
 renderOctPicker();
 renderOct();
+renderQ22Groups();
+renderQ22Real();
+renderQ22Qualified();
+renderQ22Play();
 </script>
 </body>
 </html>
