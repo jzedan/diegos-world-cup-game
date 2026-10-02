@@ -34,7 +34,7 @@
   /* ---- bracket ---- */
   .bracket-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
   .bracket { position: relative; display: flex; align-items: stretch; min-width: 950px; }
-  #connectors, #fconnectors, #cconnectors, #oconnectors, #qconnectors, #pconnectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
+  #connectors, #fconnectors, #cconnectors, #oconnectors, #qconnectors, #pconnectors, #kconnectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
   .round { flex: 1 1 0; display: flex; flex-direction: column; padding: 0 16px; }
   .cell { flex: 1 1 0; min-height: 158px; display: flex; align-items: center; justify-content: center; }
   .bracket-card { position: relative; z-index: 10; width: 100%; }
@@ -53,6 +53,10 @@
   /* ---- octavos bracket (3-letter code + big flag, side by side) ---- */
   .obracket .cell { min-height: 228px; }
   .obracket .round { padding: 0 10px; }
+
+  /* ---- Catar 2022 octavos bracket (same cards, plus a date/venue footer) ---- */
+  .kbracket .cell { min-height: 262px; }
+  .kbracket .round { padding: 0 10px; }
   .code3 { font-size: 1.05rem; font-weight: 900; letter-spacing: .08em; line-height: 1; }
 
   /* ---- tabs ---- */
@@ -117,6 +121,9 @@
     </button>
     <button id="tabbtn-q22" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       🕌 Mundial Catar 2022
+    </button>
+    <button id="tabbtn-k22" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      🥅 Octavos Catar 2022
     </button>
   </div>
 
@@ -670,6 +677,71 @@
 </div><!-- /q22-play -->
 
 </div><!-- /tab-q22 -->
+
+<div id="tab-k22" class="hidden">
+
+<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego · Catar 2022</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Elige tus Octavos de Catar 2022 🥅</h2>
+    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
+      Empezamos en los <b class="text-emerald-300">Octavos de final</b> de Catar 2022, ya llenos con los
+      <b>16 equipos que de verdad</b> llegaron. Si quieres, <b class="text-yellow-300">quita a un país</b>
+      y pon a <b>cualquiera de los 32</b> que jugaron ese Mundial — hasta los que se quedaron en la
+      fase de grupos, como <b>Alemania</b> o <b>Uruguay</b>. Después tocas quién gana cada partido
+      hasta la Final. 👇
+    </p>
+    <p class="text-xs text-slate-400 mt-2">Cada equipo solo puede estar en un partido. Toca un equipo <b>otra vez</b> para borrar tu elección.</p>
+  </div>
+  <div class="flex items-center justify-center mt-3">
+    <button id="reset-k22-teams" class="text-xs px-4 py-2 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      ↺ Restablecer a los 16 equipos reales
+    </button>
+  </div>
+</section>
+
+<section class="max-w-5xl mx-auto px-4 pt-4 pb-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="k22-picker"></div>
+</section>
+
+<section class="max-w-3xl mx-auto px-4 pt-2 pb-2">
+  <div id="kchamp-banner" class="hidden glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
+    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Tu campeón de Catar 2022</div>
+    <div class="text-7xl mt-2">🏆</div>
+    <div id="kchamp-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
+    <div class="text-slate-300 mt-2">¡Este equipo ganó tu Mundial desde los Octavos! 🎉</div>
+  </div>
+</section>
+
+<main class="max-w-7xl mx-auto px-2 sm:px-4 pb-10">
+  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
+  <div class="bracket-scroll">
+    <div class="head-row max-w-7xl mx-auto" style="min-width:1050px">
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">tus 16 equipos</div></div>
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">quedan 8</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">quedan 4</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">¡tu campeón!</div></div>
+    </div>
+    <div id="kbracket" class="bracket kbracket max-w-7xl mx-auto" style="min-width:1050px">
+      <svg id="kconnectors"></svg>
+      <div class="round" id="kround-r16"></div>
+      <div class="round" id="kround-qf"></div>
+      <div class="round" id="kround-sf"></div>
+      <div class="round" id="kround-final"></div>
+    </div>
+  </div>
+</main>
+
+<section class="max-w-sm mx-auto px-4 pt-2 pb-10">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-amber-300/80">Extra</div>
+    <h3 class="text-xl font-black text-amber-300 mt-1">🥉 Partido por el 3.º lugar</h3>
+    <p class="text-xs text-slate-400 mt-1">Lo juegan los dos equipos que <b class="text-slate-200">pierden</b> tus semifinales.</p>
+  </div>
+  <div id="kround-third"></div>
+</section>
+
+</div><!-- /tab-k22 -->
 
 <footer class="max-w-5xl mx-auto px-4 pb-10 text-center text-xs text-slate-500 leading-relaxed">
   Hecho con cariño para Diego · Mundial 2026 (USA · México · Canadá).<br/>
@@ -2562,6 +2634,214 @@ function showQ22(mode) {
 document.getElementById("q22btn-real").addEventListener("click", () => showQ22("real"));
 document.getElementById("q22btn-play").addEventListener("click", () => showQ22("play"));
 
+/* ---------------- OCTAVOS CATAR 2022: Elige tus Octavos (tab 9) ---------------- */
+/* Same idea as "Elige tus Octavos" for 2026, but for Catar 2022: the 8 octavos
+   come pre-filled with the 16 teams that really got there, and any slot can be
+   swapped for any of the 32 teams that played the tournament (including ones
+   knocked out in the group stage, e.g. Alemania or Uruguay). From there Diego
+   picks every winner up to the final, plus a 3rd-place match. Cards show the
+   3-letter code over a big flag, and keep the real date / time / stadium of
+   that bracket position (reused 1:1 from Q22KO). */
+
+/* the 32 teams of 2022, alphabetical, for the slot dropdowns */
+const Q22_TEAMS = Q22_GROUPS.flatMap(gr => gr.teams.map(name => ({ name, group: gr.g })))
+  .sort((a, b) => a.name.localeCompare(b.name, "es"));
+
+const KDEFAULT = {};
+Q22KO.r16.forEach((m, i) => { KDEFAULT["ks" + (i + 1) + "a"] = m.a; KDEFAULT["ks" + (i + 1) + "b"] = m.b; });
+
+const KTKEY = "diegosWorldCup.qatar2022.oct.teams.v1";
+let kTeams = {};
+try { kTeams = JSON.parse(localStorage.getItem(KTKEY) || "null") || { ...KDEFAULT }; } catch(e) { kTeams = { ...KDEFAULT }; }
+const ktsave = () => localStorage.setItem(KTKEY, JSON.stringify(kTeams));
+
+/* each octavo keeps its real bracket position, so it inherits that match's
+   real date / time / stadium (k1 = q1, k2 = q2, …) */
+const K16 = Q22KO.r16.map((real, i) => ({
+  id: "k" + (i + 1), aSlot: "ks" + (i + 1) + "a", bSlot: "ks" + (i + 1) + "b",
+  date: real.date, time: real.time, v: real.v
+}));
+/* the real 2022 bracket: q1+q2 -> q9, q3+q4 -> q10, q5+q6 -> q11, q7+q8 -> q12 */
+const KQF = [
+  { id:"k9",  from:["k1","k2"] },
+  { id:"k10", from:["k3","k4"] },
+  { id:"k11", from:["k5","k6"] },
+  { id:"k12", from:["k7","k8"] }
+].map((m, i) => ({ ...m, date:Q22KO.qf[i].date, time:Q22KO.qf[i].time, v:Q22KO.qf[i].v }));
+const KSF = [
+  { id:"k13", from:["k9","k10"] },
+  { id:"k14", from:["k11","k12"] }
+].map((m, i) => ({ ...m, date:Q22KO.sf[i].date, time:Q22KO.sf[i].time, v:Q22KO.sf[i].v }));
+const KFINAL = { id:"k15", from:["k13","k14"], date:Q22KO.final.date, time:Q22KO.final.time, v:Q22KO.final.v };
+const KTHIRD = { id:"k16", fromLosers:["k13","k14"], date:Q22KO.third.date, time:Q22KO.third.time, v:Q22KO.third.v };
+const KALL = [...K16, ...KQF, ...KSF, KFINAL, KTHIRD];
+const KLABEL = {};
+K16.forEach((m, i) => KLABEL[m.id] = "Octavo " + (i + 1));
+KQF.forEach((m, i) => KLABEL[m.id] = "Cuarto " + (i + 1));
+KSF.forEach((m, i) => KLABEL[m.id] = "Semifinal " + (i + 1));
+KLABEL["k15"] = "Final";
+KLABEL["k16"] = "3.º lugar";
+const KPAIRS = [];
+[...KQF, ...KSF, KFINAL].forEach(m => { KPAIRS.push([m.from[0], m.id], [m.from[1], m.id]); });
+
+const KPKEY = "diegosWorldCup.qatar2022.oct.picks.v1";
+let kpicks = {};
+try { kpicks = JSON.parse(localStorage.getItem(KPKEY) || "{}"); } catch(e) { kpicks = {}; }
+const ksave = () => localStorage.setItem(KPKEY, JSON.stringify(kpicks));
+
+const kWinnerOf = (id) => kpicks[id] || null;
+function kLoserOf(id) {
+  const w = kWinnerOf(id);
+  if (!w) return null;
+  const t = kTeamsOf(KALL.find(x => x.id === id));
+  if (!t.a || !t.b) return null;
+  return w === t.a ? t.b : t.a;
+}
+function kTeamsOf(m) {
+  if (m.aSlot) return { a: kTeams[m.aSlot] || null, b: kTeams[m.bSlot] || null };
+  if (m.fromLosers) return { a: kLoserOf(m.fromLosers[0]), b: kLoserOf(m.fromLosers[1]) };
+  return { a: kWinnerOf(m.from[0]), b: kWinnerOf(m.from[1]) };
+}
+function kValidate() {
+  let changed = true;
+  while (changed) {
+    changed = false;
+    KALL.forEach(m => {
+      if (kpicks[m.id]) {
+        const t = kTeamsOf(m);
+        if (kpicks[m.id] !== t.a && kpicks[m.id] !== t.b) { delete kpicks[m.id]; changed = true; }
+      }
+    });
+  }
+}
+
+function kMatchCard(m) {
+  const t = kTeamsOf(m);
+  const chosen = kpicks[m.id] || null;
+  const btn = (name, side) => {
+    if (!name) {
+      const ph = m.aSlot
+        ? "Elige un equipo arriba 👆"
+        : m.fromLosers
+          ? "Perdedor de " + KLABEL[side === "a" ? m.fromLosers[0] : m.fromLosers[1]]
+          : "Ganador de " + KLABEL[side === "a" ? m.from[0] : m.from[1]];
+      return `<div class="team-btn flex-1 flex flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 bg-slate-800/40 border border-slate-700 text-slate-500">
+        <div class="text-2xl">❓</div>
+        <div class="text-[10px] text-center leading-tight">${ph}</div>
+      </div>`;
+    }
+    const cls = chosen ? (chosen === name ? "win" : "lose") : "";
+    return `<button data-kmatch="${m.id}" data-team="${name}" title="${name}"
+        class="team-btn flex-1 flex flex-col items-center gap-1.5 rounded-xl px-1 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 ${cls}">
+        <div class="code3">${code3(name)}</div>
+        ${flag(name, 56)}
+        <div class="text-sm" style="height:1.15rem">${chosen === name ? "🏅" : ""}</div>
+      </button>`;
+  };
+  const wrap = document.createElement("article");
+  wrap.id = "card-" + m.id;
+  wrap.className = "bracket-card glass rounded-xl p-2";
+  wrap.innerHTML = `
+    <div class="flex items-center justify-between mb-1.5 text-[10px]">
+      <span class="uppercase tracking-widest text-slate-500">${KLABEL[m.id]}</span>
+      <span class="text-yellow-300/90 font-medium">🕒 ${m.time} Catar</span>
+    </div>
+    <div class="flex items-stretch gap-1">
+      ${btn(t.a, "a")}
+      <div class="flex items-center text-[10px] font-black text-slate-500">VS</div>
+      ${btn(t.b, "b")}
+    </div>
+    ${q22Footer(m)}`;
+  return wrap;
+}
+
+function drawKConnectors() { drawLines("kbracket", "kconnectors", KPAIRS, kWinnerOf); }
+
+let kConfettiOn = false;
+function renderKOct() {
+  kValidate();
+  const fill = (elId, list, isFinal) => {
+    const el = document.getElementById(elId);
+    el.innerHTML = "";
+    list.forEach(m => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      const inner = document.createElement("div");
+      inner.style.width = "100%";
+      if (isFinal) inner.innerHTML = `<div class="text-center text-3xl mb-1">🏆</div>`;
+      inner.appendChild(kMatchCard(m));
+      cell.appendChild(inner);
+      el.appendChild(cell);
+    });
+  };
+  fill("kround-r16", K16, false);
+  fill("kround-qf", KQF, false);
+  fill("kround-sf", KSF, false);
+  fill("kround-final", [KFINAL], true);
+  const kthirdEl = document.getElementById("kround-third");
+  kthirdEl.innerHTML = "";
+  kthirdEl.appendChild(kMatchCard(KTHIRD));
+  requestAnimationFrame(drawKConnectors);
+
+  const banner = document.getElementById("kchamp-banner");
+  const champ = kpicks["k15"];
+  if (champ) {
+    document.getElementById("kchamp-name").innerHTML = flag(champ, 42) + " " + champ;
+    banner.classList.remove("hidden");
+    banner.classList.add("pop");
+    if (!kConfettiOn) { kConfettiOn = true; celebrate(); }
+  } else {
+    banner.classList.add("hidden");
+    kConfettiOn = false;
+  }
+  ksave();
+}
+
+/* ---- team picker: any of the 32 teams of 2022 can fill any octavos slot ---- */
+function kOptionsHtml(selectedName) {
+  return Q22_TEAMS.map(t => {
+    const usedElsewhere = t.name !== selectedName && Object.values(kTeams).includes(t.name);
+    return `<option value="${t.name}" ${t.name === selectedName ? "selected" : ""} ${usedElsewhere ? "disabled" : ""}>${code3(t.name)} · ${t.name}</option>`;
+  }).join("");
+}
+function renderKOctPicker() {
+  const el = document.getElementById("k22-picker");
+  el.innerHTML = "";
+  for (let i = 1; i <= 8; i++) {
+    const slotA = "ks" + i + "a", slotB = "ks" + i + "b";
+    const row = document.createElement("div");
+    row.className = "glass rounded-2xl p-3";
+    row.innerHTML = `
+      <div class="text-[10px] uppercase tracking-widest text-slate-500 mb-2 text-center">Octavo ${i}</div>
+      <div class="space-y-2">
+        <select data-kslot="${slotA}" class="k-select w-full text-xs sm:text-sm bg-slate-800/60 border border-slate-700 rounded-lg px-2 py-2 text-slate-100">
+          ${kOptionsHtml(kTeams[slotA])}
+        </select>
+        <select data-kslot="${slotB}" class="k-select w-full text-xs sm:text-sm bg-slate-800/60 border border-slate-700 rounded-lg px-2 py-2 text-slate-100">
+          ${kOptionsHtml(kTeams[slotB])}
+        </select>
+      </div>`;
+    el.appendChild(row);
+  }
+}
+document.addEventListener("change", (e) => {
+  const sel = e.target.closest(".k-select");
+  if (!sel) return;
+  kTeams[sel.dataset.kslot] = sel.value;
+  ktsave();
+  kValidate();
+  renderKOctPicker();
+  renderKOct();
+});
+document.getElementById("reset-k22-teams").addEventListener("click", () => {
+  if (!confirm("¿Restablecer los 16 equipos a los que jugaron los Octavos reales de Catar 2022?")) return;
+  kTeams = { ...KDEFAULT };
+  kpicks = {};
+  ktsave(); ksave();
+  renderKOctPicker();
+  renderKOct();
+});
+
 /* ---------------- TABS ---------------- */
 let activeTab = "real";
 function showTab(name) {
@@ -2574,6 +2854,7 @@ function showTab(name) {
   document.getElementById("tab-groups").classList.toggle("hidden", name !== "groups");
   document.getElementById("tab-oct").classList.toggle("hidden", name !== "oct");
   document.getElementById("tab-q22").classList.toggle("hidden", name !== "q22");
+  document.getElementById("tab-k22").classList.toggle("hidden", name !== "k22");
   document.getElementById("tabbtn-real").classList.toggle("active", name === "real");
   document.getElementById("tabbtn-fantasy").classList.toggle("active", name === "fantasy");
   document.getElementById("tabbtn-custom").classList.toggle("active", name === "custom");
@@ -2582,11 +2863,12 @@ function showTab(name) {
   document.getElementById("tabbtn-groups").classList.toggle("active", name === "groups");
   document.getElementById("tabbtn-oct").classList.toggle("active", name === "oct");
   document.getElementById("tabbtn-q22").classList.toggle("active", name === "q22");
+  document.getElementById("tabbtn-k22").classList.toggle("active", name === "k22");
   /* the "Empezar de nuevo" button has nothing to reset on the info/sim tabs */
   document.getElementById("reset-all").classList.toggle("hidden",
     name === "elim" || name === "wc30" || (name === "q22" && q22Mode === "real"));
   /* connector lines can only be measured while a bracket is visible (elim tab has none) */
-  const drawFn = name === "real" ? drawConnectors : name === "fantasy" ? drawFConnectors : name === "custom" ? drawCConnectors : name === "oct" ? drawOConnectors : name === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : null;
+  const drawFn = name === "real" ? drawConnectors : name === "fantasy" ? drawFConnectors : name === "custom" ? drawCConnectors : name === "oct" ? drawOConnectors : name === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : name === "k22" ? drawKConnectors : null;
   if (drawFn) requestAnimationFrame(drawFn);
 }
 document.getElementById("tabbtn-real").addEventListener("click", () => showTab("real"));
@@ -2597,6 +2879,7 @@ document.getElementById("tabbtn-wc30").addEventListener("click", () => showTab("
 document.getElementById("tabbtn-groups").addEventListener("click", () => showTab("groups"));
 document.getElementById("tabbtn-oct").addEventListener("click", () => showTab("oct"));
 document.getElementById("tabbtn-q22").addEventListener("click", () => showTab("q22"));
+document.getElementById("tabbtn-k22").addEventListener("click", () => showTab("k22"));
 
 /* ---- click handling ---- */
 document.addEventListener("click", (e) => {
@@ -2634,6 +2917,11 @@ document.addEventListener("click", (e) => {
     if (ppicks[id] === team) { delete ppicks[id]; }
     else { ppicks[id] = team; }
     renderQ22Play();
+  } else if (btn.dataset.kmatch) {
+    const id = btn.dataset.kmatch;
+    if (kpicks[id] === team) { delete kpicks[id]; }
+    else { kpicks[id] = team; }
+    renderKOct();
   } else if (btn.dataset.omatch) {
     const id = btn.dataset.omatch;
     if (opicks[id] === team) { delete opicks[id]; }
@@ -2649,13 +2937,14 @@ document.getElementById("reset-all").addEventListener("click", () => {
   else if (activeTab === "groups") { gStand = {}; gThirds = []; gsave(); renderGroups(); }
   else if (activeTab === "oct") { opicks = {}; renderOct(); }
   else if (activeTab === "q22") { ppicks = {}; renderQ22Play(); }
+  else if (activeTab === "k22") { kpicks = {}; renderKOct(); }
   else { picks = {}; render(); }
 });
 
 let rz;
 window.addEventListener("resize", () => {
   clearTimeout(rz);
-  const fn = activeTab === "real" ? drawConnectors : activeTab === "fantasy" ? drawFConnectors : activeTab === "custom" ? drawCConnectors : activeTab === "oct" ? drawOConnectors : activeTab === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : null;
+  const fn = activeTab === "real" ? drawConnectors : activeTab === "fantasy" ? drawFConnectors : activeTab === "custom" ? drawCConnectors : activeTab === "oct" ? drawOConnectors : activeTab === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : activeTab === "k22" ? drawKConnectors : null;
   if (fn) rz = setTimeout(fn, 120);
 });
 window.addEventListener("load", drawConnectors);
@@ -2675,6 +2964,8 @@ renderQ22Groups();
 renderQ22Real();
 renderQ22Qualified();
 renderQ22Play();
+renderKOctPicker();
+renderKOct();
 </script>
 </body>
 </html>
