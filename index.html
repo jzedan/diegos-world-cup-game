@@ -760,8 +760,9 @@
       <b class="text-emerald-300">8 selecciones</b> pelean por los <b class="text-yellow-300">6 boletos</b> de Concacaf
       para el <b>Mundial Femenil Brasil 2027</b>. Las <b>4 que ganen los Cuartos</b> van directo al Mundial.
       Las 4 que pierdan juegan un <b>Play-In</b>, y las 2 ganadoras van al <b class="text-amber-300">repechaje</b>.
-      Ya están los partidos reales — si quieres, <b class="text-yellow-300">cambia los equipos de lugar</b>,
-      y luego tocas quién gana cada partido. 👇
+      Ya están los partidos reales — pero tú puedes <b class="text-yellow-300">elegir tus propias 8 finalistas</b>
+      entre las <b>31 selecciones de Concacaf</b> que jugaron la eliminatoria, ¡hasta las que no clasificaron!
+      Luego tocas quién gana cada partido. 👇
     </p>
     <p class="text-xs text-slate-400 mt-2">
       Se juega del 27 de noviembre al 5 de diciembre de 2026 en Texas (EUA). Toca un equipo <b>otra vez</b> para borrar tu elección.
@@ -769,14 +770,15 @@
   </div>
   <div class="flex items-center justify-center mt-3">
     <button id="reset-cw27-teams" class="text-xs px-4 py-2 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
-      ↺ Restablecer los partidos reales
+      ↺ Volver a las 8 finalistas reales
     </button>
   </div>
 </section>
 
 <section class="max-w-5xl mx-auto px-4 pt-4 pb-2">
   <p class="text-center text-xs text-slate-400 mb-2">
-    Elige un equipo en cualquier lugar: si ya estaba en otro partido, <b class="text-slate-200">cambian de lugar</b>.
+    Elige <b class="text-slate-200">cualquier selección</b> para cada lugar. Si eliges una que ya estaba en otro partido,
+    <b class="text-slate-200">cambian de lugar</b>.
   </p>
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="cw27-picker"></div>
 </section>
@@ -865,6 +867,11 @@ const FLAGS = {
   "Brasil":"br","Escocia":"gb-sct","Marruecos":"ma","Haití":"ht",
   "Estados Unidos":"us","Australia":"au","Turquía":"tr","Paraguay":"py",
   "Alemania":"de","Costa de Marfil":"ci","Ecuador":"ec","Curazao":"cw",
+  /* the rest of the Concacaf women's qualifying field (Eliminatoria Femenil 2027 tab) */
+  "Puerto Rico":"pr","San Vicente y las Granadinas":"vc","Islas Vírgenes de EE. UU.":"vi","Santa Lucía":"lc",
+  "Guyana":"gy","Nicaragua":"ni","Antigua y Barbuda":"ag","Dominica":"dm","Bermudas":"bm","Granada":"gd",
+  "Islas Caimán":"ky","República Dominicana":"do","Belice":"bz","Anguila":"ai","Cuba":"cu","Aruba":"aw",
+  "San Cristóbal y Nieves":"kn","Barbados":"bb",
   "Países Bajos":"nl","Suecia":"se","Túnez":"tn","Japón":"jp",
   "España":"es","Arabia Saudita":"sa","Uruguay":"uy","Cabo Verde":"cv",
   "Bélgica":"be","Irán":"ir","Nueva Zelanda":"nz","Egipto":"eg",
@@ -1560,7 +1567,11 @@ document.getElementById("reset-custom-teams").addEventListener("click", () => {
    Irán/Irak) or unclear. All 48 codes are unique. */
 const CODE3 = {
   "Estados Unidos":"EUA", "Costa de Marfil":"CDM", "Rep. Checa":"CHE", "Países Bajos":"PBA",
-  "RD Congo":"CGO", "Argelia":"ALG", "Austria":"AUT", "Irán":"IRN", "Irak":"IRQ", "Nueva Zelanda":"NZL", "El Salvador":"SLV"
+  "RD Congo":"CGO", "Argelia":"ALG", "Austria":"AUT", "Irán":"IRN", "Irak":"IRQ", "Nueva Zelanda":"NZL", "El Salvador":"SLV",
+  "Puerto Rico":"PUR", "San Vicente y las Granadinas":"VIN", "Islas Vírgenes de EE. UU.":"VIR",
+  "Santa Lucía":"LCA", "Nicaragua":"NCA", "Antigua y Barbuda":"ATG", "Dominica":"DMA", "Granada":"GRN",
+  "Islas Caimán":"CAY", "República Dominicana":"DOM", "Belice":"BLZ", "Anguila":"AIA", "Aruba":"ARU",
+  "San Cristóbal y Nieves":"SKN", "Barbados":"BRB"
 };
 const code3 = (name) => CODE3[name]
   || name.normalize("NFD").replace(/[\u0300-\u036f.]/g, "").slice(0, 3).toUpperCase();
@@ -2952,8 +2963,9 @@ document.getElementById("reset-k22-teams").addEventListener("click", () => {
      semis → final (+ 3rd place) for the Concacaf title;
    · the 4 quarter-final losers play two Play-In matches; the 2 winners go to
      the FIFA inter-confederation play-off (repechaje), the 2 losers are out.
-   The 8 teams start in their real quarter-final pairings, but Diego can move
-   them around (picking a team that is already in another slot swaps the two),
+   The 8 teams start in their real quarter-final pairings, but Diego can put any
+   of the 31 Concacaf teams that played qualifying into any slot and pick his own
+   8 finalists (picking a team that is already in another slot swaps the two),
    then picks every winner. Times are local Texas time (CST, UTC−6), which is
    the same as hora MX. Not played yet, so nothing is locked. */
 
@@ -2997,7 +3009,17 @@ const CW_DEFAULT = {
   cws3a:"México",         cws3b:"Haití",
   cws4a:"Jamaica",        cws4b:"Costa Rica"
 };
-const CW_TEAMS = Object.values(CW_DEFAULT).slice().sort((a, b) => a.localeCompare(b, "es"));
+const CW_QUALIFIED = Object.values(CW_DEFAULT).slice().sort((a, b) => a.localeCompare(b, "es"));
+/* everyone else who played qualifying (Wikipedia, "2026 CONCACAF W Championship qualification") */
+const CW_OTHERS = [
+  "Puerto Rico", "San Vicente y las Granadinas", "Islas Vírgenes de EE. UU.", "Santa Lucía",
+  "Guyana", "Nicaragua", "Antigua y Barbuda", "Dominica",
+  "Guatemala", "Bermudas", "Granada", "Islas Caimán",
+  "República Dominicana", "Surinam", "Belice", "Anguila",
+  "Cuba", "Aruba", "Curazao", "San Cristóbal y Nieves",
+  "Trinidad y Tobago", "Honduras", "Barbados"
+].sort((a, b) => a.localeCompare(b, "es"));
+const CW_TEAMS = [...CW_QUALIFIED, ...CW_OTHERS];
 
 const CWTKEY = "diegosWorldCup.concacafW2027.teams.v1";
 let cwTeams = {};
@@ -3158,9 +3180,11 @@ function renderCw27() {
   cwsave();
 }
 
-/* ---- picker: move the 8 teams between the quarter-final slots ---- */
+/* ---- picker: any of the 31 Concacaf teams can take any quarter-final slot ---- */
 function cwOptionsHtml(selectedName) {
-  return CW_TEAMS.map(n => `<option value="${n}" ${n === selectedName ? "selected" : ""}>${code3(n)} · ${n}</option>`).join("");
+  const opt = (n) => `<option value="${n}" ${n === selectedName ? "selected" : ""}>${code3(n)} · ${n}</option>`;
+  return `<optgroup label="Clasificaron de verdad">${CW_QUALIFIED.map(opt).join("")}</optgroup>`
+       + `<optgroup label="No clasificaron">${CW_OTHERS.map(opt).join("")}</optgroup>`;
 }
 function renderCw27Picker() {
   const el = document.getElementById("cw27-picker");
