@@ -34,7 +34,7 @@
   /* ---- bracket ---- */
   .bracket-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
   .bracket { position: relative; display: flex; align-items: stretch; min-width: 950px; }
-  #connectors, #fconnectors, #cconnectors, #oconnectors, #qconnectors, #pconnectors, #kconnectors, #cwconnectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
+  #connectors, #fconnectors, #cconnectors, #oconnectors, #qconnectors, #pconnectors, #kconnectors, #cwconnectors, #nlconnectors, #inlconnectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
   .round { flex: 1 1 0; display: flex; flex-direction: column; padding: 0 16px; }
   .cell { flex: 1 1 0; min-height: 158px; display: flex; align-items: center; justify-content: center; }
   .bracket-card { position: relative; z-index: 10; width: 100%; }
@@ -61,6 +61,10 @@
   /* ---- Concacaf femenil 2027 bracket (octavos-style cards + a prize line) ---- */
   .cwbracket .cell { min-height: 290px; }
   .cwbracket .round { padding: 0 10px; }
+
+  /* ---- Liga de Naciones knockout bracket (code + flag + name + label cards) ---- */
+  .nlbracket .cell { min-height: 310px; }
+  .nlbracket .round { padding: 0 10px; }
   .code3 { font-size: 1.05rem; font-weight: 900; letter-spacing: .08em; line-height: 1; }
 
   /* ---- tabs ---- */
@@ -131,6 +135,12 @@
     </button>
     <button id="tabbtn-cw27" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       ⚽ Eliminatoria Femenil Concacaf 2027
+    </button>
+    <button id="tabbtn-unl" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      🛡️ Liga de Naciones UEFA
+    </button>
+    <button id="tabbtn-inl" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      🧩 Inventa tu Liga de Naciones
     </button>
   </div>
 
@@ -846,6 +856,277 @@
 </section>
 
 </div><!-- /tab-cw27 -->
+
+<div id="tab-unl" class="hidden">
+
+<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-indigo-300/80">Europa · 2026–27</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Liga de Naciones UEFA 🛡️</h2>
+    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
+      Las <b class="text-indigo-300">54 selecciones de Europa</b> juegan en 4 ligas: la <b>A</b> (las mejores), la <b>B</b>, la <b>C</b> y la <b>D</b>.
+      Ya se jugaron <b class="text-emerald-300">4 de las 6 jornadas</b> (septiembre y octubre). Las últimas 2 se juegan del
+      <b class="text-yellow-300">12 al 17 de noviembre</b> — <b>¡tú pones cuántos goles mete cada equipo!</b>
+      Las tablas cambian con tus resultados, y abajo ves qué pasa después. 👇
+    </p>
+    <p class="text-xs text-slate-400 mt-2">Toca <b>+</b> y <b>−</b> para poner los goles. Horarios en hora MX.</p>
+  </div>
+</section>
+
+<section class="max-w-5xl mx-auto px-4 pt-2 pb-2">
+  <div class="flex items-center justify-center gap-2 flex-wrap">
+    <button id="nlbtn-A" data-nlleague="A" class="tab-btn active text-sm px-4 py-2 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">🥇 Liga A</button>
+    <button id="nlbtn-B" data-nlleague="B" class="tab-btn text-sm px-4 py-2 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">🥈 Liga B</button>
+    <button id="nlbtn-C" data-nlleague="C" class="tab-btn text-sm px-4 py-2 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">🥉 Liga C</button>
+    <button id="nlbtn-D" data-nlleague="D" class="tab-btn text-sm px-4 py-2 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">🏅 Liga D</button>
+  </div>
+  <p id="nl-league-info" class="text-sm text-slate-300 text-center max-w-3xl mx-auto mt-3"></p>
+  <div class="flex items-center justify-center gap-2 flex-wrap mt-3">
+    <button id="nl-random" class="text-xs px-4 py-2 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-400/30 text-indigo-100">🎲 Rellenar lo que falta al azar</button>
+    <button id="nl-clear" class="text-xs px-4 py-2 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">↺ Borrar mis resultados de esta liga</button>
+  </div>
+  <p id="nl-missing" class="text-xs text-slate-400 text-center mt-2"></p>
+  <div class="flex items-center justify-center gap-3 flex-wrap mt-2 text-[10px] text-slate-400">
+    <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span>Cuartos de final</span>
+    <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-sky-400"></span>Sube de liga</span>
+    <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-400"></span>Play-off (marzo)</span>
+    <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-500"></span>Se queda</span>
+    <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-400"></span>Baja de liga</span>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 pt-4 pb-4">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" id="nl-groups"></div>
+</section>
+
+<section class="max-w-5xl mx-auto px-4 pt-2 pb-6">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-emerald-300/80">Después de la fase de liga</div>
+    <h3 id="nl-next-title" class="text-xl sm:text-2xl font-black text-white mt-1"></h3>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="nl-next"></div>
+</section>
+
+<!-- ---------- the next phase, for all leagues ---------- -->
+<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">La siguiente fase · 2027</div>
+    <h3 class="text-xl sm:text-2xl font-black text-white mt-1">Cuartos de final y Final Four 🏆</h3>
+    <p class="text-sm text-slate-300 mt-2 max-w-2xl mx-auto">
+      Solo para la <b class="text-emerald-300">Liga A</b>. Cada 1.º de grupo juega contra un 2.º de <b>otro grupo</b>,
+      ida y vuelta en <b>marzo de 2027</b> (el 1.º juega la vuelta en casa). Los 4 ganadores van al
+      <b class="text-yellow-300">Final Four</b> en <b>junio de 2027</b>: semifinales, 3.er lugar y la gran final.
+      Los equipos salen de las tablas de arriba — si cambias resultados, cambian aquí también. Toca quién pasa. 👆
+    </p>
+    <p class="text-[11px] text-slate-500 mt-2 max-w-2xl mx-auto">
+      El sorteo de verdad todavía no se hace (será después de noviembre), así que aquí hacemos uno de práctica que sigue las mismas reglas.
+    </p>
+  </div>
+  <div class="flex items-center justify-center mt-3">
+    <button id="nl-redraw" class="text-xs px-4 py-2 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">🎲 Sortear otra vez</button>
+  </div>
+</section>
+
+<section class="max-w-3xl mx-auto px-4 pt-4 pb-2">
+  <div id="nlchamp-banner" class="hidden glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
+    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Tu campeón de la Liga de Naciones</div>
+    <div class="text-7xl mt-2">🏆</div>
+    <div id="nlchamp-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
+    <div class="text-slate-300 mt-2">¡Ganó tu Final Four de junio de 2027! 🎉</div>
+  </div>
+</section>
+
+<main class="max-w-7xl mx-auto px-2 sm:px-4 pb-6">
+  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
+  <div class="bracket-scroll">
+    <div class="head-row max-w-6xl mx-auto" style="min-width:820px">
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">marzo 2027</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">9–10 junio 2027</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">13 junio 2027</div></div>
+    </div>
+    <div id="nlbracket" class="bracket nlbracket max-w-6xl mx-auto" style="min-width:820px">
+      <svg id="nlconnectors"></svg>
+      <div class="round" id="nlround-qf"></div>
+      <div class="round" id="nlround-sf"></div>
+      <div class="round" id="nlround-final"></div>
+    </div>
+  </div>
+</main>
+
+<section class="max-w-sm mx-auto px-4 pt-2 pb-8">
+  <div class="text-center mb-3">
+    <h3 class="text-xl font-black text-amber-300">🥉 Partido por el 3.er lugar</h3>
+    <p class="text-xs text-slate-400 mt-1">Lo juegan los que <b class="text-slate-200">pierden</b> las semifinales.</p>
+  </div>
+  <div id="nlround-third"></div>
+</section>
+
+<section class="max-w-5xl mx-auto px-4 pt-4 pb-6">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-amber-300/80">Marzo 2027 · ida y vuelta</div>
+    <h3 class="text-xl sm:text-2xl font-black text-amber-300 mt-1">⚔️ Play-offs: ¿quién sube y quién baja?</h3>
+    <p class="text-sm text-slate-300 mt-2 max-w-2xl mx-auto">
+      En cada play-off juega un equipo de una liga contra uno de la liga de abajo. <b>Si gana el de abajo, sube y el otro baja.</b>
+      Si gana el de arriba, cada uno se queda en su liga. Toca quién gana. 👆
+    </p>
+  </div>
+  <h4 class="text-sm font-black text-slate-200 mb-2">Liga A contra Liga B</h4>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5" id="nl-po-ab"></div>
+  <h4 class="text-sm font-black text-slate-200 mb-2">Liga B contra Liga C</h4>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="nl-po-bc"></div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 pt-4 pb-10">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-sky-300/80">Lo que se decide</div>
+    <h3 class="text-xl sm:text-2xl font-black text-white mt-1">Así quedan las ligas para 2028–29 📋</h3>
+    <p class="text-sm text-slate-300 mt-2 max-w-2xl mx-auto">
+      Desde 2028 ya no hay Liga D: quedan <b>3 ligas de 18 equipos</b>. Esto sale de tus tablas y de tus play-offs.
+    </p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="nl-2829"></div>
+</section>
+
+</div><!-- /tab-unl -->
+
+<div id="tab-inl" class="hidden">
+
+<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-indigo-300/80">Modo Diego · Europa 2026–27</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Inventa tu Liga de Naciones 🧩</h2>
+    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
+      Los mismos grupos de la Liga de Naciones de este año, pero aquí <b class="text-yellow-300">tú decides cómo terminan</b>.
+      En cada grupo toca al equipo que queda <b>1.º</b>, luego al <b>2.º</b> y al <b>3.º</b> — el que sobra queda último.
+      Las reglas de verdad deciden quién va a Cuartos, quién sube, quién juega play-off y quién baja. 👇
+    </p>
+    <p class="text-xs text-slate-400 mt-2">Junto a cada equipo ves sus puntos de verdad hoy, para que te ayuden a decidir.</p>
+  </div>
+</section>
+
+<section class="max-w-5xl mx-auto px-4 pt-2 pb-2">
+  <div class="flex items-center justify-center gap-2 flex-wrap">
+    <button id="inlbtn-A" data-inlleague="A" class="tab-btn active text-sm px-4 py-2 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">🥇 Liga A</button>
+    <button id="inlbtn-B" data-inlleague="B" class="tab-btn text-sm px-4 py-2 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">🥈 Liga B</button>
+    <button id="inlbtn-C" data-inlleague="C" class="tab-btn text-sm px-4 py-2 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">🥉 Liga C</button>
+    <button id="inlbtn-D" data-inlleague="D" class="tab-btn text-sm px-4 py-2 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">🏅 Liga D</button>
+  </div>
+  <p id="inl-league-info" class="text-sm text-slate-300 text-center max-w-3xl mx-auto mt-3"></p>
+  <div class="flex items-center justify-center gap-2 flex-wrap mt-3">
+    <button id="inl-random" class="text-xs px-4 py-2 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-400/30 text-indigo-100">🎲 Ordenar lo que falta al azar</button>
+    <button id="inl-clear" class="text-xs px-4 py-2 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">↺ Borrar esta liga</button>
+  </div>
+  <p id="inl-missing" class="text-xs text-slate-400 text-center mt-2"></p>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 pt-4 pb-4">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="inl-groups"></div>
+</section>
+
+<section id="inl-best" class="max-w-4xl mx-auto px-4 pt-2 pb-4">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-amber-300/80">Solo en la Liga A</div>
+    <h3 class="text-lg sm:text-xl font-black text-white mt-1">Los terceros y cuartos se comparan entre grupos 🔍</h3>
+    <p class="text-xs text-slate-400 mt-1 max-w-xl mx-auto">
+      De verdad se decide con puntos y goles. Aquí eliges tú: los 2 mejores 3.º se quedan y los otros 2 van a play-off;
+      los 2 mejores 4.º van a play-off y los otros 2 bajan directo a Liga B.
+    </p>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="inl-best-body"></div>
+</section>
+
+<section class="max-w-5xl mx-auto px-4 pt-2 pb-6">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-emerald-300/80">Después de la fase de liga</div>
+    <h3 id="inl-next-title" class="text-xl sm:text-2xl font-black text-white mt-1"></h3>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="inl-next"></div>
+</section>
+
+<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">La siguiente fase · 2027</div>
+    <h3 class="text-xl sm:text-2xl font-black text-white mt-1">Cuartos de final y Final Four 🏆</h3>
+    <p class="text-sm text-slate-300 mt-2 max-w-2xl mx-auto">
+      Los <b class="text-emerald-300">1.º y 2.º de la Liga A</b> juegan Cuartos (ida y vuelta, <b>marzo de 2027</b>): cada 1.º contra un 2.º
+      de otro grupo. Los 4 ganadores van al <b class="text-yellow-300">Final Four</b> en <b>junio de 2027</b>. Toca quién pasa. 👆
+    </p>
+    <p class="text-[11px] text-slate-500 mt-2 max-w-2xl mx-auto">
+      El sorteo de verdad todavía no se hace (será después de noviembre), así que aquí hacemos uno de práctica que sigue las mismas reglas.
+    </p>
+  </div>
+  <div class="flex items-center justify-center mt-3">
+    <button id="inl-redraw" class="text-xs px-4 py-2 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">🎲 Sortear otra vez</button>
+  </div>
+</section>
+
+<section class="max-w-3xl mx-auto px-4 pt-4 pb-2">
+  <div id="inlchamp-banner" class="hidden glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
+    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Tu campeón de la Liga de Naciones</div>
+    <div class="text-7xl mt-2">🏆</div>
+    <div id="inlchamp-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
+    <div class="text-slate-300 mt-2">¡Ganó tu Final Four de junio de 2027! 🎉</div>
+  </div>
+</section>
+
+<main class="max-w-7xl mx-auto px-2 sm:px-4 pb-6">
+  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
+  <div class="bracket-scroll">
+    <div class="head-row max-w-6xl mx-auto" style="min-width:820px">
+      <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">marzo 2027</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">9–10 junio 2027</div></div>
+      <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">13 junio 2027</div></div>
+    </div>
+    <div id="inlbracket" class="bracket nlbracket max-w-6xl mx-auto" style="min-width:820px">
+      <svg id="inlconnectors"></svg>
+      <div class="round" id="inlround-qf"></div>
+      <div class="round" id="inlround-sf"></div>
+      <div class="round" id="inlround-final"></div>
+    </div>
+  </div>
+</main>
+
+<section class="max-w-sm mx-auto px-4 pt-2 pb-8">
+  <div class="text-center mb-3">
+    <h3 class="text-xl font-black text-amber-300">🥉 Partido por el 3.er lugar</h3>
+    <p class="text-xs text-slate-400 mt-1">Lo juegan los que <b class="text-slate-200">pierden</b> las semifinales.</p>
+  </div>
+  <div id="inlround-third"></div>
+</section>
+
+<section class="max-w-5xl mx-auto px-4 pt-4 pb-6">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-amber-300/80">Marzo 2027 · ida y vuelta</div>
+    <h3 class="text-xl sm:text-2xl font-black text-amber-300 mt-1">⚔️ Play-offs: ¿quién sube y quién baja?</h3>
+    <p class="text-sm text-slate-300 mt-2 max-w-2xl mx-auto">
+      Un equipo de una liga contra uno de la liga de abajo. <b>Si gana el de abajo, sube y el otro baja.</b>
+      Si gana el de arriba, cada uno se queda en su liga. Toca quién gana. 👆
+    </p>
+  </div>
+  <h4 class="text-sm font-black text-slate-200 mb-2">Liga A contra Liga B</h4>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5" id="inl-po-ab"></div>
+  <h4 class="text-sm font-black text-slate-200 mb-2">Liga B contra Liga C</h4>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="inl-po-bc"></div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 pt-4 pb-6">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-sky-300/80">Lo que se decide</div>
+    <h3 class="text-xl sm:text-2xl font-black text-white mt-1">Así quedan las ligas para 2028–29 📋</h3>
+    <p class="text-sm text-slate-300 mt-2 max-w-2xl mx-auto">Desde 2028 ya no hay Liga D: quedan <b>3 ligas de 18 equipos</b>.</p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="inl-2829"></div>
+</section>
+
+<section class="max-w-4xl mx-auto px-4 pt-4 pb-10">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-emerald-300/80">¿Y después?</div>
+    <h3 class="text-xl sm:text-2xl font-black text-white mt-1">¿Esto ayuda para ir a la Euro o al Mundial? 🤔</h3>
+  </div>
+  <div class="space-y-3" id="inl-future"></div>
+</section>
+
+</div><!-- /tab-inl -->
 
 <footer class="max-w-5xl mx-auto px-4 pb-10 text-center text-xs text-slate-500 leading-relaxed">
   Hecho con cariño para Diego · Mundial 2026 (USA · México · Canadá).<br/>
@@ -3224,6 +3505,1089 @@ document.getElementById("reset-cw27-teams").addEventListener("click", () => {
   renderCw27();
 });
 
+/* ---------------- LIGA DE NACIONES UEFA 2026-27 (tab 11) ---------------- */
+/* League phase of the 2026-27 UEFA Nations League, from the raw wikitext of
+   Wikipedia's "2026–27 UEFA Nations League A/B/C/D" articles (downloaded
+   2026-10-13). Matchdays 1-4 (24 Sep - 6 Oct 2026) are played and locked;
+   matchdays 5-6 (12-17 Nov 2026) are left for Diego to predict.
+   Every match was cross-checked against the separately-kept standings grid:
+   154 of 156 agreed; Austria 3-1 Kosovo was confirmed with ESPN, and
+   Liechtenstein 0-2 Lithuania was in Vaduz (the grid had it the wrong way round).
+   Match row: [date, time (CET/CEST as listed by UEFA), home, away, home goals, away goals, stadium]
+   — goals are null for matches not played yet.
+   order = UEFA access-list order for the group (the last tiebreaker). */
+const NL_TEAMS = {
+  ALB:["Albania", "al"],
+  AND:["Andorra", "ad"],
+  ARM:["Armenia", "am"],
+  AUT:["Austria", "at"],
+  AZE:["Azerbaiyán", "az"],
+  BEL:["Bélgica", "be"],
+  BIH:["Bosnia", "ba"],
+  BLR:["Bielorrusia", "by"],
+  BUL:["Bulgaria", "bg"],
+  CRO:["Croacia", "hr"],
+  CYP:["Chipre", "cy"],
+  CZE:["Rep. Checa", "cz"],
+  DEN:["Dinamarca", "dk"],
+  ENG:["Inglaterra", "gb-eng"],
+  ESP:["España", "es"],
+  EST:["Estonia", "ee"],
+  FIN:["Finlandia", "fi"],
+  FRA:["Francia", "fr"],
+  FRO:["Islas Feroe", "fo"],
+  GEO:["Georgia", "ge"],
+  GER:["Alemania", "de"],
+  GIB:["Gibraltar", "gi"],
+  GRE:["Grecia", "gr"],
+  HUN:["Hungría", "hu"],
+  IRL:["Irlanda", "ie"],
+  ISL:["Islandia", "is"],
+  ISR:["Israel", "il"],
+  ITA:["Italia", "it"],
+  KAZ:["Kazajistán", "kz"],
+  KOS:["Kosovo", "xk"],
+  LIE:["Liechtenstein", "li"],
+  LTU:["Lituania", "lt"],
+  LUX:["Luxemburgo", "lu"],
+  LVA:["Letonia", "lv"],
+  MDA:["Moldavia", "md"],
+  MKD:["Macedonia del Norte", "mk"],
+  MLT:["Malta", "mt"],
+  MNE:["Montenegro", "me"],
+  NED:["Países Bajos", "nl"],
+  NIR:["Irlanda del Norte", "gb-nir"],
+  NOR:["Noruega", "no"],
+  POL:["Polonia", "pl"],
+  POR:["Portugal", "pt"],
+  ROU:["Rumania", "ro"],
+  SCO:["Escocia", "gb-sct"],
+  SMR:["San Marino", "sm"],
+  SRB:["Serbia", "rs"],
+  SUI:["Suiza", "ch"],
+  SVK:["Eslovaquia", "sk"],
+  SVN:["Eslovenia", "si"],
+  SWE:["Suecia", "se"],
+  TUR:["Turquía", "tr"],
+  UKR:["Ucrania", "ua"],
+  WAL:["Gales", "gb-wls"]
+};
+const NL_GROUPS = {
+  A: [
+    { g:"1", order:["FRA", "ITA", "BEL", "TUR"], m:[
+      ["2026-09-25","20:45","ITA","BEL",0,2,"Stadio Olimpico, Rome"],
+      ["2026-09-25","20:45","TUR","FRA",0,1,"Kocaeli Stadium, İzmit"],
+      ["2026-09-28","20:45","BEL","FRA",0,1,"King Baudouin Stadium, Brussels"],
+      ["2026-09-28","20:45","TUR","ITA",1,4,"Centennial Atatürk Stadium, Bursa"],
+      ["2026-10-02","20:45","BEL","TUR",3,0,"Stade Maurice Dufrasne, Liège"],
+      ["2026-10-02","20:45","FRA","ITA",1,1,"Stade de France, Saint-Denis"],
+      ["2026-10-05","20:45","FRA","BEL",4,1,"Stade de France, Saint-Denis"],
+      ["2026-10-05","20:45","ITA","TUR",3,1,"Stadio Renato Dall'Ara, Bologna"],
+      ["2026-11-12","18:00","TUR","BEL",null,null,"Gürsel Aksel Stadium, İzmir"],
+      ["2026-11-12","20:45","ITA","FRA",null,null,"San Siro, Milan"],
+      ["2026-11-15","20:45","BEL","ITA",null,null,"King Baudouin Stadium, Brussels"],
+      ["2026-11-15","20:45","FRA","TUR",null,null,"Stade Atlantique, Bordeaux"]
+    ]},
+    { g:"2", order:["GER", "NED", "SRB", "GRE"], m:[
+      ["2026-09-24","20:45","NED","GER",1,1,"Johan Cruyff Arena, Amsterdam"],
+      ["2026-09-24","20:45","SRB","GRE",1,2,"Rajko Mitić Stadium, Belgrade"],
+      ["2026-09-27","18:00","SRB","NED",1,2,"Rajko Mitić Stadium, Belgrade"],
+      ["2026-09-27","20:45","GER","GRE",0,1,"WWK Arena, Augsburg"],
+      ["2026-10-01","20:45","GER","SRB",2,0,"Allianz Arena, Munich"],
+      ["2026-10-01","20:45","GRE","NED",2,2,"Toumba Stadium, Thessaloniki"],
+      ["2026-10-04","20:45","GRE","GER",0,0,"Toumba Stadium, Thessaloniki"],
+      ["2026-10-04","20:45","NED","SRB",2,1,"Philips Stadion, Eindhoven"],
+      ["2026-11-13","20:45","NED","GRE",null,null,"Johan Cruyff Arena, Amsterdam"],
+      ["2026-11-13","20:45","SRB","GER",null,null,"Rajko Mitić Stadium, Belgrade"],
+      ["2026-11-16","20:45","GER","NED",null,null,"Olympiastadion, Berlin"],
+      ["2026-11-16","20:45","GRE","SRB",null,null,"Panthessaliko Stadium, Volos"]
+    ]},
+    { g:"3", order:["ESP", "CRO", "ENG", "CZE"], m:[
+      ["2026-09-26","20:45","CZE","CRO",1,2,"Fortuna Arena, Prague"],
+      ["2026-09-26","20:45","ENG","ESP",2,3,"Wembley Stadium, London"],
+      ["2026-09-29","20:45","CZE","ENG",0,2,"Fortuna Arena, Prague"],
+      ["2026-09-29","20:45","ESP","CRO",4,1,"Ramón Sánchez-Pizjuán, Seville"],
+      ["2026-10-03","18:00","CRO","ENG",0,7,"Stadion HNK Rijeka, Rijeka"],
+      ["2026-10-03","20:45","ESP","CZE",3,1,"Carlos Tartiere, Oviedo"],
+      ["2026-10-06","20:45","CRO","ESP",1,2,"Stadion Poljud, Split"],
+      ["2026-10-06","20:45","ENG","CZE",3,0,"Wembley Stadium, London"],
+      ["2026-11-12","20:45","CZE","ESP",null,null,"Stadion Letná, Prague"],
+      ["2026-11-12","20:45","ENG","CRO",null,null,"Wembley Stadium, London"],
+      ["2026-11-15","20:45","CRO","CZE",null,null,"Opus Arena, Osijek"],
+      ["2026-11-15","20:45","ESP","ENG",null,null,"Metropolitano Stadium, Madrid"]
+    ]},
+    { g:"4", order:["POR", "DEN", "NOR", "WAL"], m:[
+      ["2026-09-24","20:45","NOR","DEN",3,2,"Ullevaal Stadion, Oslo"],
+      ["2026-09-24","20:45","POR","WAL",1,0,"Estádio José Alvalade, Lisbon"],
+      ["2026-09-27","18:00","DEN","WAL",2,0,"Parken Stadium, Copenhagen"],
+      ["2026-09-27","20:45","NOR","POR",1,2,"Ullevaal Stadion, Oslo"],
+      ["2026-10-01","20:45","DEN","POR",2,4,"Parken Stadium, Copenhagen"],
+      ["2026-10-01","20:45","WAL","NOR",2,1,"Cardiff City Stadium, Cardiff"],
+      ["2026-10-04","20:45","POR","NOR",2,1,"Estádio do Dragão, Porto"],
+      ["2026-10-04","20:45","WAL","DEN",0,1,"Cardiff City Stadium, Cardiff"],
+      ["2026-11-14","18:00","NOR","WAL",null,null,"Ullevaal Stadion, Oslo"],
+      ["2026-11-14","20:45","POR","DEN",null,null,"Estádio Municipal, Braga"],
+      ["2026-11-17","20:45","DEN","NOR",null,null,"Parken Stadium, Copenhagen"],
+      ["2026-11-17","20:45","WAL","POR",null,null,"Cardiff City Stadium, Cardiff"]
+    ]},
+  ],
+  B: [
+    { g:"1", order:["SCO", "SUI", "SVN", "MKD"], m:[
+      ["2026-09-26","15:00","SVN","SCO",0,0,"Stožice Stadium, Ljubljana"],
+      ["2026-09-26","20:45","MKD","SUI",0,3,"Toše Proeski Arena, Skopje"],
+      ["2026-09-29","20:45","SCO","SUI",0,3,"Hampden Park, Glasgow"],
+      ["2026-09-29","20:45","SVN","MKD",2,0,"Stožice Stadium, Ljubljana"],
+      ["2026-10-03","20:45","MKD","SCO",0,2,"Toše Proeski Arena, Skopje"],
+      ["2026-10-03","20:45","SUI","SVN",2,1,"Thermoplan Arena, Lucerne"],
+      ["2026-10-06","20:45","SCO","SVN",1,2,"Hampden Park, Glasgow"],
+      ["2026-10-06","20:45","SUI","MKD",3,0,"Thermoplan Arena, Lucerne"],
+      ["2026-11-13","20:45","SCO","MKD",null,null,"Hampden Park, Glasgow"],
+      ["2026-11-13","20:45","SVN","SUI",null,null,"Stožice Stadium, Ljubljana"],
+      ["2026-11-16","20:45","MKD","SVN",null,null,"Toše Proeski Arena, Skopje"],
+      ["2026-11-16","20:45","SUI","SCO",null,null,"Sitterstadion, St. Gallen"]
+    ]},
+    { g:"2", order:["HUN", "UKR", "GEO", "NIR"], m:[
+      ["2026-09-25","18:00","GEO","NIR",0,1,"Boris Paichadze Dinamo Arena, Tbilisi"],
+      ["2026-09-25","20:45","HUN","UKR",0,1,"Puskás Aréna, Budapest"],
+      ["2026-09-28","18:00","GEO","UKR",0,0,"Boris Paichadze Dinamo Arena, Tbilisi"],
+      ["2026-09-28","20:45","NIR","HUN",0,0,"Windsor Park, Belfast"],
+      ["2026-10-02","20:45","HUN","GEO",1,0,"Puskás Aréna, Budapest"],
+      ["2026-10-02","20:45","UKR","NIR",0,3,"Anton Malatinský Stadium, Trnava (Slovakia)"],
+      ["2026-10-05","20:45","NIR","GEO",0,0,"Windsor Park, Belfast"],
+      ["2026-10-05","20:45","UKR","HUN",1,2,"Anton Malatinský Stadium, Trnava (Slovakia)"],
+      ["2026-11-14","18:00","GEO","HUN",null,null,"Boris Paichadze Dinamo Arena, Tbilisi"],
+      ["2026-11-14","20:45","NIR","UKR",null,null,"Windsor Park, Belfast"],
+      ["2026-11-17","20:45","HUN","NIR",null,null,"Puskás Aréna, Budapest"],
+      ["2026-11-17","20:45","UKR","GEO",null,null,"Anton Malatinský Stadium, Trnava (Slovakia)"]
+    ]},
+    { g:"3", order:["ISR", "AUT", "IRL", "KOS"], m:[
+      ["2026-09-24","20:45","AUT","ISR",3,1,"Raiffeisen Arena, Linz"],
+      ["2026-09-24","20:45","KOS","IRL",1,0,"Fadil Vokrri Stadium, Pristina"],
+      ["2026-09-27","18:00","AUT","KOS",3,1,"Ernst-Happel-Stadion, Vienna"],
+      ["2026-09-27","20:45","ISR","IRL",0,3,"Nagyerdei Stadion, Debrecen (Hungary)"],
+      ["2026-10-01","20:45","ISR","KOS",0,0,"Nagyerdei Stadion, Debrecen (Hungary)"],
+      ["2026-10-01","20:45","IRL","AUT",2,2,"Aviva Stadium, Dublin"],
+      ["2026-10-04","18:00","KOS","AUT",1,1,"Fadil Vokrri Stadium, Pristina"],
+      ["2026-10-04","20:45","IRL","ISR",1,1,"TSC Arena, Bačka Topola (Serbia)"],
+      ["2026-11-14","15:00","KOS","ISR",null,null,"Fadil Vokrri Stadium, Pristina"],
+      ["2026-11-14","20:45","AUT","IRL",null,null,"Raiffeisen Arena, Linz"],
+      ["2026-11-17","20:45","ISR","AUT",null,null,"Nagyerdei Stadion, Debrecen (Hungary)"],
+      ["2026-11-17","20:45","IRL","KOS",null,null,"Aviva Stadium, Dublin"]
+    ]},
+    { g:"4", order:["POL", "BIH", "ROU", "SWE"], m:[
+      ["2026-09-25","20:45","POL","BIH",0,0,"Stadion Narodowy, Warsaw"],
+      ["2026-09-25","20:45","SWE","ROU",2,1,"Nationalarenan, Solna"],
+      ["2026-09-28","20:45","ROU","BIH",2,4,"Arena Națională, Bucharest"],
+      ["2026-09-28","20:45","SWE","POL",3,1,"Nationalarenan, Solna"],
+      ["2026-10-02","20:45","BIH","SWE",1,1,"Bilino Polje Stadium, Zenica"],
+      ["2026-10-02","20:45","POL","ROU",6,0,"Stadion Narodowy, Warsaw"],
+      ["2026-10-05","20:45","BIH","POL",1,0,"Bilino Polje Stadium, Zenica"],
+      ["2026-10-05","20:45","ROU","SWE",0,1,"Arena Națională, Bucharest"],
+      ["2026-11-14","20:45","ROU","POL",null,null,"Arena Națională, Bucharest"],
+      ["2026-11-14","20:45","SWE","BIH",null,null,"Nationalarenan, Solna"],
+      ["2026-11-17","20:45","BIH","ROU",null,null,"Bilino Polje Stadium, Zenica"],
+      ["2026-11-17","20:45","POL","SWE",null,null,"Wrocław Stadium, Wrocław"]
+    ]},
+  ],
+  C: [
+    { g:"1", order:["ALB", "FIN", "BLR", "SMR"], m:[
+      ["2026-09-26","18:00","SMR","FIN",0,7,"San Marino Stadium, Serravalle"],
+      ["2026-09-26","20:45","ALB","BLR",2,0,"Arena Kombëtare, Tirana"],
+      ["2026-09-29","18:00","FIN","BLR",0,0,"Helsinki Olympic Stadium, Helsinki"],
+      ["2026-09-29","20:45","SMR","ALB",0,3,"San Marino Stadium, Serravalle"],
+      ["2026-10-03","15:00","FIN","ALB",2,1,"Helsinki Olympic Stadium, Helsinki"],
+      ["2026-10-03","18:00","BLR","SMR",4,0,"Illovszky Rudolf Stadion, Budapest (Hungary)"],
+      ["2026-10-06","20:45","ALB","SMR",2,1,"Arena Kombëtare, Tirana"],
+      ["2026-10-06","20:45","BLR","FIN",1,0,"Illovszky Rudolf Stadion, Budapest (Hungary)"],
+      ["2026-11-12","20:45","ALB","FIN",null,null,"Arena Kombëtare, Tirana"],
+      ["2026-11-12","20:45","SMR","BLR",null,null,"San Marino Stadium, Serravalle"],
+      ["2026-11-15","18:00","BLR","ALB",null,null,"Illovszky Rudolf Stadion, Budapest (Hungary)"],
+      ["2026-11-15","18:00","FIN","SMR",null,null,"Töölö Football Stadium, Helsinki"]
+    ]},
+    { g:"2", order:["MNE", "ARM", "CYP", "LVA"], m:[
+      ["2026-09-25","18:00","ARM","LVA",2,0,"Vazgen Sargsyan Republican Stadium, Yerevan"],
+      ["2026-09-25","20:45","MNE","CYP",2,1,"Podgorica City Stadium, Podgorica"],
+      ["2026-09-28","18:00","ARM","MNE",2,3,"Vazgen Sargsyan Republican Stadium, Yerevan"],
+      ["2026-09-28","18:00","LVA","CYP",0,0,"Skonto Stadium, Riga"],
+      ["2026-10-02","18:00","CYP","ARM",2,0,"GSP Stadium, Nicosia"],
+      ["2026-10-02","18:00","LVA","MNE",1,2,"Skonto Stadium, Riga"],
+      ["2026-10-05","18:00","CYP","LVA",2,1,"GSP Stadium, Nicosia"],
+      ["2026-10-05","20:45","MNE","ARM",0,0,"Podgorica City Stadium, Podgorica"],
+      ["2026-11-12","18:00","ARM","CYP",null,null,"Vazgen Sargsyan Republican Stadium, Yerevan"],
+      ["2026-11-12","20:45","MNE","LVA",null,null,"Podgorica City Stadium, Podgorica"],
+      ["2026-11-15","15:00","CYP","MNE",null,null,"Alphamega Stadium, Limassol"],
+      ["2026-11-15","15:00","LVA","ARM",null,null,"Skonto Stadium, Riga"]
+    ]},
+    { g:"3", order:["KAZ", "SVK", "FRO", "MDA"], m:[
+      ["2026-09-26","18:00","FRO","KAZ",1,1,"Tórsvøllur, Tórshavn"],
+      ["2026-09-26","20:45","SVK","MDA",2,0,"Tatran Stadium, Prešov"],
+      ["2026-09-29","18:00","MDA","FRO",1,1,"Zimbru Stadium, Chișinău"],
+      ["2026-09-29","20:45","SVK","KAZ",2,1,"Košická futbalová aréna, Košice"],
+      ["2026-10-02","16:00","KAZ","MDA",1,2,"Astana Arena, Astana"],
+      ["2026-10-02","20:45","FRO","SVK",1,1,"Tórsvøllur, Tórshavn"],
+      ["2026-10-06","16:00","KAZ","FRO",2,2,"Astana Arena, Astana"],
+      ["2026-10-06","20:45","MDA","SVK",0,4,"Zimbru Stadium, Chișinău"],
+      ["2026-11-13","18:00","MDA","KAZ",null,null,"Zimbru Stadium, Chișinău"],
+      ["2026-11-13","20:45","SVK","FRO",null,null,"Košická futbalová aréna, Košice"],
+      ["2026-11-16","16:00","FRO","MDA",null,null,"Tórsvøllur, Tórshavn"],
+      ["2026-11-16","16:00","KAZ","SVK",null,null,"Astana Arena, Astana"]
+    ]},
+    { g:"4", order:["ISL", "BUL", "EST", "LUX"], m:[
+      ["2026-09-26","18:00","BUL","LUX",1,2,"Hristo Botev Stadium, Plovdiv"],
+      ["2026-09-26","18:00","ISL","EST",1,1,"Laugardalsvöllur, Reykjavík"],
+      ["2026-09-29","20:45","BUL","EST",0,0,"Hristo Botev Stadium, Plovdiv"],
+      ["2026-09-29","20:45","LUX","ISL",0,3,"Stade de Luxembourg, Luxembourg City"],
+      ["2026-10-03","18:00","EST","LUX",1,0,"Lilleküla Stadium, Tallinn"],
+      ["2026-10-03","18:00","ISL","BUL",3,0,"Laugardalsvöllur, Reykjavík"],
+      ["2026-10-06","20:45","EST","ISL",0,0,"Lilleküla Stadium, Tallinn"],
+      ["2026-10-06","20:45","LUX","BUL",0,2,"Stade de Luxembourg, Luxembourg City"],
+      ["2026-11-13","20:45","BUL","ISL",null,null,"Hristo Botev Stadium, Plovdiv"],
+      ["2026-11-13","20:45","LUX","EST",null,null,"Stade de Luxembourg, Luxembourg City"],
+      ["2026-11-16","18:00","EST","BUL",null,null,"Lilleküla Stadium, Tallinn"],
+      ["2026-11-16","18:00","ISL","LUX",null,null,"Laugardalsvöllur, Reykjavík"]
+    ]},
+  ],
+  D: [
+    { g:"1", order:["GIB", "MLT", "AND"], m:[
+      ["2026-09-24","18:00","AND","MLT",1,2,"Estadi de la FAF, Encamp"],
+      ["2026-09-27","18:00","GIB","AND",0,0,"Europa Sports Park, Gibraltar"],
+      ["2026-10-01","20:45","MLT","GIB",1,1,"National Stadium, Ta' Qali"],
+      ["2026-10-04","18:00","MLT","AND",1,0,"National Stadium, Ta' Qali"],
+      ["2026-11-13","20:45","AND","GIB",null,null,"Estadi de la FAF, Encamp"],
+      ["2026-11-16","20:45","GIB","MLT",null,null,"Europa Sports Park, Gibraltar"]
+    ]},
+    { g:"2", order:["LTU", "AZE", "LIE"], m:[
+      ["2026-09-24","20:45","LIE","LTU",0,2,"Rheinpark Stadion, Vaduz"],
+      ["2026-09-27","15:00","LTU","AZE",1,1,"Darius and Girėnas Stadium, Kaunas"],
+      ["2026-10-01","18:00","AZE","LIE",0,0,"Tofiq Bahramov Republican Stadium, Baku"],
+      ["2026-10-04","15:00","AZE","LTU",1,0,"Neftçi Arena, Baku"],
+      ["2026-11-13","20:45","LIE","AZE",null,null,"Rheinpark Stadion, Vaduz"],
+      ["2026-11-16","18:00","LTU","LIE",null,null,"Darius and Girėnas Stadium, Kaunas"]
+    ]},
+  ],
+};
+
+const nlName = (c) => NL_TEAMS[c][0];
+const nlFlag = (c, s = 24) => `<img src="https://flagcdn.com/w80/${NL_TEAMS[c][1]}.png" alt="${NL_TEAMS[c][0]}" loading="lazy"
+    style="width:${s}px;height:auto;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.2);display:inline-block;vertical-align:middle">`;
+/* UEFA lists CEST (UTC+2) until clocks change on 25 Oct 2026, then CET (UTC+1); hora MX is UTC−6 */
+function nlMx(date, time) {
+  const [h, m] = time.split(":").map(Number);
+  return String(h - (date < "2026-10-25" ? 8 : 7)).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+}
+/* matchday from the date windows of the 2026-27 calendar */
+function nlMatchday(date) {
+  if (date <= "2026-09-26") return 1;
+  if (date <= "2026-09-29") return 2;
+  if (date <= "2026-10-03") return 3;
+  if (date <= "2026-10-06") return 4;
+  if (date <= "2026-11-14") return 5;
+  return 6;
+}
+
+/* every league-phase match as an object, id nl<League><group>_<n> */
+const NL_MATCHES = [];
+Object.keys(NL_GROUPS).forEach(L => NL_GROUPS[L].forEach(gr => gr.m.forEach((r, i) => {
+  NL_MATCHES.push({ id: "nl" + L + gr.g + "_" + (i + 1), L, g: gr.g, date: r[0], time: r[1], a: r[2], b: r[3],
+                    ga: r[4], gb: r[5], stadium: r[6], played: r[4] !== null });
+})));
+
+/* Diego's predicted scores for the matches not played yet: { id: [homeGoals, awayGoals] } */
+const NLPKEY = "diegosWorldCup.nations2627.pred.v1";
+let nlPred = {};
+try { nlPred = JSON.parse(localStorage.getItem(NLPKEY) || "{}"); } catch(e) { nlPred = {}; }
+const nlSavePred = () => localStorage.setItem(NLPKEY, JSON.stringify(nlPred));
+
+/* the score that counts: the real one, else Diego's prediction, else nothing yet */
+function nlScore(m) {
+  if (m.played) return [m.ga, m.gb];
+  return nlPred[m.id] || null;
+}
+const nlGroupMatches = (L, g) => NL_MATCHES.filter(m => m.L === L && m.g === g);
+
+/* stats over a list of matches, optionally only matches between `only` teams */
+function nlStats(codes, ms, only) {
+  const t = {};
+  codes.forEach(c => t[c] = { c, pj:0, g:0, e:0, p:0, gf:0, gc:0, agf:0, aw:0 });
+  ms.forEach(m => {
+    const s = nlScore(m);
+    if (!s || !t[m.a] || !t[m.b]) return;
+    if (only && !(only.includes(m.a) && only.includes(m.b))) return;
+    const A = t[m.a], B = t[m.b];
+    A.pj++; B.pj++;
+    A.gf += s[0]; A.gc += s[1]; B.gf += s[1]; B.gc += s[0];
+    B.agf += s[1];
+    if (s[0] > s[1]) { A.g++; B.p++; }
+    else if (s[1] > s[0]) { B.g++; A.p++; B.aw++; }
+    else { A.e++; B.e++; }
+  });
+  Object.values(t).forEach(r => { r.pts = r.g * 3 + r.e; r.dg = r.gf - r.gc; });
+  return t;
+}
+
+/* split a list into buckets of equal key, best first (keys are arrays compared left to right) */
+function nlBuckets(list, key) {
+  const cmp = (x, y) => { for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return y[i] - x[i]; return 0; };
+  const sorted = list.slice().sort((p, q) => cmp(key(p), key(q)));
+  const out = [];
+  sorted.forEach(c => {
+    const last = out[out.length - 1];
+    if (last && cmp(key(last[0]), key(c)) === 0) last.push(c); else out.push([c]);
+  });
+  return out;
+}
+
+/* UEFA tiebreakers: points; then head-to-head points, goal difference, goals
+   among the tied teams (re-applied to any smaller group still tied); then
+   overall goal difference, goals, away goals, wins, away wins; then the
+   access-list order (disciplinary points are not modelled) */
+function nlSortGroup(L, g) {
+  const gr = NL_GROUPS[L].find(x => x.g === g);
+  const ms = nlGroupMatches(L, g);
+  const all = nlStats(gr.order, ms);
+  const overall = (sub) => sub.slice().sort((x, y) =>
+    all[y].dg - all[x].dg || all[y].gf - all[x].gf || all[y].agf - all[x].agf ||
+    all[y].g - all[x].g || all[y].aw - all[x].aw || gr.order.indexOf(x) - gr.order.indexOf(y));
+  const h2h = (sub) => {
+    if (sub.length === 1) return sub;
+    const h = nlStats(sub, ms, sub);
+    const parts = nlBuckets(sub, c => [h[c].pts, h[c].dg, h[c].gf]);
+    if (parts.length === 1) return overall(sub);
+    return parts.flatMap(p => p.length === 1 ? p : h2h(p));
+  };
+  const order = nlBuckets(gr.order, c => [all[c].pts]).flatMap(p => h2h(p));
+  return order.map(c => all[c]);
+}
+
+/* comparing teams in the same position across different groups */
+function nlCrossRank(rows) {
+  return rows.slice().sort((x, y) =>
+    y.pts - x.pts || y.dg - x.dg || y.gf - x.gf || y.agf - x.agf || y.g - x.g || y.aw - x.aw || x.gi - y.gi);
+}
+
+/* what each finishing position earns, per league (2026-27 format) */
+const NL_ZONE = {
+  qf:   { text:"Cuartos de final", cls:"bg-emerald-500/15", dot:"bg-emerald-400", badge:"text-emerald-300" },
+  up:   { text:"Sube de liga",     cls:"bg-sky-500/15",     dot:"bg-sky-400",     badge:"text-sky-300" },
+  stay: { text:"Se queda",         cls:"",                  dot:"bg-slate-500",   badge:"text-slate-400" },
+  po:   { text:"Play-off (marzo)", cls:"bg-amber-500/15",   dot:"bg-amber-400",   badge:"text-amber-300" },
+  down: { text:"Baja de liga",     cls:"bg-rose-500/15",    dot:"bg-rose-400",    badge:"text-rose-300" }
+};
+function nlOutcome(L) {
+  const tables = NL_GROUPS[L].map((gr, gi) => nlSortGroup(L, gr.g).map(r => ({ ...r, gi, group: gr.g })));
+  const zone = {}, note = {};
+  const set = (r, z, n) => { zone[r.c] = z; note[r.c] = n; };
+  if (L === "A") {
+    tables.forEach(t => { set(t[0], "qf", "1.º de grupo: a Cuartos"); set(t[1], "qf", "2.º de grupo: a Cuartos"); });
+    const thirds = nlCrossRank(tables.map(t => t[2]));
+    const fourths = nlCrossRank(tables.map(t => t[3]));
+    thirds.forEach((r, i) => i < 2 ? set(r, "stay", "Uno de los 2 mejores 3.º: se queda en Liga A")
+                                   : set(r, "po", "Uno de los 2 peores 3.º: play-off contra un 2.º de Liga B"));
+    fourths.forEach((r, i) => i < 2 ? set(r, "po", "Uno de los 2 mejores 4.º: play-off contra un 2.º de Liga B")
+                                    : set(r, "down", "Uno de los 2 peores 4.º: baja directo a Liga B"));
+    return { tables, zone, note, thirds, fourths };
+  }
+  if (L === "B") {
+    tables.forEach(t => {
+      set(t[0], "up", "1.º: sube a Liga A");
+      set(t[1], "po", "2.º: play-off contra un equipo de Liga A");
+      set(t[2], "stay", "3.º: se queda en Liga B");
+      set(t[3], "po", "4.º: play-off contra un 2.º de Liga C");
+    });
+  } else if (L === "C") {
+    tables.forEach(t => {
+      set(t[0], "up", "1.º: sube a Liga B");
+      set(t[1], "po", "2.º: play-off contra un 4.º de Liga B");
+      set(t[2], "stay", "3.º: se queda en Liga C");
+      set(t[3], "stay", "4.º: se queda en Liga C (ya no hay Liga D)");
+    });
+  } else {
+    tables.forEach(t => t.forEach(r => set(r, "up", "Todos suben a Liga C (la Liga D desaparece)")));
+  }
+  return { tables, zone, note };
+}
+/* matches with no real score and no prediction yet */
+const nlMissing = (L) => NL_MATCHES.filter(m => (!L || m.L === L) && !nlScore(m)).length;
+
+/* ---- league view: one league at a time ---- */
+let nlLeague = "A";
+const NL_LEAGUE_INFO = {
+  A: "Los <b class='text-emerald-300'>1.º y 2.º</b> de cada grupo van a <b>Cuartos de final</b> (marzo 2027) y de ahí al <b class='text-yellow-300'>Final Four</b> (junio 2027). Los <b class='text-rose-300'>2 peores 4.º</b> bajan a Liga B; los <b class='text-amber-300'>2 peores 3.º y los 2 mejores 4.º</b> juegan un play-off contra Liga B.",
+  B: "Los <b class='text-sky-300'>1.º suben a Liga A</b>. Los <b class='text-amber-300'>2.º</b> juegan play-off contra equipos de Liga A, y los <b class='text-amber-300'>4.º</b> juegan play-off contra los 2.º de Liga C.",
+  C: "Los <b class='text-sky-300'>1.º suben a Liga B</b>. Los <b class='text-amber-300'>2.º</b> juegan play-off contra los 4.º de Liga B. Esta vez <b>nadie baja</b>: la Liga D desaparece.",
+  D: "La Liga D <b>desaparece</b> después de esta edición, así que <b class='text-sky-300'>los 6 equipos suben a Liga C</b> pase lo que pase. ¡Pero igual quieren ganar su grupo!"
+};
+
+function nlScoreRow(m) {
+  const md = nlMatchday(m.date);
+  const when = `J${md} · ${q22date(m.date)} · 🕒 ${nlMx(m.date, m.time)} MX`;
+  const side = (c, right) => `<span class="inline-flex items-center gap-1.5 ${right ? "flex-row-reverse text-right" : ""}">
+      ${nlFlag(c, 20)}<span class="truncate">${nlName(c)}</span></span>`;
+  if (m.played) {
+    const wa = m.ga > m.gb, wb = m.gb > m.ga;
+    return `<div class="rounded-lg bg-slate-800/40 border border-slate-700/60 px-2 py-1.5">
+      <div class="flex items-center gap-2 text-[11px]">
+        <div class="flex-1 min-w-0 flex justify-end ${wa ? "text-emerald-200 font-semibold" : "text-slate-400"}">${side(m.a, true)}</div>
+        <div class="px-2 py-0.5 rounded bg-slate-900/70 font-black text-slate-100 text-xs whitespace-nowrap">${m.ga}–${m.gb}</div>
+        <div class="flex-1 min-w-0 flex ${wb ? "text-emerald-200 font-semibold" : "text-slate-400"}">${side(m.b, false)}</div>
+      </div>
+      <div class="text-[10px] text-slate-500 text-center mt-0.5">✅ ${when} · 🏟️ ${m.stadium}</div>
+    </div>`;
+  }
+  const p = nlPred[m.id];
+  const step = (i) => `<div class="flex items-center gap-1">
+      <button data-nlstep="${m.id}" data-side="${i}" data-d="-1" class="w-6 h-6 rounded-md bg-slate-700/60 hover:bg-slate-600 text-slate-100 font-black leading-none">−</button>
+      <span class="w-6 text-center text-base font-black ${p ? "text-yellow-200" : "text-slate-500"}">${p ? p[i] : "?"}</span>
+      <button data-nlstep="${m.id}" data-side="${i}" data-d="1" class="w-6 h-6 rounded-md bg-slate-700/60 hover:bg-slate-600 text-slate-100 font-black leading-none">+</button>
+    </div>`;
+  return `<div class="rounded-lg ${p ? "bg-yellow-500/10 border-yellow-400/30" : "bg-slate-800/60 border-slate-600/60"} border px-2 py-1.5">
+    <div class="flex items-center gap-2 text-[11px]">
+      <div class="flex-1 min-w-0 flex justify-end text-slate-200 font-semibold">${side(m.a, true)}</div>
+      ${step(0)}<span class="text-slate-500 font-black">–</span>${step(1)}
+      <div class="flex-1 min-w-0 flex text-slate-200 font-semibold">${side(m.b, false)}</div>
+    </div>
+    <div class="text-[10px] text-slate-500 text-center mt-0.5">
+      ${p ? "🔮 Tu resultado" : "👆 ¿Cuántos goles?"} · ${when} · 🏟️ ${m.stadium}
+      ${p ? `<button data-nlclear="${m.id}" class="ml-1 text-rose-300 hover:text-rose-200">✕ borrar</button>` : ""}
+    </div>
+  </div>`;
+}
+
+function nlGroupCard(L, gr, table, out) {
+  const ms = nlGroupMatches(L, gr.g);
+  const played = ms.filter(m => m.played), left = ms.filter(m => !m.played);
+  const card = document.createElement("div");
+  card.className = "glass rounded-2xl p-4";
+  card.innerHTML = `
+    <div class="flex items-center gap-2 mb-3">
+      <div class="w-9 h-9 rounded-full bg-indigo-500/15 border border-indigo-400/30 flex items-center justify-center text-indigo-200 font-black text-sm">${L}${gr.g}</div>
+      <div class="text-xs uppercase tracking-widest text-slate-400">Liga ${L} · Grupo ${gr.g}</div>
+    </div>
+    <table class="w-full text-[11px] mb-3">
+      <thead><tr class="text-slate-500 text-[10px]">
+        <th class="text-left font-medium pb-1">Equipo</th>
+        <th class="font-medium pb-1 w-6">PJ</th><th class="font-medium pb-1 w-5">G</th><th class="font-medium pb-1 w-5">E</th>
+        <th class="font-medium pb-1 w-5">P</th><th class="font-medium pb-1 w-7">GF</th><th class="font-medium pb-1 w-7">GC</th>
+        <th class="font-medium pb-1 w-7">DG</th><th class="font-medium pb-1 w-8">Pts</th>
+      </tr></thead>
+      <tbody>
+        ${table.map((r, i) => {
+          const z = NL_ZONE[out.zone[r.c]];
+          return `<tr class="${z.cls}" title="${out.note[r.c]}">
+            <td class="py-1 pl-1 rounded-l-md"><span class="inline-flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full ${z.dot}"></span><span class="text-slate-500 w-3">${i + 1}</span>
+              ${nlFlag(r.c, 20)}<span class="text-slate-100 font-semibold">${nlName(r.c)}</span></span></td>
+            <td class="text-center">${r.pj}</td><td class="text-center">${r.g}</td><td class="text-center">${r.e}</td>
+            <td class="text-center">${r.p}</td><td class="text-center">${r.gf}</td><td class="text-center">${r.gc}</td>
+            <td class="text-center">${r.dg > 0 ? "+" : ""}${r.dg}</td>
+            <td class="text-center font-black text-white rounded-r-md">${r.pts}</td>
+          </tr>`;
+        }).join("")}
+      </tbody>
+    </table>
+    <div class="text-[10px] uppercase tracking-widest text-yellow-300/80 mb-1.5">⏳ Por jugar · noviembre 2026 · ¡tú eliges!</div>
+    <div class="space-y-1.5 mb-3">${left.map(nlScoreRow).join("")}</div>
+    <details class="text-[11px]">
+      <summary class="cursor-pointer text-slate-400 hover:text-slate-200 select-none">✅ Ver los ${played.length} partidos ya jugados</summary>
+      <div class="space-y-1.5 mt-1.5">${played.map(nlScoreRow).join("")}</div>
+    </details>`;
+  return card;
+}
+
+/* the "what happens next" summary for the league on screen */
+function nlNextHtml(L, out) {
+  const list = (codes) => codes.length
+    ? codes.map(c => `<span class="inline-flex items-center gap-1.5 bg-slate-800/60 rounded-lg px-2 py-1 m-0.5">${nlFlag(c, 18)}<span class="text-xs text-slate-100">${nlName(c)}</span></span>`).join("")
+    : `<span class="text-xs text-slate-500">—</span>`;
+  const byZone = (z) => out.tables.flat().filter(r => out.zone[r.c] === z).map(r => r.c);
+  const box = (z, title, when, codes) => `<div class="rounded-xl border border-white/10 ${NL_ZONE[z].cls || "bg-slate-800/30"} p-3">
+      <div class="text-sm font-black ${NL_ZONE[z].badge}">${title}</div>
+      <div class="text-[11px] text-slate-400 mb-1.5">${when}</div>
+      <div>${list(codes)}</div>
+    </div>`;
+  let html = "";
+  if (L === "A") {
+    html += box("qf", "🏆 A Cuartos de final", "Ida y vuelta · 25–30 de marzo de 2027 · los 4 ganadores van al Final Four (junio 2027)", byZone("qf"));
+    html += box("stay", "😌 Se quedan en Liga A", "Los 2 mejores 3.º de los cuatro grupos", byZone("stay"));
+    html += box("po", "⚔️ Play-off para no bajar", "Contra los 2.º de Liga B · ida y vuelta · marzo 2027", byZone("po"));
+    html += box("down", "⬇️ Bajan a Liga B", "Los 2 peores 4.º de los cuatro grupos", byZone("down"));
+    const rank = (rows, title, cut, good, bad) => `<div class="rounded-xl bg-slate-800/30 border border-white/10 p-3">
+        <div class="text-xs font-black text-slate-200 mb-1">${title}</div>
+        ${rows.map((r, i) => `<div class="flex items-center gap-2 text-[11px] py-0.5 ${i < cut ? good : bad}">
+            <span class="w-3 text-slate-500">${i + 1}</span>${nlFlag(r.c, 18)}<span class="flex-1">${nlName(r.c)} <span class="text-slate-500">(Grupo A${r.group})</span></span>
+            <span>${r.pts} pts · ${r.dg > 0 ? "+" : ""}${r.dg}</span></div>`).join("")}
+      </div>`;
+    html += rank(out.thirds, "Tabla de los terceros", 2, "text-slate-200", "text-amber-300");
+    html += rank(out.fourths, "Tabla de los cuartos", 2, "text-amber-300", "text-rose-300");
+  } else if (L === "B") {
+    html += box("up", "⬆️ Suben a Liga A", "Los 4 primeros de grupo", byZone("up"));
+    html += box("po", "⚔️ Play-offs (marzo 2027)", "Los 2.º juegan contra Liga A para subir; los 4.º juegan contra los 2.º de Liga C para no bajar", byZone("po"));
+    html += box("stay", "😌 Se quedan en Liga B", "Los 4 terceros", byZone("stay"));
+  } else if (L === "C") {
+    html += box("up", "⬆️ Suben a Liga B", "Los 4 primeros de grupo", byZone("up"));
+    html += box("po", "⚔️ Play-off para subir (marzo 2027)", "Los 2.º juegan contra los 4.º de Liga B", byZone("po"));
+    html += box("stay", "😌 Se quedan en Liga C", "Los 3.º y 4.º — nadie baja", byZone("stay"));
+  } else {
+    html += box("up", "⬆️ Suben a Liga C", "Los 6 equipos de la Liga D", byZone("up"));
+  }
+  return html;
+}
+
+function renderNlLeague() {
+  const L = nlLeague;
+  ["A","B","C","D"].forEach(x => document.getElementById("nlbtn-" + x).classList.toggle("active", x === L));
+  document.getElementById("nl-league-info").innerHTML = NL_LEAGUE_INFO[L];
+  const out = nlOutcome(L);
+  const el = document.getElementById("nl-groups");
+  el.innerHTML = "";
+  NL_GROUPS[L].forEach((gr, gi) => el.appendChild(nlGroupCard(L, gr, out.tables[gi], out)));
+  const miss = nlMissing(L);
+  document.getElementById("nl-missing").innerHTML = miss
+    ? `Faltan <b class="text-yellow-300">${miss}</b> partidos de la Liga ${L} por elegir. Las tablas cambian con cada resultado que pongas.`
+    : `<b class="text-emerald-300">¡Liga ${L} completa!</b> Así terminaría la fase de liga con tus resultados.`;
+  document.getElementById("nl-next-title").textContent = "¿Qué pasa después en la Liga " + L + "?";
+  document.getElementById("nl-next").innerHTML = nlNextHtml(L, out)
+    + (miss ? `<div class="sm:col-span-2 text-[11px] text-slate-500 text-center">Es provisional: puede cambiar con los ${miss} partidos que faltan.</div>` : "");
+}
+
+/* fill every missing match of the league on screen with a random (realistic-ish) score */
+function nlRandomFill() {
+  const goals = () => [0,0,1,1,1,2,2,3,4][Math.floor(Math.random() * 9)];
+  NL_MATCHES.forEach(m => { if (m.L === nlLeague && !m.played && !nlPred[m.id]) nlPred[m.id] = [goals(), goals()]; });
+  nlSavePred();
+  renderNations();
+}
+function nlClearLeague() {
+  if (!confirm("¿Borrar tus resultados de la Liga " + nlLeague + "?")) return;
+  NL_MATCHES.forEach(m => { if (m.L === nlLeague) delete nlPred[m.id]; });
+  nlSavePred();
+  renderNations();
+}
+
+/* steppers, clear buttons and the league switcher (not team buttons, so they get their own listener) */
+document.addEventListener("click", (e) => {
+  const st = e.target.closest("[data-nlstep]");
+  if (st) {
+    const id = st.dataset.nlstep, i = +st.dataset.side, d = +st.dataset.d;
+    const p = nlPred[id] ? nlPred[id].slice() : [0, 0];
+    p[i] = Math.max(0, Math.min(9, p[i] + d));
+    nlPred[id] = p;
+    nlSavePred();
+    renderNations();
+    return;
+  }
+  const cl = e.target.closest("[data-nlclear]");
+  if (cl) { delete nlPred[cl.dataset.nlclear]; nlSavePred(); renderNations(); return; }
+  const lg = e.target.closest("[data-nlleague]");
+  if (lg) { nlLeague = lg.dataset.nlleague; renderNations(); }
+});
+
+/* ---- after the league phase: quarter-finals → Final Four, play-offs, 2028-29 leagues ----
+   Shared by "Liga de Naciones UEFA" (tables from scores) and "Inventa tu Liga de
+   Naciones" (tables Diego ranks by hand): each passes its own outcome function,
+   draw, picks and id prefix.
+   The real draws for the quarter-finals and play-offs happen after November and
+   their dates were not published yet, so each tab makes its own draw (following
+   the known rule: a group winner always meets a runner-up from another group,
+   and hosts the second leg). A draw is stored as group positions, so it keeps
+   working as the tables change. */
+const NLDKEY = "diegosWorldCup.nations2627.draw.v1";
+const NLKKEY = "diegosWorldCup.nations2627.ko.v1";
+let nlDraw = null, nlKO = {};
+try { nlDraw = JSON.parse(localStorage.getItem(NLDKEY) || "null"); } catch(e) { nlDraw = null; }
+try { nlKO = JSON.parse(localStorage.getItem(NLKKEY) || "{}"); } catch(e) { nlKO = {}; }
+const nlSaveKO = () => localStorage.setItem(NLKKEY, JSON.stringify(nlKO));
+
+function nlShuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function nlMakeDraw() {
+  let rivals;   /* rivals[w] = group whose runner-up meets the winner of group w (never the same group) */
+  do { rivals = nlShuffle([0, 1, 2, 3]); } while (rivals.some((r, w) => r === w));
+  return {
+    qf: nlShuffle([0, 1, 2, 3]).map(w => [w, rivals[w]]),
+    ab: nlShuffle([0, 1, 2, 3]),   /* Liga B group whose runner-up meets League A play-off slot k */
+    bc: nlShuffle([0, 1, 2, 3])    /* Liga C group whose runner-up meets the 4.º of Liga B group k */
+  };
+}
+const nlDrawOk = (d) => d && d.qf && d.ab && d.bc;
+function nlNewDraw() { nlDraw = nlMakeDraw(); localStorage.setItem(NLDKEY, JSON.stringify(nlDraw)); }
+if (!nlDrawOk(nlDraw)) nlNewDraw();
+
+const NL_KO_LABEL = { qf1:"Cuarto 1", qf2:"Cuarto 2", qf3:"Cuarto 3", qf4:"Cuarto 4",
+                      sf1:"Semifinal 1", sf2:"Semifinal 2", final:"Final", third:"3.er lugar" };
+const nlC = (row) => row ? row.c : null;
+
+/* every knockout tie with its two teams resolved from the tables + the picks.
+   Rows can be null (a group Diego has not ranked yet): the tie then shows who it waits for. */
+function nlTies(out = nlOutcome, draw = nlDraw, ko = nlKO, px = "nl") {
+  const A = out("A"), B = out("B"), C = out("C");
+  const ties = {};
+  draw.qf.forEach(([w, r], i) => {
+    ties[px + "qf" + (i + 1)] = { id: px + "qf" + (i + 1), a: nlC(A.tables[r][1]), b: nlC(A.tables[w][0]),
+      la: "2.º Grupo A" + (r + 1), lb: "1.º Grupo A" + (w + 1),
+      when: "Ida 25–27 mar 2027 en casa del 2.º · Vuelta 28–30 mar en casa del 1.º" };
+  });
+  const win = (id) => { const t = ties[id], k = ko[id]; return t && t.a && t.b && (k === t.a || k === t.b) ? k : null; };
+  const lose = (id) => { const w = win(id); return w ? (w === ties[id].a ? ties[id].b : ties[id].a) : null; };
+  const from = (s, f1, f2, when, losers) => {
+    ties[px + s] = { id: px + s, a: losers ? lose(px + f1) : win(px + f1), b: losers ? lose(px + f2) : win(px + f2),
+      la: (losers ? "Perdedor de " : "Ganador de ") + NL_KO_LABEL[f1], lb: (losers ? "Perdedor de " : "Ganador de ") + NL_KO_LABEL[f2], when };
+  };
+  from("sf1", "qf1", "qf2", "9–10 de junio de 2027 · sede por decidir");
+  from("sf2", "qf3", "qf4", "9–10 de junio de 2027 · sede por decidir");
+  from("final", "sf1", "sf2", "13 de junio de 2027 · sede por decidir");
+  from("third", "sf1", "sf2", "13 de junio de 2027 · sede por decidir", true);
+  /* League A play-off slots: the 2 worst 3.º and the 2 best 4.º */
+  const aSlots = [[A.thirds[2], "3.º", "uno de los 2 peores 3.º"], [A.thirds[3], "3.º", "uno de los 2 peores 3.º"],
+                  [A.fourths[0], "4.º", "uno de los 2 mejores 4.º"], [A.fourths[1], "4.º", "uno de los 2 mejores 4.º"]];
+  aSlots.forEach(([r, pos, ph], k) => {
+    const bg = draw.ab[k];
+    ties[px + "ab" + (k + 1)] = { id: px + "ab" + (k + 1), a: nlC(B.tables[bg][1]), b: nlC(r),
+      la: "Liga B · 2.º Grupo B" + (bg + 1), lb: "Liga A · " + (r ? pos + " Grupo A" + r.group : ph),
+      when: "Ida y vuelta · marzo 2027" };
+  });
+  for (let k = 0; k < 4; k++) {
+    const cg = draw.bc[k];
+    ties[px + "bc" + (k + 1)] = { id: px + "bc" + (k + 1), a: nlC(C.tables[cg][1]), b: nlC(B.tables[k][3]),
+      la: "Liga C · 2.º Grupo C" + (cg + 1), lb: "Liga B · 4.º Grupo B" + (k + 1),
+      when: "Ida y vuelta · marzo 2027" };
+  }
+  return ties;
+}
+/* drop picks whose team is no longer in that tie (cascades down the bracket) */
+function nlValidateKO(out = nlOutcome, draw = nlDraw, ko = nlKO, px = "nl") {
+  let changed = true;
+  while (changed) {
+    changed = false;
+    const ties = nlTies(out, draw, ko, px);
+    Object.keys(ko).forEach(id => {
+      const t = ties[id];
+      if (!t || (ko[id] !== t.a && ko[id] !== t.b)) { delete ko[id]; changed = true; }
+    });
+  }
+}
+
+function nlTieCard(t, title, ko = nlKO, attr = "nlko") {
+  const chosen = ko[t.id] || null;
+  const btn = (c, label) => {
+    if (!c) return `<div class="team-btn flex-1 flex flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 bg-slate-800/40 border border-slate-700 text-slate-500">
+        <div class="text-2xl">❓</div><div class="text-[10px] text-center leading-tight">${label}</div></div>`;
+    const cls = chosen ? (chosen === c ? "win" : "lose") : "";
+    return `<button data-${attr}="${t.id}" data-team="${c}" title="${nlName(c)}"
+        class="team-btn flex-1 flex flex-col items-center gap-1 rounded-xl px-1 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 ${cls}">
+        <div class="code3">${c}</div>${nlFlag(c, 48)}
+        <div class="text-[10px] font-semibold leading-tight text-center">${nlName(c)}</div>
+        <div class="text-[9px] leading-tight text-center opacity-70">${label}</div>
+        <div class="text-sm" style="height:1.1rem">${chosen === c ? "🏅" : ""}</div>
+      </button>`;
+  };
+  const wrap = document.createElement("article");
+  wrap.id = "card-" + t.id;
+  wrap.className = "bracket-card glass rounded-xl p-2";
+  wrap.innerHTML = `
+    <div class="text-[10px] uppercase tracking-widest text-slate-500 mb-1.5">${title}</div>
+    <div class="flex items-stretch gap-1">${btn(t.a, t.la)}<div class="flex items-center text-[10px] font-black text-slate-500">VS</div>${btn(t.b, t.lb)}</div>
+    <div class="mt-1.5 pt-1.5 border-t border-white/10 text-[10px] text-slate-400 leading-snug">📅 ${t.when}</div>`;
+  return wrap;
+}
+
+const nlPairs = (px) => [["qf1","sf1"],["qf2","sf1"],["qf3","sf2"],["qf4","sf2"],["sf1","final"],["sf2","final"]].map(([a, b]) => [px + a, px + b]);
+function drawNlConnectors() { drawLines("nlbracket", "nlconnectors", nlPairs("nl"), id => nlKO[id] || null); }
+
+/* who plays where in 2028-29: three leagues of 18 (rows not decided yet show as placeholders) */
+function nl2829(out = nlOutcome, draw = nlDraw, ko = nlKO, px = "nl") {
+  const A = out("A"), B = out("B"), C = out("C"), Dd = out("D");
+  const ties = nlTies(out, draw, ko, px);
+  const la = [], lb = [], lc = [];
+  const add = (list, row, why, ph, extra) => list.push(row ? { c: row.c, why, ...extra } : { ph });
+  A.tables.forEach((t, i) => { add(la, t[0], "1.º Liga A", "1.º del Grupo A" + (i + 1)); add(la, t[1], "2.º Liga A", "2.º del Grupo A" + (i + 1)); });
+  A.thirds.slice(0, 2).forEach(r => add(la, r, "3.º Liga A", "Uno de los 2 mejores 3.º de Liga A"));
+  B.tables.forEach((t, i) => add(la, t[0], "⬆️ sube de Liga B", "1.º del Grupo B" + (i + 1), { up: true }));
+  A.fourths.slice(2).forEach(r => add(lb, r, "⬇️ baja de Liga A", "Uno de los 2 peores 4.º de Liga A", { down: true }));
+  B.tables.forEach((t, i) => add(lb, t[2], "3.º Liga B", "3.º del Grupo B" + (i + 1)));
+  C.tables.forEach((t, i) => add(lb, t[0], "⬆️ sube de Liga C", "1.º del Grupo C" + (i + 1), { up: true }));
+  C.tables.forEach((t, i) => { add(lc, t[2], "3.º Liga C", "3.º del Grupo C" + (i + 1)); add(lc, t[3], "4.º Liga C", "4.º del Grupo C" + (i + 1)); });
+  Dd.tables.forEach(t => t.forEach(r => add(lc, r, "⬆️ sube de Liga D", "Equipo de Liga D", { up: true })));
+  const playoff = (kind, hi, lo) => [1, 2, 3, 4].forEach(k => {
+    const t = ties[px + kind + k], w = ko[t.id];
+    if (!w) { hi.push({ ph: "Ganador del play-off " + kind.toUpperCase() + k }); lo.push({ ph: "Perdedor del play-off " + kind.toUpperCase() + k }); return; }
+    const l = w === t.a ? t.b : t.a;
+    hi.push({ c: w, why: w === t.a ? "⬆️ ganó el play-off y sube" : "ganó el play-off y se queda", up: w === t.a });
+    lo.push({ c: l, why: l === t.b ? "⬇️ perdió el play-off y baja" : "perdió el play-off", down: l === t.b });
+  });
+  playoff("ab", la, lb);
+  playoff("bc", lb, lc);
+  return { A: la, B: lb, C: lc };
+}
+
+/* render the whole next phase into one tab's elements (ids = cfg.px + "round-qf", etc.) */
+function renderNextPhase(cfg) {
+  const { out, draw, ko, px, attr } = cfg;
+  nlValidateKO(out, draw, ko, px);
+  const ties = nlTies(out, draw, ko, px);
+  const col = (elId, keys, isFinal) => {
+    const el = document.getElementById(elId);
+    el.innerHTML = "";
+    keys.forEach(k => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      const inner = document.createElement("div");
+      inner.style.width = "100%";
+      if (isFinal) inner.innerHTML = `<div class="text-center text-3xl mb-1">🏆</div>`;
+      inner.appendChild(nlTieCard(ties[px + k], NL_KO_LABEL[k], ko, attr));
+      cell.appendChild(inner);
+      el.appendChild(cell);
+    });
+  };
+  col(px + "round-qf", ["qf1","qf2","qf3","qf4"], false);
+  col(px + "round-sf", ["sf1","sf2"], false);
+  col(px + "round-final", ["final"], true);
+  const third = document.getElementById(px + "round-third");
+  third.innerHTML = "";
+  third.appendChild(nlTieCard(ties[px + "third"], NL_KO_LABEL.third, ko, attr));
+  requestAnimationFrame(() => drawLines(px + "bracket", px + "connectors", nlPairs(px), id => ko[id] || null));
+
+  const banner = document.getElementById(px + "champ-banner");
+  const champ = ko[px + "final"];
+  if (champ) {
+    document.getElementById(px + "champ-name").innerHTML = nlFlag(champ, 42) + " " + nlName(champ);
+    banner.classList.remove("hidden");
+    banner.classList.add("pop");
+    if (!cfg.confetti) { cfg.confetti = true; celebrate(); }
+  } else {
+    banner.classList.add("hidden");
+    cfg.confetti = false;
+  }
+
+  const po = (elId, kind) => {
+    const el = document.getElementById(elId);
+    el.innerHTML = "";
+    [1, 2, 3, 4].forEach(k => el.appendChild(nlTieCard(ties[px + kind + k], "Play-off " + kind.toUpperCase() + k, ko, attr)));
+  };
+  po(px + "-po-ab", "ab");
+  po(px + "-po-bc", "bc");
+
+  const L = nl2829(out, draw, ko, px);
+  const league = (name, rows, tone) => `<div class="glass rounded-2xl p-3">
+      <div class="text-center text-sm font-black ${tone} mb-1">Liga ${name} 2028–29</div>
+      <div class="text-center text-[10px] text-slate-500 mb-2">${rows.length} equipos</div>
+      <div class="space-y-1">${rows.map(r => r.ph
+        ? `<div class="flex items-center gap-1.5 text-[11px] text-slate-500 px-1.5 py-1 rounded bg-slate-800/30">❓ ${r.ph}</div>`
+        : `<div class="flex items-center gap-1.5 text-[11px] px-1.5 py-1 rounded ${r.up ? "bg-sky-500/10" : r.down ? "bg-rose-500/10" : "bg-slate-800/40"}">
+            ${nlFlag(r.c, 18)}<span class="flex-1 text-slate-100">${nlName(r.c)}</span><span class="text-[10px] text-slate-400">${r.why}</span></div>`).join("")}</div>
+    </div>`;
+  document.getElementById(px + "-2829").innerHTML =
+    league("A", L.A, "text-emerald-300") + league("B", L.B, "text-sky-300") + league("C", L.C, "text-amber-300");
+  cfg.save();
+}
+
+/* tab 11 (Liga de Naciones UEFA): tables come from real + predicted scores */
+const NL_CFG = { px: "nl", attr: "nlko", confetti: false,
+  get out() { return nlOutcome; }, get draw() { return nlDraw; }, get ko() { return nlKO; }, save: () => nlSaveKO() };
+function renderNlNext() { renderNextPhase(NL_CFG); }
+function renderNations() { renderNlLeague(); renderNlNext(); }
+
+document.getElementById("nl-redraw").addEventListener("click", () => {
+  if (Object.keys(nlKO).length && !confirm("¿Sortear otra vez? Se borran tus ganadores de Cuartos, Final Four y play-offs.")) return;
+  nlNewDraw();
+  nlKO = {};
+  renderNations();
+});
+document.getElementById("nl-random").addEventListener("click", nlRandomFill);
+document.getElementById("nl-clear").addEventListener("click", nlClearLeague);
+
+/* ---------------- INVENTA TU LIGA DE NACIONES (tab 12) ---------------- */
+/* Same 54 teams and groups as "Liga de Naciones UEFA", but no scores: Diego taps
+   the teams of each group in finishing order (1.º, 2.º, 3.º — the last one left
+   is automatically last). In League A he also chooses which two 3.º places are
+   the best (they stay) and which two 4.º places are the best (they go to the
+   play-off instead of dropping), because those are compared across groups.
+   From there the real 2026-27 rules decide everything else, and the next phase
+   (quarter-finals → Final Four, play-offs, 2028-29 leagues) is the same shared
+   code as the scores tab. */
+const INLKEY = "diegosWorldCup.inventaNations.v1";
+let inlStand = {}, inlBest3 = [], inlBest4 = [], inlDraw = null, inlKO = {};
+try {
+  const s = JSON.parse(localStorage.getItem(INLKEY) || "{}");
+  inlStand = s.stand || {}; inlBest3 = s.best3 || []; inlBest4 = s.best4 || []; inlDraw = s.draw || null; inlKO = s.ko || {};
+} catch(e) { inlStand = {}; inlBest3 = []; inlBest4 = []; inlDraw = null; inlKO = {}; }
+const inlSave = () => localStorage.setItem(INLKEY, JSON.stringify({ stand: inlStand, best3: inlBest3, best4: inlBest4, draw: inlDraw, ko: inlKO }));
+if (!nlDrawOk(inlDraw)) { inlDraw = nlMakeDraw(); inlSave(); }
+
+let inlLeague = "A";
+const inlGroup = (L, g) => NL_GROUPS[L].find(x => x.g === g);
+
+/* finishing order for one group: Diego's taps, plus the last team once only one is left */
+function inlRanked(L, g) {
+  const gr = inlGroup(L, g);
+  const picks = (inlStand[L + g] || []).filter(c => gr.order.includes(c));
+  if (picks.length === gr.order.length - 1) return [...picks, gr.order.find(c => !picks.includes(c))];
+  return picks;
+}
+/* the real table today (played matches only), shown as a hint next to each team */
+function inlRealPts(L, g) {
+  const t = nlStats(inlGroup(L, g).order, nlGroupMatches(L, g).filter(m => m.played));
+  const pts = {};
+  Object.values(t).forEach(r => pts[r.c] = r.pts);
+  return pts;
+}
+
+/* only keep "best 3.º / 4.º" choices that are still 3.º / 4.º of their group */
+function inlSyncBest() {
+  const thirds = NL_GROUPS.A.map(gr => inlRanked("A", gr.g)[2]).filter(Boolean);
+  const fourths = NL_GROUPS.A.map(gr => inlRanked("A", gr.g)[3]).filter(Boolean);
+  inlBest3 = inlBest3.filter(c => thirds.includes(c));
+  inlBest4 = inlBest4.filter(c => fourths.includes(c));
+}
+function inlToggle(key, code) {
+  const arr = inlStand[key] || (inlStand[key] = []);
+  const gr = inlGroup(key[0], key.slice(1));
+  const i = arr.indexOf(code);
+  if (i >= 0) arr.splice(i);                          /* tap a ranked team: it and everyone after it are unranked */
+  else if (arr.length < gr.order.length - 1) arr.push(code);
+  else arr[arr.length - 1] = code;                    /* tapping the automatic last place swaps it with the one above */
+  inlSyncBest();
+  renderInventaNations();
+}
+function inlToggleBest(kind, code) {
+  const arr = kind === "3" ? inlBest3 : inlBest4;
+  const i = arr.indexOf(code);
+  if (i >= 0) arr.splice(i, 1);
+  else if (arr.length < 2) arr.push(code);
+  renderInventaNations();
+}
+
+/* the same shape as nlOutcome(L) — tables of rows {c, group, gi}, zone, note, thirds, fourths —
+   with null where Diego has not decided yet */
+function inlOutcome(L) {
+  const tables = NL_GROUPS[L].map((gr, gi) => {
+    const r = inlRanked(L, gr.g);
+    return gr.order.map((_, i) => r[i] ? { c: r[i], group: gr.g, gi } : null);
+  });
+  const zone = {}, note = {};
+  const set = (row, z, n) => { if (row) { zone[row.c] = z; note[row.c] = n; } };
+  if (L === "A") {
+    tables.forEach(t => { set(t[0], "qf", "1.º de grupo: a Cuartos"); set(t[1], "qf", "2.º de grupo: a Cuartos"); });
+    const rowOf = (c) => tables.flat().find(r => r && r.c === c) || null;
+    const split = (pos, picks) => {
+      const all = tables.map(t => t[pos]);
+      const best = picks.filter(c => all.some(r => r && r.c === c));   /* ignore picks that are no longer in that place */
+      const known = all.every(Boolean) && best.length === 2;
+      const rest = known ? all.filter(r => !best.includes(r.c)) : [null, null];
+      return [rowOf(best[0]), rowOf(best[1]), rest[0], rest[1]];
+    };
+    const thirds = split(2, inlBest3), fourths = split(3, inlBest4);
+    thirds.forEach((r, i) => set(r, i < 2 ? "stay" : "po", i < 2 ? "Uno de los 2 mejores 3.º: se queda en Liga A" : "Uno de los 2 peores 3.º: play-off contra un 2.º de Liga B"));
+    fourths.forEach((r, i) => set(r, i < 2 ? "po" : "down", i < 2 ? "Uno de los 2 mejores 4.º: play-off contra un 2.º de Liga B" : "Uno de los 2 peores 4.º: baja directo a Liga B"));
+    return { tables, zone, note, thirds, fourths };
+  }
+  if (L === "B") tables.forEach(t => {
+    set(t[0], "up", "1.º: sube a Liga A"); set(t[1], "po", "2.º: play-off contra un equipo de Liga A");
+    set(t[2], "stay", "3.º: se queda en Liga B"); set(t[3], "po", "4.º: play-off contra un 2.º de Liga C");
+  });
+  else if (L === "C") tables.forEach(t => {
+    set(t[0], "up", "1.º: sube a Liga B"); set(t[1], "po", "2.º: play-off contra un 4.º de Liga B");
+    set(t[2], "stay", "3.º: se queda en Liga C"); set(t[3], "stay", "4.º: se queda en Liga C (ya no hay Liga D)");
+  });
+  else tables.forEach(t => t.forEach(r => set(r, "up", "Todos suben a Liga C (la Liga D desaparece)")));
+  return { tables, zone, note };
+}
+/* how many group places Diego still has to decide in a league (or all leagues) */
+const inlMissing = (L) => (L ? [L] : ["A","B","C","D"]).reduce((n, x) =>
+  n + NL_GROUPS[x].reduce((m, gr) => m + (gr.order.length - inlRanked(x, gr.g).length), 0), 0);
+
+const INL_POS = ["1.º", "2.º", "3.º", "4.º"];
+
+function inlGroupCard(L, gr, out) {
+  const key = L + gr.g;
+  const ranked = inlRanked(L, gr.g);
+  const pts = inlRealPts(L, gr.g);
+  /* list teams in today's real order so Diego sees how the group is going */
+  const teams = gr.order.slice().sort((x, y) => pts[y] - pts[x] || gr.order.indexOf(x) - gr.order.indexOf(y));
+  const next = ranked.length < gr.order.length ? INL_POS[ranked.length] : null;
+  const card = document.createElement("div");
+  card.className = "glass rounded-2xl p-4";
+  card.innerHTML = `
+    <div class="flex items-center gap-2 mb-1">
+      <div class="w-9 h-9 rounded-full bg-indigo-500/15 border border-indigo-400/30 flex items-center justify-center text-indigo-200 font-black text-sm">${key}</div>
+      <div class="text-xs uppercase tracking-widest text-slate-400">Liga ${L} · Grupo ${gr.g}</div>
+    </div>
+    <div class="text-[11px] mb-2 ${next ? "text-yellow-300" : "text-emerald-300"}">
+      ${next ? `👆 Toca al <b>${next}</b> lugar` : "✅ ¡Grupo listo! Toca un equipo para cambiarlo"}
+    </div>
+    <div class="space-y-1.5">
+      ${teams.map(c => {
+        const i = ranked.indexOf(c);
+        const z = i >= 0 && out.zone[c] ? NL_ZONE[out.zone[c]] : null;
+        return `<button data-inlpos="${key}" data-team="${c}" title="${i >= 0 ? out.note[c] || "" : ""}"
+            class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-2 border ${i >= 0 ? (z ? z.cls : "bg-slate-700/40") + " border-white/15" : "bg-slate-800/60 border-slate-700 hover:bg-slate-700/60"}">
+            <span class="w-8 text-center text-sm font-black ${i >= 0 ? "text-white" : "text-slate-600"}">${i >= 0 ? INL_POS[i] : "·"}</span>
+            ${nlFlag(c, 26)}
+            <span class="flex-1 text-left text-sm font-semibold text-slate-100 truncate">${nlName(c)}</span>
+            <span class="text-[10px] text-slate-500 whitespace-nowrap">${pts[c]} pts hoy</span>
+            ${z ? `<span class="text-[10px] font-bold ${z.badge} whitespace-nowrap">${z.text}</span>` : ""}
+          </button>`;
+      }).join("")}
+    </div>`;
+  return card;
+}
+
+/* League A only: the 3.º and 4.º places are compared across the four groups */
+function inlBestHtml() {
+  const thirds = NL_GROUPS.A.map(gr => inlRanked("A", gr.g)[2]);
+  const fourths = NL_GROUPS.A.map(gr => inlRanked("A", gr.g)[3]);
+  if (!thirds.every(Boolean)) {
+    return `<div class="sm:col-span-2 text-center text-xs text-slate-400">Cuando ordenes los 4 grupos de la Liga A, aquí eliges a los mejores 3.º y 4.º lugares.</div>`;
+  }
+  const pick = (codes, chosen, kind, title, yes, no) => `<div class="rounded-xl bg-slate-800/30 border border-white/10 p-3">
+      <div class="text-sm font-black text-slate-100">${title}</div>
+      <div class="text-[11px] text-slate-400 mb-2">${chosen.length < 2 ? `👆 Toca ${2 - chosen.length} más` : "✅ Listo"}</div>
+      <div class="grid grid-cols-2 gap-1.5">
+        ${codes.map((c, gi) => {
+          const on = chosen.includes(c), done = chosen.length === 2;
+          return `<button data-inlbest="${kind}" data-team="${c}"
+              class="team-btn flex items-center gap-1.5 rounded-lg px-2 py-1.5 border text-left ${on ? "win" : done ? "lose bg-slate-800/60 border-slate-700" : "bg-slate-800/60 border-slate-700 hover:bg-slate-700/60"}">
+              ${nlFlag(c, 20)}<span class="flex-1 text-xs font-semibold">${nlName(c)} <span class="opacity-60">(A${gi + 1})</span></span>
+              <span class="text-[10px]">${on ? yes : done ? no : ""}</span></button>`;
+        }).join("")}
+      </div>
+    </div>`;
+  return pick(thirds, inlBest3, "3", "¿Cuáles son los 2 mejores 3.º?", "se queda", "play-off")
+       + pick(fourths, inlBest4, "4", "¿Cuáles son los 2 mejores 4.º?", "play-off", "baja");
+}
+
+/* "what happens next" boxes for the league on screen (null rows = not decided yet) */
+function inlNextHtml(L, out) {
+  const byZone = (z) => out.tables.flat().filter(r => r && out.zone[r.c] === z).map(r => r.c);
+  const list = (codes) => codes.length
+    ? codes.map(c => `<span class="inline-flex items-center gap-1.5 bg-slate-800/60 rounded-lg px-2 py-1 m-0.5">${nlFlag(c, 18)}<span class="text-xs text-slate-100">${nlName(c)}</span></span>`).join("")
+    : `<span class="text-xs text-slate-500">Todavía nadie — sigue ordenando 👆</span>`;
+  const box = (z, title, when) => `<div class="rounded-xl border border-white/10 ${NL_ZONE[z].cls || "bg-slate-800/30"} p-3">
+      <div class="text-sm font-black ${NL_ZONE[z].badge}">${title}</div>
+      <div class="text-[11px] text-slate-400 mb-1.5">${when}</div>
+      <div>${list(byZone(z))}</div>
+    </div>`;
+  if (L === "A") return box("qf", "🏆 A Cuartos de final", "Ida y vuelta · 25–30 de marzo de 2027 · los 4 ganadores van al Final Four (junio 2027)")
+    + box("stay", "😌 Se quedan en Liga A", "Los 2 mejores 3.º")
+    + box("po", "⚔️ Play-off para no bajar", "Contra los 2.º de Liga B · ida y vuelta · marzo 2027")
+    + box("down", "⬇️ Bajan a Liga B", "Los 2 peores 4.º");
+  if (L === "B") return box("up", "⬆️ Suben a Liga A", "Los 4 primeros de grupo")
+    + box("po", "⚔️ Play-offs (marzo 2027)", "Los 2.º juegan contra Liga A para subir; los 4.º juegan contra los 2.º de Liga C para no bajar")
+    + box("stay", "😌 Se quedan en Liga B", "Los 4 terceros");
+  if (L === "C") return box("up", "⬆️ Suben a Liga B", "Los 4 primeros de grupo")
+    + box("po", "⚔️ Play-off para subir (marzo 2027)", "Los 2.º juegan contra los 4.º de Liga B")
+    + box("stay", "😌 Se quedan en Liga C", "Los 3.º y 4.º — nadie baja");
+  return box("up", "⬆️ Suben a Liga C", "Los 6 equipos de la Liga D");
+}
+
+/* Euro 2028 and World Cup 2030: what this Nations League does (and does not) decide */
+function renderInlFuture() {
+  const winners = ["A", "B", "C"].flatMap(L => inlOutcome(L).tables.map(t => t[0]).filter(Boolean).map(r => r.c));
+  const L = nl2829(inlOutcome, inlDraw, inlKO, "inl");
+  const top = [...L.A, ...L.B].filter(r => r.c).map(r => r.c);
+  const chips = (codes, max) => codes.length
+    ? codes.slice(0, max).map(c => `<span class="inline-flex items-center gap-1 bg-slate-800/60 rounded-md px-1.5 py-0.5 m-0.5 text-[11px] text-slate-100">${nlFlag(c, 16)}${nlName(c)}</span>`).join("")
+    : `<span class="text-[11px] text-slate-500">Ordena los grupos para verlos aquí.</span>`;
+  const champ = inlKO.inlfinal;
+  document.getElementById("inl-future").innerHTML = `
+    <div class="glass rounded-2xl p-4">
+      <div class="text-base font-black text-yellow-300">🏆 ¿Qué gana el campeón?</div>
+      <p class="text-sm text-slate-300 mt-1">
+        ${champ ? `Tu campeón, <b class="text-white">${nlFlag(champ, 18)} ${nlName(champ)}</b>, levanta` : "El campeón levanta"}
+        el <b>trofeo de la Liga de Naciones</b> en la final del <b>13 de junio de 2027</b>. Es un título muy importante…
+        pero <b>no le da un boleto directo</b> ni a la Euro ni al Mundial: para eso hay que jugar las eliminatorias.
+      </p>
+    </div>
+    <div class="glass rounded-2xl p-4">
+      <div class="text-base font-black text-sky-300">🎟️ Euro 2028 (Reino Unido e Irlanda)</div>
+      <p class="text-sm text-slate-300 mt-1">
+        Aquí sí ayuda: los <b>primeros de grupo de las Ligas A, B y C</b> que no se clasifiquen a la Euro 2028 en su eliminatoria
+        (que se juega en 2027) tienen <b>otra oportunidad en el repechaje de marzo de 2028</b>. A veces también entra el mejor 1.º de la Liga D.
+      </p>
+      <div class="text-[11px] text-slate-400 mt-2 mb-1">Tus primeros de grupo (A, B y C) — ${winners.length} de 12:</div>
+      <div>${chips(winners, 12)}</div>
+    </div>
+    <div class="glass rounded-2xl p-4">
+      <div class="text-base font-black text-emerald-300">🌍 Mundial 2030 (España, Portugal y Marruecos)</div>
+      <p class="text-sm text-slate-300 mt-1">
+        Esta Liga de Naciones <b>no da boletos al Mundial</b>. Pero decide <b>en qué liga juega cada país en 2028–29</b>, y eso sí importa:
+        según el plan de la UEFA (aprobado en mayo de 2026, aunque los detalles todavía pueden cambiar), en la eliminatoria al
+        Mundial 2030 las <b>36 selecciones de las Ligas A y B</b> juegan una "Liga 1" de 3 grupos de 12, y los primeros de cada grupo
+        van directo al Mundial. Las demás tienen que ir por el repechaje. <b>España y Portugal ya están clasificados</b> por ser sedes.
+      </p>
+      <div class="text-[11px] text-slate-400 mt-2 mb-1">Con lo que elegiste, estarían en esa "Liga 1" (${top.length} de 36 decididos):</div>
+      <div>${chips(top, 36)}</div>
+    </div>`;
+}
+
+function renderInlLeague() {
+  const Lg = inlLeague;
+  ["A","B","C","D"].forEach(x => document.getElementById("inlbtn-" + x).classList.toggle("active", x === Lg));
+  document.getElementById("inl-league-info").innerHTML = NL_LEAGUE_INFO[Lg];
+  const out = inlOutcome(Lg);
+  const el = document.getElementById("inl-groups");
+  el.innerHTML = "";
+  NL_GROUPS[Lg].forEach(gr => el.appendChild(inlGroupCard(Lg, gr, out)));
+  const best = document.getElementById("inl-best");
+  best.classList.toggle("hidden", Lg !== "A");
+  if (Lg === "A") document.getElementById("inl-best-body").innerHTML = inlBestHtml();
+  const miss = inlMissing(Lg);
+  document.getElementById("inl-missing").innerHTML = miss
+    ? `Faltan <b class="text-yellow-300">${miss}</b> lugares por ordenar en la Liga ${Lg}.`
+    : `<b class="text-emerald-300">¡Liga ${Lg} ordenada!</b>`;
+  document.getElementById("inl-next-title").textContent = "¿Qué pasa después en la Liga " + Lg + "?";
+  document.getElementById("inl-next").innerHTML = inlNextHtml(Lg, out);
+}
+
+const INL_CFG = { px: "inl", attr: "inlko", confetti: false,
+  get out() { return inlOutcome; }, get draw() { return inlDraw; }, get ko() { return inlKO; }, save: () => inlSave() };
+function renderInventaNations() {
+  renderInlLeague();
+  renderNextPhase(INL_CFG);
+  renderInlFuture();
+  inlSave();
+}
+
+/* fill the league on screen with a random order (only groups not finished yet) */
+function inlRandomFill() {
+  NL_GROUPS[inlLeague].forEach(gr => {
+    const key = inlLeague + gr.g;
+    const have = inlRanked(inlLeague, gr.g);
+    if (have.length === gr.order.length) return;
+    inlStand[key] = [...have, ...nlShuffle(gr.order.filter(c => !have.includes(c)))].slice(0, gr.order.length - 1);
+  });
+  if (inlLeague === "A") {
+    const thirds = NL_GROUPS.A.map(gr => inlRanked("A", gr.g)[2]);
+    const fourths = NL_GROUPS.A.map(gr => inlRanked("A", gr.g)[3]);
+    inlBest3 = [...inlBest3, ...nlShuffle(thirds.filter(c => !inlBest3.includes(c)))].slice(0, 2);
+    inlBest4 = [...inlBest4, ...nlShuffle(fourths.filter(c => !inlBest4.includes(c)))].slice(0, 2);
+  }
+  renderInventaNations();
+}
+function inlClearLeague() {
+  if (!confirm("¿Borrar cómo ordenaste la Liga " + inlLeague + "?")) return;
+  NL_GROUPS[inlLeague].forEach(gr => delete inlStand[inlLeague + gr.g]);
+  if (inlLeague === "A") { inlBest3 = []; inlBest4 = []; }
+  renderInventaNations();
+}
+
+document.addEventListener("click", (e) => {
+  const lg = e.target.closest("[data-inlleague]");
+  if (lg) { inlLeague = lg.dataset.inlleague; renderInventaNations(); }
+});
+document.getElementById("inl-random").addEventListener("click", inlRandomFill);
+document.getElementById("inl-clear").addEventListener("click", inlClearLeague);
+document.getElementById("inl-redraw").addEventListener("click", () => {
+  if (Object.keys(inlKO).length && !confirm("¿Sortear otra vez? Se borran tus ganadores de Cuartos, Final Four y play-offs.")) return;
+  inlDraw = nlMakeDraw();
+  inlKO = {};
+  renderInventaNations();
+});
+function drawInlConnectors() { drawLines("inlbracket", "inlconnectors", nlPairs("inl"), id => inlKO[id] || null); }
+
 /* ---------------- TABS ---------------- */
 let activeTab = "real";
 function showTab(name) {
@@ -3238,6 +4602,8 @@ function showTab(name) {
   document.getElementById("tab-q22").classList.toggle("hidden", name !== "q22");
   document.getElementById("tab-k22").classList.toggle("hidden", name !== "k22");
   document.getElementById("tab-cw27").classList.toggle("hidden", name !== "cw27");
+  document.getElementById("tab-unl").classList.toggle("hidden", name !== "unl");
+  document.getElementById("tab-inl").classList.toggle("hidden", name !== "inl");
   document.getElementById("tabbtn-real").classList.toggle("active", name === "real");
   document.getElementById("tabbtn-fantasy").classList.toggle("active", name === "fantasy");
   document.getElementById("tabbtn-custom").classList.toggle("active", name === "custom");
@@ -3248,11 +4614,13 @@ function showTab(name) {
   document.getElementById("tabbtn-q22").classList.toggle("active", name === "q22");
   document.getElementById("tabbtn-k22").classList.toggle("active", name === "k22");
   document.getElementById("tabbtn-cw27").classList.toggle("active", name === "cw27");
+  document.getElementById("tabbtn-unl").classList.toggle("active", name === "unl");
+  document.getElementById("tabbtn-inl").classList.toggle("active", name === "inl");
   /* the "Empezar de nuevo" button has nothing to reset on the info/sim tabs */
   document.getElementById("reset-all").classList.toggle("hidden",
     name === "elim" || name === "wc30" || (name === "q22" && q22Mode === "real"));
   /* connector lines can only be measured while a bracket is visible (elim tab has none) */
-  const drawFn = name === "real" ? drawConnectors : name === "fantasy" ? drawFConnectors : name === "custom" ? drawCConnectors : name === "oct" ? drawOConnectors : name === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : name === "k22" ? drawKConnectors : name === "cw27" ? drawCwConnectors : null;
+  const drawFn = name === "real" ? drawConnectors : name === "fantasy" ? drawFConnectors : name === "custom" ? drawCConnectors : name === "oct" ? drawOConnectors : name === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : name === "k22" ? drawKConnectors : name === "cw27" ? drawCwConnectors : name === "unl" ? drawNlConnectors : name === "inl" ? drawInlConnectors : null;
   if (drawFn) requestAnimationFrame(drawFn);
 }
 document.getElementById("tabbtn-real").addEventListener("click", () => showTab("real"));
@@ -3265,6 +4633,8 @@ document.getElementById("tabbtn-oct").addEventListener("click", () => showTab("o
 document.getElementById("tabbtn-q22").addEventListener("click", () => showTab("q22"));
 document.getElementById("tabbtn-k22").addEventListener("click", () => showTab("k22"));
 document.getElementById("tabbtn-cw27").addEventListener("click", () => showTab("cw27"));
+document.getElementById("tabbtn-unl").addEventListener("click", () => showTab("unl"));
+document.getElementById("tabbtn-inl").addEventListener("click", () => showTab("inl"));
 
 /* ---- click handling ---- */
 document.addEventListener("click", (e) => {
@@ -3302,6 +4672,20 @@ document.addEventListener("click", (e) => {
     if (ppicks[id] === team) { delete ppicks[id]; }
     else { ppicks[id] = team; }
     renderQ22Play();
+  } else if (btn.dataset.inlpos) {
+    inlToggle(btn.dataset.inlpos, team);
+  } else if (btn.dataset.inlbest) {
+    inlToggleBest(btn.dataset.inlbest, team);
+  } else if (btn.dataset.inlko) {
+    const id = btn.dataset.inlko;
+    if (inlKO[id] === team) { delete inlKO[id]; }
+    else { inlKO[id] = team; }
+    renderInventaNations();
+  } else if (btn.dataset.nlko) {
+    const id = btn.dataset.nlko;
+    if (nlKO[id] === team) { delete nlKO[id]; }
+    else { nlKO[id] = team; }
+    renderNlNext();
   } else if (btn.dataset.cwmatch) {
     const id = btn.dataset.cwmatch;
     if (cwpicks[id] === team) { delete cwpicks[id]; }
@@ -3329,13 +4713,15 @@ document.getElementById("reset-all").addEventListener("click", () => {
   else if (activeTab === "q22") { ppicks = {}; renderQ22Play(); }
   else if (activeTab === "k22") { kpicks = {}; renderKOct(); }
   else if (activeTab === "cw27") { cwpicks = {}; renderCw27(); }
+  else if (activeTab === "unl") { nlPred = {}; nlKO = {}; nlSavePred(); renderNations(); }
+  else if (activeTab === "inl") { inlStand = {}; inlBest3 = []; inlBest4 = []; inlKO = {}; renderInventaNations(); }
   else { picks = {}; render(); }
 });
 
 let rz;
 window.addEventListener("resize", () => {
   clearTimeout(rz);
-  const fn = activeTab === "real" ? drawConnectors : activeTab === "fantasy" ? drawFConnectors : activeTab === "custom" ? drawCConnectors : activeTab === "oct" ? drawOConnectors : activeTab === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : activeTab === "k22" ? drawKConnectors : activeTab === "cw27" ? drawCwConnectors : null;
+  const fn = activeTab === "real" ? drawConnectors : activeTab === "fantasy" ? drawFConnectors : activeTab === "custom" ? drawCConnectors : activeTab === "oct" ? drawOConnectors : activeTab === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : activeTab === "k22" ? drawKConnectors : activeTab === "cw27" ? drawCwConnectors : activeTab === "unl" ? drawNlConnectors : activeTab === "inl" ? drawInlConnectors : null;
   if (fn) rz = setTimeout(fn, 120);
 });
 window.addEventListener("load", drawConnectors);
@@ -3359,6 +4745,8 @@ renderKOctPicker();
 renderKOct();
 renderCw27Picker();
 renderCw27();
+renderNations();
+renderInventaNations();
 </script>
 </body>
 </html>
