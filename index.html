@@ -127,9 +127,6 @@
     <button id="tabbtn-elim" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       🗺️ Eliminatorias 2030
     </button>
-    <button id="tabbtn-groups" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
-      🧮 Fase de grupos
-    </button>
     <button id="tabbtn-oct" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       🥅 Elige tus Octavos
     </button>
@@ -442,34 +439,6 @@
 
 <!-- ================= TAB 5: MUNDIAL 2030 (mock simulator) ================= -->
 
-
-<!-- ================= TAB 6: FASE DE GRUPOS (Diego elige clasificados) ================= -->
-<div id="tab-groups" class="hidden">
-<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
-  <div class="text-center mb-2">
-    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego · ¡tú decides quién pasa!</div>
-    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Fase de grupos · Mundial 2030 🧮</h2>
-    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
-      Los mismos <b class="text-emerald-300">48 equipos</b> en <b>12 grupos de 4</b>, pero
-      <b>nada está decidido</b>. En cada grupo toca a los equipos <b>en orden</b>:
-      el <b class="text-emerald-300">1.º</b> y el <b class="text-emerald-300">2.º</b> pasan directo,
-      y de los <b class="text-amber-300">12 terceros</b> tú eliges los <b class="text-emerald-300">8 mejores</b>.
-      ¡En total <b class="text-yellow-300">32 equipos</b> a la Ronda de 32! 👇
-    </p>
-    <p class="text-[11px] text-slate-400 mt-2">¿Te equivocaste? Toca un equipo ya ordenado para quitarlo.</p>
-  </div>
-  <div id="groups-legend" class="flex flex-wrap items-center justify-center gap-2 mt-3"></div>
-</section>
-<section class="max-w-3xl mx-auto px-4 pt-2 pb-2"><div id="groups-summary"></div></section>
-<section class="max-w-6xl mx-auto px-4 pt-2 pb-4">
-  <div id="groups-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-</section>
-<section class="max-w-3xl mx-auto px-4 pt-2 pb-12">
-  <h3 class="text-lg font-black text-amber-300 text-center mb-1">🥉 Los mejores terceros</h3>
-  <p class="text-center text-[11px] text-slate-400 mb-3">De los 12 terceros de cada grupo, elige los <b>8</b> que también pasan.</p>
-  <div id="groups-thirds"></div>
-</section>
-</div><!-- /tab-groups -->
 
 <!-- ================= TAB 7: OCTAVOS (Elige tus Octavos) ================= -->
 <div id="tab-oct" class="hidden">
@@ -2312,114 +2281,8 @@ function renderWc30Legend() {
   ).join("");
 }
 
-/* ---------------- FASE DE GRUPOS · Diego elige los clasificados (tab 6) ---------------- */
-/* Same 48 teams as Mundial 2030, in a FIXED (deterministic) 12-group draw — nothing
-   simulated. Diego ranks each group (1º/2º/3º), then picks the 8 best thirds → 32 pasan. */
+/* team -> confederation (for the coloured dots in 2030) */
 const TEAM_CONF = {}; WC30_TEAMS.forEach(([name, conf]) => TEAM_CONF[name] = conf);
-const GRP_SEEDED = WC30_TEAMS.map(([name, , str]) => ({ name, str })).sort((a, b) => b.str - a.str);
-const GRP_POTS = [0, 1, 2, 3].map(p => GRP_SEEDED.slice(p * 12, p * 12 + 12));
-const GRP_GROUPS = [];
-for (let i = 0; i < 12; i++) GRP_GROUPS.push({ letter: GLET[i], teams: [GRP_POTS[0][i].name, GRP_POTS[1][i].name, GRP_POTS[2][i].name, GRP_POTS[3][i].name] });
-
-const GKEY = "diegosWorldCup.groups.v1";
-let gStand = {}, gThirds = [], gCelebrated = false;
-try { const s = JSON.parse(localStorage.getItem(GKEY) || "{}"); gStand = s.stand || {}; gThirds = s.thirds || []; } catch (e) { gStand = {}; gThirds = []; }
-const gsave = () => localStorage.setItem(GKEY, JSON.stringify({ stand: gStand, thirds: gThirds }));
-
-const currentThirds = () => GRP_GROUPS.map(g => (gStand[g.letter] || [])[2]).filter(Boolean);
-function syncThirds() { const valid = new Set(currentThirds()); gThirds = gThirds.filter(n => valid.has(n)); }
-function grpToggle(letter, name) {
-  const arr = gStand[letter] || (gStand[letter] = []);
-  const i = arr.indexOf(name);
-  if (i >= 0) arr.splice(i, 1);         /* tap again to unrank */
-  else if (arr.length < 3) arr.push(name);  /* rank next position (1º→2º→3º) */
-  syncThirds();
-  gsave(); renderGroups();
-}
-function grpThirdToggle(name) {
-  const i = gThirds.indexOf(name);
-  if (i >= 0) gThirds.splice(i, 1);
-  else if (gThirds.length < 8) gThirds.push(name);
-  gsave(); renderGroups();
-}
-const groupsComplete = () => GRP_GROUPS.every(g => (gStand[g.letter] || []).length === 3);
-const directQualified = () => GRP_GROUPS.flatMap(g => (gStand[g.letter] || []).slice(0, 2));
-
-function renderGroups() {
-  if (!document.getElementById("groups-grid")) return;
-
-  const leg = document.getElementById("groups-legend");
-  leg.innerHTML = Object.keys(WC30_CONF).map(c =>
-    `<span class="inline-flex items-center gap-1.5 text-[11px] text-slate-300 bg-slate-800/50 border border-slate-700 rounded-full px-2.5 py-1">${wc30Dot(c)} ${WC30_CONF[c].label}</span>`
-  ).join("");
-
-  /* group cards */
-  document.getElementById("groups-grid").innerHTML = GRP_GROUPS.map(g => {
-    const arr = gStand[g.letter] || [];
-    const rows = g.teams.map(name => {
-      const idx = arr.indexOf(name);
-      const pos = idx >= 0 ? idx : (arr.length === 3 ? -2 : -1);
-      const badge = pos === 0 ? '<span class="text-emerald-300 text-[11px] font-bold">🥇 1.º · PASA</span>'
-        : pos === 1 ? '<span class="text-emerald-300 text-[11px] font-bold">🥈 2.º · PASA</span>'
-        : pos === 2 ? '<span class="text-amber-300 text-[11px] font-bold">🥉 3.º</span>'
-        : pos === -2 ? '<span class="text-slate-500 text-[10px]">4.º ❌</span>'
-        : '<span class="text-slate-500 text-[10px]">toca 👆</span>';
-      const hl = pos === 0 || pos === 1 ? "bg-emerald-500/15" : pos === 2 ? "bg-amber-500/10" : "opacity-70";
-      return `<button data-grp="${g.letter}" data-team="${name}"
-        class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-1.5 border border-slate-700 ${hl} hover:bg-slate-700/40">
-        ${wc30Dot(TEAM_CONF[name])}
-        <span class="flag">${flag(name, 18)}</span>
-        <span class="flex-1 text-left text-xs text-slate-100 truncate">${name}</span>
-        ${badge}
-      </button>`;
-    }).join("");
-    return `<div class="glass rounded-2xl p-3">
-      <div class="text-xs uppercase tracking-widest text-slate-400 mb-2 text-center">Grupo ${g.letter}</div>
-      <div class="space-y-1">${rows}</div>
-    </div>`;
-  }).join("");
-
-  /* thirds picker */
-  const thirds = currentThirds();
-  const thirdsEl = document.getElementById("groups-thirds");
-  if (thirds.length === 0) {
-    thirdsEl.innerHTML = `<p class="text-center text-sm text-slate-500">Ordena los grupos (elige un 3.º en cada uno) para desbloquear a los terceros. 👆</p>`;
-  } else {
-    const btns = thirds.map(name => {
-      const on = gThirds.includes(name);
-      return `<button data-grpthird="1" data-team="${name}"
-        class="team-btn flex items-center gap-2 rounded-lg px-2 py-2 border ${on ? "bg-emerald-500/20 border-emerald-400/50" : "bg-slate-800/60 border-slate-700 hover:bg-slate-700/60"}">
-        ${wc30Dot(TEAM_CONF[name])}
-        <span class="flag">${flag(name, 18)}</span>
-        <span class="flex-1 text-left text-xs text-slate-100 truncate">${name}</span>
-        <span class="text-[10px] font-bold ${on ? "text-emerald-300" : "text-slate-600"}">${on ? "PASA ✅" : ""}</span>
-      </button>`;
-    }).join("");
-    thirdsEl.innerHTML = `
-      <div class="text-center text-xs text-slate-300 mb-2">Elegidos: <b class="text-emerald-300">${gThirds.length}/8</b>${thirds.length < 12 ? ` · faltan grupos por ordenar (${thirds.length}/12 terceros)` : ""}</div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${btns}</div>`;
-  }
-
-  /* summary + confetti */
-  const complete = groupsComplete() && gThirds.length === 8;
-  const sumEl = document.getElementById("groups-summary");
-  if (complete) {
-    const qualified = [...directQualified(), ...gThirds];
-    sumEl.innerHTML = `
-      <div class="glass champ-glow rounded-3xl p-5 text-center border-yellow-400/40">
-        <div class="text-4xl">🎉</div>
-        <div class="text-lg font-black text-white mt-1">¡32 clasificados a la Ronda de 32!</div>
-        <div class="flex flex-wrap justify-center gap-1.5 mt-3">
-          ${qualified.map(n => `<span class="inline-flex items-center gap-1 text-[11px] bg-emerald-500/15 border border-emerald-400/30 rounded-full px-2 py-0.5">${flag(n, 14)} ${n}</span>`).join("")}
-        </div>
-      </div>`;
-    if (!gCelebrated) { gCelebrated = true; celebrate(); }
-  } else {
-    const dir = directQualified().length;
-    sumEl.innerHTML = `<div class="glass rounded-2xl p-3 text-center text-sm text-slate-300">Directos elegidos: <b class="text-emerald-300">${dir}/24</b> · Terceros: <b class="text-emerald-300">${gThirds.length}/8</b> → faltan para los 32.</div>`;
-    gCelebrated = false;
-  }
-}
 
 /* ---------------- MUNDIAL CATAR 2022 (tab 8) ---------------- */
 /* Two sub-modes inside one tab:
@@ -5807,7 +5670,6 @@ function showTab(name) {
   document.getElementById("tab-real").classList.toggle("hidden", name !== "real");
   document.getElementById("tab-custom").classList.toggle("hidden", name !== "custom");
   document.getElementById("tab-elim").classList.toggle("hidden", name !== "elim");
-  document.getElementById("tab-groups").classList.toggle("hidden", name !== "groups");
   document.getElementById("tab-oct").classList.toggle("hidden", name !== "oct");
   document.getElementById("tab-q22").classList.toggle("hidden", name !== "q22");
   document.getElementById("tab-k22").classList.toggle("hidden", name !== "k22");
@@ -5817,7 +5679,6 @@ function showTab(name) {
   document.getElementById("tabbtn-real").classList.toggle("active", name === "real");
   document.getElementById("tabbtn-custom").classList.toggle("active", name === "custom");
   document.getElementById("tabbtn-elim").classList.toggle("active", name === "elim");
-  document.getElementById("tabbtn-groups").classList.toggle("active", name === "groups");
   document.getElementById("tabbtn-oct").classList.toggle("active", name === "oct");
   document.getElementById("tabbtn-q22").classList.toggle("active", name === "q22");
   document.getElementById("tabbtn-k22").classList.toggle("active", name === "k22");
@@ -5835,7 +5696,6 @@ document.getElementById("tabbtn-real").addEventListener("click", () => showTab("
 document.getElementById("tabbtn-imh").addEventListener("click", () => showTab("imh"));
 document.getElementById("tabbtn-custom").addEventListener("click", () => showTab("custom"));
 document.getElementById("tabbtn-elim").addEventListener("click", () => showTab("elim"));
-document.getElementById("tabbtn-groups").addEventListener("click", () => showTab("groups"));
 document.getElementById("tabbtn-oct").addEventListener("click", () => showTab("oct"));
 document.getElementById("tabbtn-q22").addEventListener("click", () => showTab("q22"));
 document.getElementById("tabbtn-k22").addEventListener("click", () => showTab("k22"));
@@ -5865,10 +5725,6 @@ document.addEventListener("click", (e) => {
     renderCustom();
   } else if (btn.dataset.sim) {
     simToggle(btn.dataset.sim, team);
-  } else if (btn.dataset.grp) {
-    grpToggle(btn.dataset.grp, team);
-  } else if (btn.dataset.grpthird) {
-    grpThirdToggle(team);
   } else if (btn.dataset.pmatch) {
     const id = btn.dataset.pmatch;
     if (ppicks[id] === team) { delete ppicks[id]; }
@@ -5916,7 +5772,6 @@ document.getElementById("reset-all").addEventListener("click", () => {
   if (activeTab === "imh") { imhReset(); }
   else if (activeTab === "fantasy") { fpicks = {}; renderFantasy(); }
   else if (activeTab === "custom") { cpicks = {}; renderCustom(); }
-  else if (activeTab === "groups") { gStand = {}; gThirds = []; gsave(); renderGroups(); }
   else if (activeTab === "oct") { opicks = {}; renderOct(); }
   else if (activeTab === "q22") { ppicks = {}; renderQ22Play(); }
   else if (activeTab === "k22") { kpicks = {}; renderKOct(); }
@@ -5943,7 +5798,6 @@ renderElim();
 renderSim();
 renderWc30Legend();
 WC30.render();
-renderGroups();
 renderOctPicker();
 renderOct();
 renderQ22Groups();
