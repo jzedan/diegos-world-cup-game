@@ -34,7 +34,7 @@
   /* ---- bracket ---- */
   .bracket-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
   .bracket { position: relative; display: flex; align-items: stretch; min-width: 950px; }
-  #connectors, #fconnectors, #cconnectors, #oconnectors, #qconnectors, #pconnectors, #kconnectors, #cwconnectors, #nlconnectors, #inlconnectors, #sa10connectors, #ru18connectors, #wc30connectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
+  #connectors, #fconnectors, #cconnectors, #oconnectors, #qconnectors, #pconnectors, #kconnectors, #cwconnectors, #nlconnectors, #inlconnectors, #sa10connectors, #ru18connectors, #wc30connectors, .wmconnectors { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
   .round { flex: 1 1 0; display: flex; flex-direction: column; padding: 0 16px; }
   .cell { flex: 1 1 0; min-height: 158px; display: flex; align-items: center; justify-content: center; }
   .bracket-card { position: relative; z-index: 10; width: 100%; }
@@ -77,6 +77,8 @@
   /* ---- tabs ---- */
   .tab-btn { transition: background-color .15s ease, color .15s ease; }
   .tab-btn.active { background: linear-gradient(135deg, #22c55e, #16a34a); color: #04140a; border-color: rgba(34,197,94,.6); font-weight: 800; }
+  /* selected year in the Inventa tu Mundial timeline: dark text on the green */
+  .imh-btn.active span { color: #04140a; }
 </style>
 </head>
 <body class="pitch-bg text-slate-200 min-h-screen">
@@ -116,17 +118,14 @@
     <button id="tabbtn-real" class="tab-btn active text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       🏆 El Mundial real
     </button>
-    <button id="tabbtn-fantasy" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
-      🎮 Inventa tu Mundial
+    <button id="tabbtn-imh" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
+      🌍 Inventa tu Mundial
     </button>
     <button id="tabbtn-custom" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       🧩 Elige tu Ronda de 32
     </button>
     <button id="tabbtn-elim" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       🗺️ Eliminatorias 2030
-    </button>
-    <button id="tabbtn-wc30" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
-      🌐 Inventa tu Mundial 2030
     </button>
     <button id="tabbtn-groups" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       🧮 Fase de grupos
@@ -148,12 +147,6 @@
     </button>
     <button id="tabbtn-inl" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
       🧩 Inventa tu Liga de Naciones
-    </button>
-    <button id="tabbtn-sa10" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
-      🦁 Inventa tu Mundial 2010
-    </button>
-    <button id="tabbtn-ru18" class="tab-btn text-sm sm:text-base px-5 py-2.5 rounded-2xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">
-      🐻 Inventa tu Mundial 2018
     </button>
   </div>
 
@@ -245,13 +238,29 @@
 </section>
 </div><!-- /tab-real -->
 
-<!-- ================= TAB 2: FANTASY (Inventa tu Mundial) ================= -->
+<!-- ================= INVENTA TU MUNDIAL: a timeline of World Cups (2026 page below is moved in) ================= -->
+<div id="tab-imh" class="hidden">
+<section class="max-w-6xl mx-auto px-4 pt-6 pb-2">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego · de 1930 a 2030</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Inventa tu Mundial 🌍</h2>
+    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
+      Elige un Mundial en la línea del tiempo. Los equipos y los grupos son <b>los de verdad</b>, pero <b class="text-yellow-300">sin resultados</b>:
+      tú decides quién pasa, con las reglas que tenía ese Mundial. 👇
+    </p>
+  </div>
+  <div class="bracket-scroll"><div id="imh-timeline" class="flex items-center gap-1 px-1 pb-2 w-max mx-auto"></div></div>
+</section>
+<div id="imh-panels"></div>
+</div><!-- /tab-imh -->
+
+<!-- ================= 2026 page of the Inventa tu Mundial timeline (fantasy) ================= -->
 <div id="tab-fantasy" class="hidden">
 
 <section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
   <div class="text-center mb-2">
     <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego · ¡Aquí mandas tú!</div>
-    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Inventa tu Mundial 🎮</h2>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Mundial 2026 🎮</h2>
     <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
       Los <b class="text-emerald-300">Octavos</b> aquí empiezan con los equipos que <b>de verdad</b>
       pasaron la Ronda de 32 real. Pero desde ahí <b>no cuentan los resultados reales</b>:
@@ -432,79 +441,7 @@
 </div><!-- /tab-elim -->
 
 <!-- ================= TAB 5: MUNDIAL 2030 (mock simulator) ================= -->
-<div id="tab-wc30" class="hidden">
 
-<section class="max-w-4xl mx-auto px-4 pt-6 pb-2">
-  <div class="text-center mb-2">
-    <div class="text-xs uppercase tracking-[0.3em] text-emerald-400/80">España · Portugal · Marruecos 2030</div>
-    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Inventa tu Mundial 2030 🌐</h2>
-    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
-      Un Mundial con <b class="text-emerald-300">48 equipos</b> en <b>12 grupos de 4</b>, igual que el formato oficial de 2030.
-      Los grupos son <b>inventados</b> (el sorteo real es en ~2029) y <b class="text-yellow-300">no hay resultados: tú decides</b>.
-      En cada grupo toca al <b>1.º</b>, al <b>2.º</b> y al <b>3.º</b>. Luego escoge a los <b>8 mejores terceros</b>:
-      con los 1.º y 2.º son <b class="text-emerald-300">32 equipos</b> para la Ronda de 32. Después tocas quién gana cada partido. 👇
-    </p>
-    <p class="text-[11px] text-slate-400 mt-2">Sedes: España, Portugal y Marruecos, con 3 partidos de aniversario en Uruguay, Argentina y Paraguay. Toca un equipo elegido <b>otra vez</b> para quitarlo.</p>
-  </div>
-  <div id="wc30-legend" class="flex flex-wrap items-center justify-center gap-2 mt-3"></div>
-  <div class="flex items-center justify-center mt-4">
-    <button id="wc30-redraw" class="text-xs px-4 py-2 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">🎲 Otro sorteo de grupos</button>
-  </div>
-  <p id="wc30-missing" class="text-xs text-slate-300 text-center mt-3"></p>
-</section>
-
-<section class="max-w-6xl mx-auto px-4 pt-2 pb-4">
-  <h3 class="text-lg font-black text-emerald-300 text-center mb-1">Fase de grupos</h3>
-  <p class="text-center text-[11px] text-slate-400 mb-3">Pasan los <b class="text-emerald-300">2 primeros</b> de cada grupo + los <b class="text-emerald-300">8 mejores terceros</b> = 32 equipos.</p>
-  <div id="wc30-groups" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-</section>
-
-<section class="max-w-5xl mx-auto px-4 pt-2 pb-4">
-  <h3 class="text-lg font-black text-amber-300 text-center mb-1">🥉 Los 8 mejores terceros</h3>
-  <p class="text-center text-[11px] text-slate-400 mb-3">De los 12 terceros, toca a los <b>8</b> que pasan a la Ronda de 32. Cada uno juega contra un 1.º de grupo, nunca de su mismo grupo.</p>
-  <div id="wc30-thirds"></div>
-</section>
-
-<section class="max-w-3xl mx-auto px-4 pt-2 pb-2">
-  <div id="wc30champ-banner" class="hidden glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
-    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Tu campeón del Mundial 2030</div>
-    <div class="text-7xl mt-2">🏆</div>
-    <div id="wc30champ-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
-    <div class="text-slate-300 mt-2">¡Este equipo ganó tu Mundial 2030! 🎉</div>
-  </div>
-</section>
-
-<main class="max-w-7xl mx-auto px-2 sm:px-4 pb-10">
-  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
-  <div class="bracket-scroll">
-    <div class="head-row max-w-7xl mx-auto" style="min-width:1250px">
-      <div class="head-col"><div class="text-sm font-black text-emerald-300">🌍 Ronda de 32</div><div class="text-[10px] text-slate-500">tus 32 equipos</div></div>
-      <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">quedan 16</div></div>
-      <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">quedan 8</div></div>
-      <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">quedan 4</div></div>
-      <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">¡tu campeón!</div></div>
-    </div>
-    <div id="wc30bracket" class="bracket wm30bracket max-w-7xl mx-auto" style="min-width:1250px">
-      <svg id="wc30connectors"></svg>
-      <div class="round" id="wc30round-r32"></div>
-      <div class="round" id="wc30round-r16"></div>
-      <div class="round" id="wc30round-qf"></div>
-      <div class="round" id="wc30round-sf"></div>
-      <div class="round" id="wc30round-final"></div>
-    </div>
-  </div>
-</main>
-
-<section class="max-w-sm mx-auto px-4 pt-2 pb-10">
-  <div class="text-center mb-3">
-    <div class="text-xs uppercase tracking-[0.3em] text-amber-300/80">Extra</div>
-    <h3 class="text-xl font-black text-amber-300 mt-1">🥉 Partido por el 3.er lugar</h3>
-    <p class="text-xs text-slate-400 mt-1">Lo juegan los dos equipos que <b class="text-slate-200">pierden</b> tus semifinales.</p>
-  </div>
-  <div id="wc30round-third"></div>
-</section>
-
-</div><!-- /tab-wc30 -->
 
 <!-- ================= TAB 6: FASE DE GRUPOS (Diego elige clasificados) ================= -->
 <div id="tab-groups" class="hidden">
@@ -1185,131 +1122,9 @@
 
 </div><!-- /tab-inl -->
 
-<div id="tab-sa10" class="hidden">
 
-<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
-  <div class="text-center mb-2">
-    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego · Historia</div>
-    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Inventa tu Mundial 2010 🦁</h2>
-    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
-      El Mundial de <b class="text-emerald-300">Sudáfrica 2010</b>, el primero en África. Aquí están los
-      <b>8 grupos de verdad</b> con sus <b>32 equipos</b>, pero <b class="text-yellow-300">sin resultados</b>:
-      tú decides. En cada grupo toca al <b>1.º</b> y luego al <b>2.º</b> — esos dos pasan a Octavos.
-      Después tocas quién gana cada partido hasta la Final. 👇
-    </p>
-    <p class="text-xs text-slate-400 mt-2">
-      <b class="text-amber-300">⭐ de verdad</b> = los que de verdad quedaron 1.º y 2.º en 2010, por si quieres elegirlos.
-      Toca un equipo elegido <b>otra vez</b> para quitarlo.
-    </p>
-    <p id="sa10-missing" class="text-xs text-slate-300 mt-2"></p>
-  </div>
-</section>
 
-<section class="max-w-6xl mx-auto px-4 pt-2 pb-4">
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="sa10-groups"></div>
-</section>
 
-<section class="max-w-3xl mx-auto px-4 pt-2 pb-2">
-  <div id="sa10champ-banner" class="hidden glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
-    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Tu campeón de Sudáfrica 2010</div>
-    <div class="text-7xl mt-2">🏆</div>
-    <div id="sa10champ-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
-    <div class="text-slate-300 mt-2">¡Este equipo ganó tu Mundial 2010! 🎉</div>
-  </div>
-</section>
-
-<main class="max-w-7xl mx-auto px-2 sm:px-4 pb-10">
-  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
-  <div class="bracket-scroll">
-    <div class="head-row max-w-7xl mx-auto" style="min-width:1050px">
-      <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">los 16 que elegiste</div></div>
-      <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">quedan 8</div></div>
-      <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">quedan 4</div></div>
-      <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">¡tu campeón!</div></div>
-    </div>
-    <div id="sa10bracket" class="bracket wmbracket max-w-7xl mx-auto" style="min-width:1050px">
-      <svg id="sa10connectors"></svg>
-      <div class="round" id="sa10round-r16"></div>
-      <div class="round" id="sa10round-qf"></div>
-      <div class="round" id="sa10round-sf"></div>
-      <div class="round" id="sa10round-final"></div>
-    </div>
-  </div>
-</main>
-
-<section class="max-w-sm mx-auto px-4 pt-2 pb-10">
-  <div class="text-center mb-3">
-    <div class="text-xs uppercase tracking-[0.3em] text-amber-300/80">Extra</div>
-    <h3 class="text-xl font-black text-amber-300 mt-1">🥉 Partido por el 3.er lugar</h3>
-    <p class="text-xs text-slate-400 mt-1">Lo juegan los dos equipos que <b class="text-slate-200">pierden</b> tus semifinales.</p>
-  </div>
-  <div id="sa10round-third"></div>
-</section>
-
-</div><!-- /tab-sa10 -->
-
-<div id="tab-ru18" class="hidden">
-
-<section class="max-w-5xl mx-auto px-4 pt-6 pb-2">
-  <div class="text-center mb-2">
-    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Modo Diego · Historia</div>
-    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Inventa tu Mundial 2018 🐻</h2>
-    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">
-      El Mundial de <b class="text-emerald-300">Rusia 2018</b>. Aquí están los <b>8 grupos de verdad</b> con sus
-      <b>32 equipos</b>, pero <b class="text-yellow-300">sin resultados</b>: tú decides. En cada grupo toca al
-      <b>1.º</b> y luego al <b>2.º</b> — esos dos pasan a Octavos. Después tocas quién gana cada partido hasta la Final. 👇
-    </p>
-    <p class="text-xs text-slate-400 mt-2">
-      <b class="text-amber-300">⭐ de verdad</b> = los que de verdad quedaron 1.º y 2.º en 2018, por si quieres elegirlos.
-      Toca un equipo elegido <b>otra vez</b> para quitarlo.
-    </p>
-    <p class="text-[11px] text-slate-500 mt-1">Rusia es tan grande que tiene varios husos horarios: cada partido muestra su hora local y la de México.</p>
-    <p id="ru18-missing" class="text-xs text-slate-300 mt-2"></p>
-  </div>
-</section>
-
-<section class="max-w-6xl mx-auto px-4 pt-2 pb-4">
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="ru18-groups"></div>
-</section>
-
-<section class="max-w-3xl mx-auto px-4 pt-2 pb-2">
-  <div id="ru18champ-banner" class="hidden glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
-    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Tu campeón de Rusia 2018</div>
-    <div class="text-7xl mt-2">🏆</div>
-    <div id="ru18champ-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
-    <div class="text-slate-300 mt-2">¡Este equipo ganó tu Mundial 2018! 🎉</div>
-  </div>
-</section>
-
-<main class="max-w-7xl mx-auto px-2 sm:px-4 pb-10">
-  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
-  <div class="bracket-scroll">
-    <div class="head-row max-w-7xl mx-auto" style="min-width:1050px">
-      <div class="head-col"><div class="text-sm font-black text-emerald-300">🥅 Octavos</div><div class="text-[10px] text-slate-500">los 16 que elegiste</div></div>
-      <div class="head-col"><div class="text-sm font-black text-emerald-300">⚔️ Cuartos</div><div class="text-[10px] text-slate-500">quedan 8</div></div>
-      <div class="head-col"><div class="text-sm font-black text-yellow-300">🔥 Semis</div><div class="text-[10px] text-slate-500">quedan 4</div></div>
-      <div class="head-col"><div class="text-sm font-black text-yellow-300">🏆 Final</div><div class="text-[10px] text-slate-500">¡tu campeón!</div></div>
-    </div>
-    <div id="ru18bracket" class="bracket wmbracket max-w-7xl mx-auto" style="min-width:1050px">
-      <svg id="ru18connectors"></svg>
-      <div class="round" id="ru18round-r16"></div>
-      <div class="round" id="ru18round-qf"></div>
-      <div class="round" id="ru18round-sf"></div>
-      <div class="round" id="ru18round-final"></div>
-    </div>
-  </div>
-</main>
-
-<section class="max-w-sm mx-auto px-4 pt-2 pb-10">
-  <div class="text-center mb-3">
-    <div class="text-xs uppercase tracking-[0.3em] text-amber-300/80">Extra</div>
-    <h3 class="text-xl font-black text-amber-300 mt-1">🥉 Partido por el 3.er lugar</h3>
-    <p class="text-xs text-slate-400 mt-1">Lo juegan los dos equipos que <b class="text-slate-200">pierden</b> tus semifinales.</p>
-  </div>
-  <div id="ru18round-third"></div>
-</section>
-
-</div><!-- /tab-ru18 -->
 
 <footer class="max-w-5xl mx-auto px-4 pb-10 text-center text-xs text-slate-500 leading-relaxed">
   Hecho con cariño para Diego · Mundial 2026 (USA · México · Canadá).<br/>
@@ -1328,6 +1143,16 @@ const FLAGS = {
   "Grecia":"gr","Eslovenia":"si","Eslovaquia":"sk","Corea del Norte":"kp",
   /* extra nations for the Inventa tu Mundial 2018 tab */
   "Rusia":"ru","Islandia":"is",
+  /* extra nations for the 1930–1954 World Cups in Inventa tu Mundial */
+  "Irlanda del Norte":"gb-nir","Bulgaria":"bg","Israel":"il",
+  /* extra nations for 1978–2022 in Inventa tu Mundial (Serbia y Montenegro used Yugoslavia's tricolour) */
+  "Angola":"ao","China":"cn","Emiratos Árabes Unidos":"ae","Irlanda":"ie","Kuwait":"kw","Togo":"tg","Ucrania":"ua",
+  "Serbia y Montenegro":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3Crect width='3' height='2' fill='%23DE0000'/%3E%3Crect width='3' height='1.333' fill='%23fff'/%3E%3Crect width='3' height='.667' fill='%230C4076'/%3E%3C/svg%3E",
+  "URSS":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3Crect width='3' height='2' fill='%23CC0000'/%3E%3Cpolygon points='0.550,0.230 0.603,0.377 0.759,0.382 0.636,0.478 0.679,0.628 0.550,0.540 0.421,0.628 0.464,0.478 0.341,0.382 0.497,0.377' fill='%23FFD700'/%3E%3C/svg%3E",
+  "Alemania Democrática":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3Crect width='3' height='2' fill='%23FFCE00'/%3E%3Crect width='3' height='1.333' fill='%23DD0000'/%3E%3Crect width='3' height='.667' fill='%23000'/%3E%3Ccircle cx='1.5' cy='1' r='.36' fill='%23FFCE00' stroke='%23000' stroke-width='.06'/%3E%3C/svg%3E",
+  "Zaire":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3Crect width='3' height='2' fill='%2331A54B'/%3E%3Ccircle cx='1.5' cy='1' r='.55' fill='%23FFD200'/%3E%3Crect x='1.43' y='.62' width='.14' height='.76' fill='%23DD0000'/%3E%3C/svg%3E",
+  "Bolivia":"bo","Rumania":"ro","Checoslovaquia":"cz","Hungría":"hu","Indias Orientales Neerlandesas":"id","Alemania Federal":"de",
+  "Yugoslavia":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3Crect width='3' height='2' fill='%23DE0000'/%3E%3Crect width='3' height='1.333' fill='%23fff'/%3E%3Crect width='3' height='.667' fill='%230C4076'/%3E%3C/svg%3E",
   /* extra nations for the Mundial 2030 pool */
   "Italia":"it","Nigeria":"ng","Chile":"cl","Perú":"pe",
   "México":"mx","Corea del Sur":"kr","Rep. Checa":"cz","Sudáfrica":"za",
@@ -1351,7 +1176,7 @@ const FLAGS = {
 const flag = (n, s = 24) => {
   const c = FLAGS[n];
   if (!c) return "⚽";
-  return `<img src="https://flagcdn.com/w80/${c}.png" alt="${n}" loading="lazy"
+  return `<img src="${c.startsWith("data:") ? c : "https://flagcdn.com/w80/" + c + ".png"}" alt="${n}" loading="lazy"
     style="width:${s}px;height:auto;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.2);display:inline-block;vertical-align:middle">`;
 };
 
@@ -2055,6 +1880,8 @@ const CODE3 = {
   "Estados Unidos":"EUA", "Costa de Marfil":"CDM", "Rep. Checa":"CHE", "Países Bajos":"PBA",
   "RD Congo":"CGO", "Argelia":"ALG", "Austria":"AUT", "Irán":"IRN", "Irak":"IRQ", "Nueva Zelanda":"NZL", "El Salvador":"SLV",
   "Eslovenia":"SVN", "Eslovaquia":"SVK", "Corea del Norte":"PRK",
+  "Checoslovaquia":"TCH", "Alemania Federal":"FRG", "Indias Orientales Neerlandesas":"INH",
+  "Irlanda del Norte":"NIR", "Alemania Democrática":"GDR", "China":"CHN", "Serbia y Montenegro":"SCG",
   "Puerto Rico":"PUR", "San Vicente y las Granadinas":"VIN", "Islas Vírgenes de EE. UU.":"VIR",
   "Santa Lucía":"LCA", "Nicaragua":"NCA", "Antigua y Barbuda":"ATG", "Dominica":"DMA", "Granada":"GRN",
   "Islas Caimán":"CAY", "República Dominicana":"DOM", "Belice":"BLZ", "Anguila":"AIA", "Aruba":"ARU",
@@ -4612,30 +4439,35 @@ document.getElementById("inl-redraw").addEventListener("click", () => {
 });
 function drawInlConnectors() { drawLines("inlbracket", "inlconnectors", nlPairs("inl"), id => inlKO[id] || null); }
 
-/* ---------------- INVENTA TU MUNDIAL (tabs 5, 13 and 14) ---------------- */
-/* One engine for every "Inventa tu Mundial <year>" tab: the groups with no
-   results. Diego taps who finishes 1.º and 2.º in each group (and 3.º in the
-   48-team format, where he also picks the 8 best third places) — teams that
-   really did are marked with a ⭐ as a hint when the tournament was played —
-   then picks every winner up to the final, plus 3rd place.
-   Each year passes a config: groups (+ real 1.º/2.º if known), places per group,
-   stadiums and the bracket. A Round-of-32 slot can be a group place [group, pos]
-   or { third: "ABCDF" } = a best 3.º from one of those groups (FIFA's rule).
-   Matches may carry date / local time / UTC offset / stadium for the card footer.
-   Element ids are cfg.px + "-groups", cfg.px + "round-r16", etc. */
+/* ---------------- INVENTA TU MUNDIAL (the big timeline tab) ---------------- */
+/* One engine for every World Cup in the "🌍 Inventa tu Mundial" timeline: the real
+   (or, for 2030, invented) groups with no results. Diego decides who goes through,
+   following the format of that World Cup, then picks every knockout winner.
+   Teams that really finished in each place are marked with a ⭐ as a hint.
+   A config describes one tournament:
+   · groups: [{ g, teams, real }]          — places = how many go through per group
+   · thirds (48-team format): Diego picks the 8 best 3.º (places: 3, r32 present)
+   · rounds: [["r32"|"r16"|"qf"|"sf", matches]] in bracket order (top to bottom)
+     a slot is [group, place], { team } (fixed, e.g. 1934/1938 had no groups) or
+     { third: "ABCDF" } (a best 3.º from one of those groups, FIFA's 48-team rule);
+     a match can carry walkover: team (1938 Sweden–Austria)
+   · final / third (optional), or finalGroup (1950: the group winners played a final group)
+   · date / time / utc / venue key per match for the card footer (all optional)
+   Element ids are cfg.px + "-groups", cfg.px + "round-qf", etc. */
 const WM = {};   /* engines by prefix, for the click handler */
+const WM_ROUND_LABEL = { r32: "Partido", r16: "Octavo", qf: "Cuarto", sf: "Semifinal" };
 function makeInventaMundial(c) {
   const places = c.places || 2;
   const e = { px: c.px, cfg: c, stand: {}, picks: {}, thirds: [], confetti: false };
-  e.rounds = c.r32 ? [["r32", c.r32], ["r16", c.r16], ["qf", c.qf], ["sf", c.sf]] : [["r16", c.r16], ["qf", c.qf], ["sf", c.sf]];
-  e.ALL = [...e.rounds.flatMap(([, list]) => list), c.final, c.third];
+  e.rounds = c.rounds || (c.r32 ? [["r32", c.r32], ["r16", c.r16], ["qf", c.qf], ["sf", c.sf]] : [["r16", c.r16], ["qf", c.qf], ["sf", c.sf]]);
+  e.r32 = (e.rounds.find(([k]) => k === "r32") || [null, null])[1];
+  e.nThirds = c.bestThirds || (e.r32 ? 8 : 0);          /* best 3.º places that go through */
+  e.first = e.rounds.length ? e.rounds[0][1] : [];     /* the first knockout round (where thirds play) */
+  e.ALL = [...e.rounds.flatMap(([, list]) => list), ...(c.final ? [c.final] : []), ...(c.third ? [c.third] : [])];
   e.LABEL = {};
-  if (c.r32) c.r32.forEach((m, i) => e.LABEL[m.id] = "Partido " + (i + 1));
-  c.r16.forEach((m, i) => e.LABEL[m.id] = "Octavo " + (i + 1));
-  c.qf.forEach((m, i) => e.LABEL[m.id] = "Cuarto " + (i + 1));
-  c.sf.forEach((m, i) => e.LABEL[m.id] = "Semifinal " + (i + 1));
-  e.LABEL[c.final.id] = "Final";
-  e.LABEL[c.third.id] = "3.er lugar";
+  e.rounds.forEach(([k, list]) => list.forEach((m, i) => e.LABEL[m.id] = WM_ROUND_LABEL[k] + " " + (i + 1)));
+  if (c.final) e.LABEL[c.final.id] = "Final";
+  if (c.third) e.LABEL[c.third.id] = "3.er lugar";
   e.PAIRS = [];
   e.ALL.forEach(m => { if (m.from) e.PAIRS.push([m.from[0], m.id], [m.from[1], m.id]); });
 
@@ -4643,7 +4475,7 @@ function makeInventaMundial(c) {
     const s = JSON.parse(localStorage.getItem(c.key) || "{}");
     e.stand = s.stand || {}; e.picks = s.picks || {}; e.thirds = s.thirds || [];
   } catch(err) { e.stand = {}; e.picks = {}; e.thirds = []; }
-  e.save = () => localStorage.setItem(c.key, JSON.stringify(c.r32 ? { stand: e.stand, picks: e.picks, thirds: e.thirds } : { stand: e.stand, picks: e.picks }));
+  e.save = () => localStorage.setItem(c.key, JSON.stringify(e.nThirds ? { stand: e.stand, picks: e.picks, thirds: e.thirds } : { stand: e.stand, picks: e.picks }));
 
   /* ---- 48-team format: the 8 best third places and which bracket slot each one takes ---- */
   e.thirdOf = (g) => (e.stand[g] || [])[2] || null;
@@ -4651,14 +4483,21 @@ function makeInventaMundial(c) {
     const now = c.groups.map(gr => e.thirdOf(gr.g)).filter(Boolean);
     e.thirds = e.thirds.filter(t => now.includes(t));
   };
-  /* FIFA lists, for every third-place slot, the groups its team may come from; with the 8
-     qualified thirds known, give each slot a different group from its list (first valid way) */
+  /* Which third plays in which slot. 1986–1994: FIFA's table (cfg.thirdTable, keyed by the qualified
+     groups, gives the third's group for each group winner). 2026/2030: FIFA lists, for every slot,
+     the groups its team may come from — give each slot a different group from its list (first valid way). */
   e.thirdSlots = () => {
-    if (!c.r32 || e.thirds.length !== 8) return {};
+    if (!e.nThirds || e.thirds.length !== e.nThirds) return {};
     const groupOf = {};
     c.groups.forEach(gr => { const t = e.thirdOf(gr.g); if (t) groupOf[t] = gr.g; });
     const have = e.thirds.map(t => groupOf[t]).filter(Boolean);
-    const slots = c.r32.filter(m => m.b && m.b.third);
+    const slots = e.first.filter(m => m.b && m.b.third);
+    if (c.thirdTable) {
+      const row = c.thirdTable[have.slice().sort().join("")];
+      const res = {};
+      if (row) slots.forEach(m => { res[m.id] = row[m.a[0]]; });
+      return res;
+    }
     const res = {}, used = new Set();
     const go = (i) => {
       if (i === slots.length) return true;
@@ -4674,13 +4513,28 @@ function makeInventaMundial(c) {
     return go(0) ? res : {};
   };
 
+  /* ---- 1950: the group winners play a final group (no final match) ---- */
+  e.fgTeams = () => c.finalGroup ? c.finalGroup.from.map(g => (e.stand[g] || [])[0] || null) : [];
+  e.fgReady = () => c.finalGroup && e.fgTeams().every(Boolean);
+  e.champion = () => c.final ? e.winnerOf(c.final.id) : (e.fgReady() && (e.stand.FG || []).length >= 1 ? e.stand.FG[0] : null);
+
+  /* ---- 1974: a second group stage; each slot points at a first-round place ---- */
+  e.g2 = (g) => (c.groups2 || []).find(x => x.g === g);
+  e.g2Teams = (gr) => gr.slots.map(([g, p]) => (e.stand[g] || [])[p] || null);
+  e.g2Ready = (gr) => e.g2Teams(gr).every(Boolean);
+
   e.side = (m, s) => {
     const ref = m[s];
     if (Array.isArray(ref)) return (e.stand[ref[0]] || [])[ref[1]] || null;
+    if (ref.team) return ref.team;
     const g = e.thirdSlots()[m.id];
     return g ? e.thirdOf(g) : null;
   };
-  e.winnerOf = (id) => e.picks[id] || null;
+  e.winnerOf = (id) => {
+    const m = e.ALL.find(x => x.id === id);
+    if (m && m.walkover) return m.walkover;
+    return e.picks[id] || null;
+  };
   e.loserOf = (id) => {
     const w = e.winnerOf(id);
     if (!w) return null;
@@ -4694,32 +4548,42 @@ function makeInventaMundial(c) {
     return { a: e.winnerOf(m.from[0]), b: e.winnerOf(m.from[1]) };
   };
   e.validate = () => {
+    (c.groups2 || []).forEach(gr => {
+      if (!e.g2Ready(gr)) delete e.stand[gr.g];
+      else if (e.stand[gr.g]) { const t = e.g2Teams(gr); e.stand[gr.g] = e.stand[gr.g].filter(x => t.includes(x)); }
+    });
+    if (c.finalGroup) {
+      const fg = e.fgTeams();
+      if (!e.fgReady()) delete e.stand.FG;
+      else if (e.stand.FG) e.stand.FG = e.stand.FG.filter(t => fg.includes(t));
+    }
     let changed = true;
     while (changed) {
       changed = false;
       e.ALL.forEach(m => {
         if (e.picks[m.id]) {
           const t = e.teamsOf(m);
-          if (e.picks[m.id] !== t.a && e.picks[m.id] !== t.b) { delete e.picks[m.id]; changed = true; }
+          if (m.walkover || (e.picks[m.id] !== t.a && e.picks[m.id] !== t.b)) { delete e.picks[m.id]; changed = true; }
         }
       });
     }
   };
-  /* tap a team: taps go 1.º, 2.º (, 3.º); tapping a chosen team clears it and the places after it;
+  /* tap a team: taps go 1.º, 2.º, …; tapping a chosen team clears it and the places after it;
      with every place chosen, tapping another team takes the last place */
   e.toggle = (g, team) => {
+    const max = g === "FG" ? e.fgTeams().length - 1 : e.g2(g) ? (c.places2 || 2) : places;
     const arr = e.stand[g] || (e.stand[g] = []);
     const i = arr.indexOf(team);
     if (i >= 0) arr.splice(i);
-    else if (arr.length < places) arr.push(team);
-    else arr[places - 1] = team;
+    else if (arr.length < max) arr.push(team);
+    else arr[max - 1] = team;
     e.syncThirds();
     e.render();
   };
   e.toggleThird = (team) => {
     const i = e.thirds.indexOf(team);
     if (i >= 0) e.thirds.splice(i, 1);
-    else if (e.thirds.length < 8) e.thirds.push(team);
+    else if (e.thirds.length < e.nThirds) e.thirds.push(team);
     e.render();
   };
   e.pick = (id, team) => {
@@ -4727,23 +4591,29 @@ function makeInventaMundial(c) {
     else e.picks[id] = team;
     e.render();
   };
-  e.missing = () => c.groups.reduce((n, gr) => n + places - (e.stand[gr.g] || []).length, 0) + (c.r32 ? 8 - e.thirds.length : 0);
+  e.missing = () => c.groups.reduce((n, gr) => n + Math.min(places, gr.teams.length) - (e.stand[gr.g] || []).length, 0)
+    + (e.nThirds ? e.nThirds - e.thirds.length : 0)
+    + (c.finalGroup ? c.finalGroup.from.length - 1 - (e.stand.FG || []).length : 0)
+    + (c.groups2 || []).reduce((n, gr) => n + (c.places2 || 2) - (e.stand[gr.g] || []).length, 0);
   /* local kickoff -> central Mexico of that year (2010 and 2018 had summer time: UTC−5) */
   e.mx = (m) => {
     const [h, mi] = m.time.split(":").map(Number);
     return String(h - (m.utc - c.mxUtc)).padStart(2, "0") + ":" + String(mi).padStart(2, "0");
   };
 
-  e.groupCard = (gr) => {
-    const chosen = e.stand[gr.g] || [];
-    const done = chosen.length === places;
+  /* one group card; key "FG" is the 1950 final group (all teams ranked, the 1.º is champion) */
+  e.groupCard = (gr, key) => {
+    const g = key || gr.g;
+    const max = g === "FG" ? gr.teams.length - 1 : e.g2(g) ? (c.places2 || 2) : Math.min(places, gr.teams.length);
+    const chosen = e.stand[g] || [];
+    const done = chosen.length === max;
     const real = gr.real || [];
     const card = document.createElement("div");
     card.className = "glass rounded-2xl p-3";
     card.innerHTML = `
       <div class="flex items-center gap-2 mb-1">
-        <div class="w-8 h-8 rounded-full bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-emerald-300 font-black">${gr.g}</div>
-        <div class="text-xs uppercase tracking-widest text-slate-400">Grupo ${gr.g}</div>
+        <div class="w-8 h-8 rounded-full bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-emerald-300 font-black">${g === "FG" ? "🏆" : gr.g}</div>
+        <div class="text-xs uppercase tracking-widest text-slate-400">${g === "FG" ? "Grupo final" : "Grupo " + gr.g}</div>
       </div>
       <div class="text-[11px] mb-2 ${done ? "text-emerald-300" : "text-yellow-300"}">
         ${done ? "✅ ¡Listo! Toca para cambiar" : `👆 Toca al <b>${chosen.length + 1}.º</b> lugar`}
@@ -4752,14 +4622,16 @@ function makeInventaMundial(c) {
         ${gr.teams.map(name => {
           const i = chosen.indexOf(name);
           const r = real.indexOf(name);
+          const auto = g === "FG" && done && i < 0;            /* the last one left in the final group is 4.º */
           /* in the 48-team format a 3.º only goes through if Diego picks it as one of the 8 best */
-          const third = i === 2;
-          const passes = i >= 0 && (!third || e.thirds.includes(name));
-          const cls = passes ? "win" : (i >= 0 || done) ? (third ? "" : "lose") : "";
-          const status = i < 0 ? (done ? "fuera" : "") : !third ? "✅" : e.thirds.includes(name) ? "✅ 3.º" : "¿3.º?";
-          return `<button data-wm="${e.px}" data-wmgrp="${gr.g}" data-team="${name}" title="${name}"
+          const third = g !== "FG" && i === 2;
+          const passes = g === "FG" ? i === 0 : i >= 0 && (!third || e.thirds.includes(name));
+          const cls = passes ? "win" : (i >= 0 || done) ? (third || g === "FG" ? "" : "lose") : "";
+          const status = g === "FG" ? (i === 0 ? "🏆" : "")
+            : i < 0 ? (done ? "fuera" : "") : !third ? "✅" : e.thirds.includes(name) ? "✅ 3.º" : "¿3.º?";
+          return `<button data-wm="${e.px}" data-wmgrp="${g}" data-team="${name}" title="${name}"
               class="team-btn w-full flex items-center gap-2 rounded-lg px-2 py-1.5 bg-slate-800/60 border ${r >= 0 ? "border-amber-400/50" : "border-slate-700"} hover:bg-slate-700/60 ${cls}">
-              <span class="w-7 text-center text-sm font-black">${i >= 0 ? (i + 1) + ".º" : ""}</span>
+              <span class="w-7 text-center text-sm font-black">${i >= 0 ? (i + 1) + ".º" : auto ? (max + 1) + ".º" : ""}</span>
               ${c.dot ? c.dot(name) : ""}
               ${flag(name, 30)}
               <span class="code3 w-10 text-left">${code3(name)}</span>
@@ -4777,9 +4649,9 @@ function makeInventaMundial(c) {
   /* 48-team format: choose the 8 best third places */
   e.thirdsHtml = () => {
     const cands = c.groups.map(gr => [gr.g, e.thirdOf(gr.g)]).filter(([, t]) => t);
-    if (!cands.length) return `<p class="text-center text-sm text-slate-500">Cuando elijas un 3.º en los grupos, aquí escoges a los 8 mejores. 👆</p>`;
-    const full = e.thirds.length === 8;
-    return `<div class="text-center text-xs text-slate-300 mb-2">Elegidos: <b class="text-emerald-300">${e.thirds.length}/8</b>${cands.length < c.groups.length ? ` · faltan grupos (${cands.length}/${c.groups.length} terceros)` : ""}</div>
+    if (!cands.length) return `<p class="text-center text-sm text-slate-500">Cuando elijas un 3.º en los grupos, aquí escoges a los ${e.nThirds} mejores. 👆</p>`;
+    const full = e.thirds.length === e.nThirds;
+    return `<div class="text-center text-xs text-slate-300 mb-2">Elegidos: <b class="text-emerald-300">${e.thirds.length}/${e.nThirds}</b>${cands.length < c.groups.length ? ` · faltan grupos (${cands.length}/${c.groups.length} terceros)` : ""}</div>
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
         ${cands.map(([g, t]) => {
           const on = e.thirds.includes(t);
@@ -4795,7 +4667,7 @@ function makeInventaMundial(c) {
 
   e.matchCard = (m) => {
     const t = e.teamsOf(m);
-    const chosen = e.picks[m.id] || null;
+    const chosen = e.winnerOf(m.id);
     const btn = (name, side) => {
       if (!name) {
         const ref = m[side];
@@ -4810,24 +4682,23 @@ function makeInventaMundial(c) {
         </div>`;
       }
       const cls = chosen ? (chosen === name ? "win" : "lose") : "";
-      return `<button data-wm="${e.px}" data-wmmatch="${m.id}" data-team="${name}" title="${name}"
-          class="team-btn flex-1 flex flex-col items-center gap-1.5 rounded-xl px-1 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 ${cls}">
-          <div class="code3">${code3(name)}</div>
+      const inner = `<div class="code3">${code3(name)}</div>
           ${flag(name, 56)}
-          <div class="text-sm" style="height:1.15rem">${chosen === name ? "🏅" : ""}</div>
-        </button>`;
+          <div class="text-sm" style="height:1.15rem">${chosen === name ? "🏅" : m.walkover ? "<span class='text-[10px]'>se retiró</span>" : ""}</div>`;
+      if (m.walkover) return `<div title="${name}" class="team-btn flex-1 flex flex-col items-center gap-1.5 rounded-xl px-1 py-2 bg-slate-800/60 border border-slate-700 ${cls}" style="cursor:default">${inner}</div>`;
+      return `<button data-wm="${e.px}" data-wmmatch="${m.id}" data-team="${name}" title="${name}"
+          class="team-btn flex-1 flex flex-col items-center gap-1.5 rounded-xl px-1 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 ${cls}">${inner}</button>`;
     };
     const wrap = document.createElement("article");
     wrap.id = "card-" + m.id;
     wrap.className = "bracket-card glass rounded-xl p-2";
-    const footer = m.date ? (() => {
-      const [venue, city] = c.venues[m.v];
-      return `<div class="mt-1.5 pt-1.5 border-t border-white/10 text-[11px] leading-snug">
-        <div class="text-slate-300">📅 ${q22date(m.date)} ${m.date.slice(0, 4)} · 🕒 ${m.time} ${c.tzLabel} / ${e.mx(m)} MX</div>
-        <div class="text-yellow-200/90 font-medium">🏟️ ${venue}</div>
-        <div class="text-slate-400">📍 ${city}</div>
-      </div>`;
-    })() : "";
+    const place = m.v ? c.venues[m.v] : null;
+    const footer = m.date ? `<div class="mt-1.5 pt-1.5 border-t border-white/10 text-[11px] leading-snug">
+        <div class="text-slate-300">📅 ${q22date(m.date)} ${m.date.slice(0, 4)}${m.time ? ` · 🕒 ${m.time} ${c.tzLabel} / ${e.mx(m)} MX` : ""}</div>
+        ${place && place[0] ? `<div class="text-yellow-200/90 font-medium">🏟️ ${place[0]}</div>` : ""}
+        ${place ? `<div class="text-slate-400">📍 ${place[1]}</div>` : ""}
+        ${m.note ? `<div class="text-amber-300/90">${m.note}</div>` : ""}
+      </div>` : "";
     wrap.innerHTML = `
       <div class="flex items-center justify-between mb-1.5 text-[10px]">
         <span class="uppercase tracking-widest text-slate-500">${e.LABEL[m.id]}</span>
@@ -4842,20 +4713,37 @@ function makeInventaMundial(c) {
     return wrap;
   };
 
-  e.drawConnectors = () => drawLines(e.px + "bracket", e.px + "connectors", e.PAIRS, e.winnerOf);
+  e.drawConnectors = () => { if (e.PAIRS.length) drawLines(e.px + "bracket", e.px + "connectors", e.PAIRS, e.winnerOf); };
 
   e.render = () => {
     e.syncThirds();
     e.validate();
     const gEl = document.getElementById(e.px + "-groups");
-    gEl.innerHTML = "";
-    c.groups.forEach(gr => gEl.appendChild(e.groupCard(gr)));
-    if (c.r32) document.getElementById(e.px + "-thirds").innerHTML = e.thirdsHtml();
+    if (gEl) { gEl.innerHTML = ""; c.groups.forEach(gr => gEl.appendChild(e.groupCard(gr))); }
+    if (e.nThirds) document.getElementById(e.px + "-thirds").innerHTML = e.thirdsHtml();
+    if (c.finalGroup) {
+      const fEl = document.getElementById(e.px + "-fg");
+      fEl.innerHTML = "";
+      if (e.fgReady()) fEl.appendChild(e.groupCard({ g: "FG", teams: e.fgTeams(), real: c.finalGroup.real }, "FG"));
+      else fEl.innerHTML = `<p class="text-center text-sm text-slate-500">Aquí juegan los ganadores de los ${c.finalGroup.from.length} grupos: ${c.finalGroup.from.map(g => "1.º " + g).join(", ")}. 👆</p>`;
+    }
+    if (c.groups2) {
+      const el = document.getElementById(e.px + "-groups2");
+      el.innerHTML = "";
+      c.groups2.forEach(gr => {
+        if (e.g2Ready(gr)) { el.appendChild(e.groupCard({ g: gr.g, teams: e.g2Teams(gr), real: gr.real })); return; }
+        const d = document.createElement("div");
+        d.className = "glass rounded-2xl p-3 text-center text-sm text-slate-500";
+        d.innerHTML = `<b class="text-slate-300">Grupo ${gr.g}</b><br>Lo juegan: ${gr.slots.map(([g, p]) => (p + 1) + ".º del Grupo " + g).join(", ")} 👆`;
+        el.appendChild(d);
+      });
+    }
     const miss = e.missing();
-    const qualifiers = c.r32 ? 32 : 16;
     document.getElementById(e.px + "-missing").innerHTML = miss
-      ? `Faltan <b class="text-yellow-300">${miss}</b> lugares por elegir${c.r32 ? " (grupos y mejores terceros)" : " en los grupos"}.`
-      : `<b class="text-emerald-300">¡Ya están los ${qualifiers}!</b> Ahora toca quién gana cada partido. 👇`;
+      ? `Faltan <b class="text-yellow-300">${miss}</b> lugares por elegir${e.nThirds ? " (grupos y mejores terceros)" : ""}.`
+      : c.finalGroup
+        ? `<b class="text-emerald-300">¡Listo! Ya tienes a tu campeón.</b> 🏆`
+        : `<b class="text-emerald-300">¡Ya están todos los que pasan!</b> Ahora toca quién gana cada partido. 👇`;
     const fill = (elId, list, isFinal) => {
       const el = document.getElementById(elId);
       el.innerHTML = "";
@@ -4871,14 +4759,16 @@ function makeInventaMundial(c) {
       });
     };
     e.rounds.forEach(([r, list]) => fill(e.px + "round-" + r, list, false));
-    fill(e.px + "round-final", [c.final], true);
-    const third = document.getElementById(e.px + "round-third");
-    third.innerHTML = "";
-    third.appendChild(e.matchCard(c.third));
+    if (c.final) fill(e.px + "round-final", [c.final], true);
+    if (c.third) {
+      const third = document.getElementById(e.px + "round-third");
+      third.innerHTML = "";
+      third.appendChild(e.matchCard(c.third));
+    }
     requestAnimationFrame(e.drawConnectors);
 
     const banner = document.getElementById(e.px + "champ-banner");
-    const champ = e.picks[c.final.id];
+    const champ = e.champion();
     if (champ) {
       document.getElementById(e.px + "champ-name").innerHTML = flag(champ, 42) + " " + champ;
       banner.classList.remove("hidden");
@@ -4895,6 +4785,141 @@ function makeInventaMundial(c) {
   WM[c.px] = e;
   return e;
 }
+
+/* ---- 1930–1954: the real groups / draw and the format of each World Cup ----
+   Sources: Wikipedia raw wikitext of "<year> FIFA World Cup", its Group / knockout /
+   final-tournament / final-round / final pages. No kickoff times (the card shows date,
+   stadium and city). Teams are listed in draw order, not in final order. */
+const WC1930 = makeInventaMundial({
+  px: "wc1930", key: "diegosWorldCup.inventa1930.v1", places: 1,
+  groups: [
+    { g:"1", teams:["Argentina","Chile","Francia","México"], real:["Argentina"] },
+    { g:"2", teams:["Yugoslavia","Brasil","Bolivia"],         real:["Yugoslavia"] },
+    { g:"3", teams:["Uruguay","Rumania","Perú"],              real:["Uruguay"] },
+    { g:"4", teams:["Estados Unidos","Paraguay","Bélgica"],   real:["Estados Unidos"] }
+  ],
+  venues: { cent: ["Estadio Centenario", "Montevideo"] },
+  /* only the 4 group winners went through, straight to the semi-finals; no 3rd-place match */
+  rounds: [["sf", [
+    { id:"wc1930sf1", a:["1",0], b:["4",0], date:"1930-07-26", v:"cent" },
+    { id:"wc1930sf2", a:["3",0], b:["2",0], date:"1930-07-27", v:"cent" }
+  ]]],
+  final: { id:"wc1930final", from:["wc1930sf1","wc1930sf2"], date:"1930-07-30", v:"cent" }
+});
+
+/* 1934 and 1938: no groups at all — straight knockout from the first match */
+const WC1934 = makeInventaMundial({
+  px: "wc1934", key: "diegosWorldCup.inventa1934.v1", groups: [],
+  /* city only: several of these stadiums had names from Italy's government of the time */
+  venues: { roma:[null,"Roma"], genova:[null,"Génova"], turin:[null,"Turín"], napoles:[null,"Nápoles"],
+            trieste:[null,"Trieste"], milan:[null,"Milán"], florencia:[null,"Florencia"], bolonia:[null,"Bolonia"] },
+  rounds: [
+    ["r16", [
+      { id:"wc1934r1", a:{ team:"Italia" },         b:{ team:"Estados Unidos" }, date:"1934-05-27", v:"roma" },
+      { id:"wc1934r2", a:{ team:"España" },         b:{ team:"Brasil" },         date:"1934-05-27", v:"genova" },
+      { id:"wc1934r3", a:{ team:"Austria" },        b:{ team:"Francia" },        date:"1934-05-27", v:"turin" },
+      { id:"wc1934r4", a:{ team:"Hungría" },        b:{ team:"Egipto" },         date:"1934-05-27", v:"napoles" },
+      { id:"wc1934r5", a:{ team:"Checoslovaquia" }, b:{ team:"Rumania" },        date:"1934-05-27", v:"trieste" },
+      { id:"wc1934r6", a:{ team:"Suiza" },          b:{ team:"Países Bajos" },   date:"1934-05-27", v:"milan" },
+      { id:"wc1934r7", a:{ team:"Alemania" },       b:{ team:"Bélgica" },        date:"1934-05-27", v:"florencia" },
+      { id:"wc1934r8", a:{ team:"Suecia" },         b:{ team:"Argentina" },      date:"1934-05-27", v:"bolonia" }
+    ]],
+    ["qf", [
+      { id:"wc1934q1", from:["wc1934r1","wc1934r2"], date:"1934-05-31", v:"florencia" },
+      { id:"wc1934q2", from:["wc1934r3","wc1934r4"], date:"1934-05-31", v:"bolonia" },
+      { id:"wc1934q3", from:["wc1934r5","wc1934r6"], date:"1934-05-31", v:"turin" },
+      { id:"wc1934q4", from:["wc1934r7","wc1934r8"], date:"1934-05-31", v:"milan" }
+    ]],
+    ["sf", [
+      { id:"wc1934s1", from:["wc1934q1","wc1934q2"], date:"1934-06-03", v:"milan" },
+      { id:"wc1934s2", from:["wc1934q3","wc1934q4"], date:"1934-06-03", v:"roma" }
+    ]]
+  ],
+  final: { id:"wc1934final", from:["wc1934s1","wc1934s2"], date:"1934-06-10", v:"roma" },
+  third: { id:"wc1934third", fromLosers:["wc1934s1","wc1934s2"], date:"1934-06-07", v:"napoles" }
+});
+
+const WC1938 = makeInventaMundial({
+  px: "wc1938", key: "diegosWorldCup.inventa1938.v1", groups: [],
+  venues: {
+    marsella:["Stade Vélodrome","Marsella"], colombes:["Stade Olympique de Colombes","Colombes (París)"],
+    estrasburgo:["Stade de la Meinau","Estrasburgo"], lehavre:["Stade Municipal","Le Havre"],
+    reims:["Vélodrome Municipal","Reims"], paris:["Parc des Princes","París"], lyon:["Stade Gerland","Lyon"],
+    toulouse:["Stade du T.O.E.C.","Toulouse"], burdeos:["Parc Lescure","Burdeos"],
+    lille:["Stade Victor Boucquey","Lille"], antibes:["Stade du Fort Carré","Antibes"]
+  },
+  rounds: [
+    ["r16", [
+      { id:"wc1938r1", a:{ team:"Italia" },         b:{ team:"Noruega" },        date:"1938-06-05", v:"marsella" },
+      { id:"wc1938r2", a:{ team:"Francia" },        b:{ team:"Bélgica" },        date:"1938-06-05", v:"colombes" },
+      { id:"wc1938r3", a:{ team:"Brasil" },         b:{ team:"Polonia" },        date:"1938-06-05", v:"estrasburgo" },
+      { id:"wc1938r4", a:{ team:"Checoslovaquia" }, b:{ team:"Países Bajos" },   date:"1938-06-05", v:"lehavre" },
+      { id:"wc1938r5", a:{ team:"Hungría" },        b:{ team:"Indias Orientales Neerlandesas" }, date:"1938-06-05", v:"reims" },
+      { id:"wc1938r6", a:{ team:"Suiza" },          b:{ team:"Alemania" },       date:"1938-06-04", v:"paris" },
+      /* Austria withdrew (it had just been taken over by Germany), so Sweden went straight through */
+      { id:"wc1938r7", a:{ team:"Suecia" },         b:{ team:"Austria" },        date:"1938-06-05", v:"lyon", walkover:"Suecia",
+        note:"Austria se retiró del Mundial: Suecia pasó directo" },
+      { id:"wc1938r8", a:{ team:"Cuba" },           b:{ team:"Rumania" },        date:"1938-06-05", v:"toulouse" }
+    ]],
+    ["qf", [
+      { id:"wc1938q1", from:["wc1938r1","wc1938r2"], date:"1938-06-12", v:"colombes" },
+      { id:"wc1938q2", from:["wc1938r3","wc1938r4"], date:"1938-06-12", v:"burdeos" },
+      { id:"wc1938q3", from:["wc1938r5","wc1938r6"], date:"1938-06-12", v:"lille" },
+      { id:"wc1938q4", from:["wc1938r7","wc1938r8"], date:"1938-06-12", v:"antibes" }
+    ]],
+    ["sf", [
+      { id:"wc1938s1", from:["wc1938q1","wc1938q2"], date:"1938-06-16", v:"marsella" },
+      { id:"wc1938s2", from:["wc1938q3","wc1938q4"], date:"1938-06-16", v:"paris" }
+    ]]
+  ],
+  final: { id:"wc1938final", from:["wc1938s1","wc1938s2"], date:"1938-06-19", v:"colombes" },
+  third: { id:"wc1938third", fromLosers:["wc1938s1","wc1938s2"], date:"1938-06-19", v:"burdeos" }
+});
+
+/* 1950: only the group winners went through, to a FINAL GROUP (everyone against everyone,
+   most points = champion) — the only World Cup without a final match. Several teams withdrew,
+   so groups 3 and 4 had 3 and 2 teams. */
+const WC1950 = makeInventaMundial({
+  px: "wc1950", key: "diegosWorldCup.inventa1950.v1", places: 1,
+  groups: [
+    { g:"1", teams:["Brasil","México","Suiza","Yugoslavia"],             real:["Brasil"] },
+    { g:"2", teams:["Inglaterra","Chile","España","Estados Unidos"],     real:["España"] },
+    { g:"3", teams:["Suecia","Italia","Paraguay"],                       real:["Suecia"] },
+    { g:"4", teams:["Uruguay","Bolivia"],                                real:["Uruguay"] }
+  ],
+  venues: {},
+  rounds: [],
+  finalGroup: { from:["1","2","3","4"], real:["Uruguay","Brasil","Suecia","España"],
+    note:"Se jugó del 9 al 16 de julio de 1950 en el Maracanã (Río de Janeiro) y el Pacaembu (São Paulo)." }
+});
+
+/* 1954: 4 groups of 4, top 2 through. In the quarter-finals group winners met group winners
+   and runners-up met runners-up. */
+const WC1954 = makeInventaMundial({
+  px: "wc1954", key: "diegosWorldCup.inventa1954.v1", places: 2,
+  groups: [
+    { g:"1", teams:["Brasil","Francia","Yugoslavia","México"],                 real:["Brasil","Yugoslavia"] },
+    { g:"2", teams:["Hungría","Turquía","Alemania Federal","Corea del Sur"],   real:["Hungría","Alemania Federal"] },
+    { g:"3", teams:["Uruguay","Austria","Checoslovaquia","Escocia"],           real:["Uruguay","Austria"] },
+    { g:"4", teams:["Inglaterra","Italia","Suiza","Bélgica"],                  real:["Inglaterra","Suiza"] }
+  ],
+  venues: { ginebra:["Stade des Charmilles","Ginebra"], lausana:["Stade Olympique de la Pontaise","Lausana"],
+            berna:["Wankdorfstadion","Berna"], basilea:["Estadio St. Jakob","Basilea"], zurich:["Estadio Hardturm","Zúrich"] },
+  rounds: [
+    ["qf", [
+      { id:"wc1954q1", a:["2",1], b:["1",1], date:"1954-06-27", v:"ginebra" },
+      { id:"wc1954q2", a:["3",1], b:["4",1], date:"1954-06-26", v:"lausana" },
+      { id:"wc1954q3", a:["2",0], b:["1",0], date:"1954-06-27", v:"berna" },
+      { id:"wc1954q4", a:["3",0], b:["4",0], date:"1954-06-26", v:"basilea" }
+    ]],
+    ["sf", [
+      { id:"wc1954s1", from:["wc1954q1","wc1954q2"], date:"1954-06-30", v:"basilea" },
+      { id:"wc1954s2", from:["wc1954q3","wc1954q4"], date:"1954-06-30", v:"lausana" }
+    ]]
+  ],
+  final: { id:"wc1954final", from:["wc1954s1","wc1954s2"], date:"1954-07-04", v:"berna" },
+  third: { id:"wc1954third", fromLosers:["wc1954s1","wc1954s2"], date:"1954-07-03", v:"zurich" }
+});
 
 /* Sudáfrica 2010 (Wikipedia: "2010 FIFA World Cup Group A–H", "... knockout stage", "... final").
    Kickoffs 16:00 / 20:30 South Africa time (UTC+2); the real 1.º / 2.º are the teams that
@@ -5063,23 +5088,725 @@ const WC30 = makeInventaMundial({
   final: { id:"wc30m104", from:["wc30m101","wc30m102"] },
   third: { id:"wc30m103", fromLosers:["wc30m101","wc30m102"] }
 });
-document.getElementById("wc30-redraw").addEventListener("click", () => {
+function wc30Redraw() {
   if (WC30.missing() < 44 && !confirm("¿Hacer otro sorteo de grupos? Se borra todo lo que elegiste.")) return;
   wc30Groups = wc30Draw();
   localStorage.setItem(WC30DKEY, JSON.stringify(wc30Groups));
   WC30.cfg.groups = wc30Groups;
   WC30.reset();
+}
+
+/* ---- 1958–1974 (Wikipedia raw wikitext: "<year> FIFA World Cup" Group 1–4 / A–B, knockout stage, final).
+   1958–1970: 4 groups of 4, top 2 into the quarter-finals. 1974: top 2 into a SECOND group stage of
+   2 groups of 4; their winners played the final and the runners-up the 3rd-place match. ---- */
+const WC1958 = makeInventaMundial({
+  px: "wc1958", key: "diegosWorldCup.inventa1958.v1", places: 2,
+  groups: [
+    { g:"1", teams:["Argentina","Alemania Federal","Irlanda del Norte","Checoslovaquia"], real:["Alemania Federal","Irlanda del Norte"] },
+    { g:"2", teams:["Francia","Paraguay","Yugoslavia","Escocia"],                         real:["Francia","Yugoslavia"] },
+    { g:"3", teams:["Suecia","México","Hungría","Gales"],                                 real:["Suecia","Gales"] },
+    { g:"4", teams:["Brasil","Austria","URSS","Inglaterra"],                              real:["Brasil","URSS"] }
+  ],
+  venues: { gotemburgo:["Estadio Ullevi","Gotemburgo"], norrkoping:["Idrottsparken","Norrköping"],
+            solna:["Estadio Råsunda","Solna (Estocolmo)"], malmo:["Malmö Stadion","Malmö"] },
+  rounds: [
+    ["qf", [
+      { id:"wc1958q1", a:["4",0], b:["3",1], date:"1958-06-19", v:"gotemburgo" },
+      { id:"wc1958q2", a:["2",0], b:["1",1], date:"1958-06-19", v:"norrkoping" },
+      { id:"wc1958q3", a:["3",0], b:["4",1], date:"1958-06-19", v:"solna" },
+      { id:"wc1958q4", a:["1",0], b:["2",1], date:"1958-06-19", v:"malmo" }
+    ]],
+    ["sf", [
+      { id:"wc1958s1", from:["wc1958q1","wc1958q2"], date:"1958-06-24", v:"solna" },
+      { id:"wc1958s2", from:["wc1958q3","wc1958q4"], date:"1958-06-24", v:"gotemburgo" }
+    ]]
+  ],
+  final: { id:"wc1958final", from:["wc1958s1","wc1958s2"], date:"1958-06-29", v:"solna" },
+  third: { id:"wc1958third", fromLosers:["wc1958s1","wc1958s2"], date:"1958-06-28", v:"gotemburgo" }
 });
+
+const WC1962 = makeInventaMundial({
+  px: "wc1962", key: "diegosWorldCup.inventa1962.v1", places: 2,
+  groups: [
+    { g:"1", teams:["Uruguay","Colombia","URSS","Yugoslavia"],          real:["URSS","Yugoslavia"] },
+    { g:"2", teams:["Chile","Suiza","Alemania Federal","Italia"],       real:["Alemania Federal","Chile"] },
+    { g:"3", teams:["Brasil","México","Checoslovaquia","España"],       real:["Brasil","Checoslovaquia"] },
+    { g:"4", teams:["Argentina","Bulgaria","Hungría","Inglaterra"],     real:["Hungría","Inglaterra"] }
+  ],
+  venues: { arica:["Estadio Carlos Dittborn","Arica"], rancagua:["Estadio El Teniente","Rancagua"],
+            vina:["Estadio Sausalito","Viña del Mar"], santiago:["Estadio Nacional","Santiago"] },
+  /* bracket order: the semi-finals were W(Q2)–W(Q4) and W(Q3)–W(Q1) */
+  rounds: [
+    ["qf", [
+      { id:"wc1962q2", a:["4",0], b:["3",1], date:"1962-06-10", v:"rancagua" },
+      { id:"wc1962q4", a:["2",0], b:["1",1], date:"1962-06-10", v:"santiago" },
+      { id:"wc1962q3", a:["3",0], b:["4",1], date:"1962-06-10", v:"vina" },
+      { id:"wc1962q1", a:["1",0], b:["2",1], date:"1962-06-10", v:"arica" }
+    ]],
+    ["sf", [
+      { id:"wc1962s1", from:["wc1962q2","wc1962q4"], date:"1962-06-13", v:"vina" },
+      { id:"wc1962s2", from:["wc1962q3","wc1962q1"], date:"1962-06-13", v:"santiago" }
+    ]]
+  ],
+  final: { id:"wc1962final", from:["wc1962s1","wc1962s2"], date:"1962-06-17", v:"santiago" },
+  third: { id:"wc1962third", fromLosers:["wc1962s1","wc1962s2"], date:"1962-06-16", v:"santiago" }
+});
+
+const WC1966 = makeInventaMundial({
+  px: "wc1966", key: "diegosWorldCup.inventa1966.v1", places: 2,
+  groups: [
+    { g:"1", teams:["Inglaterra","Uruguay","Francia","México"],             real:["Inglaterra","Uruguay"] },
+    { g:"2", teams:["Alemania Federal","Suiza","Argentina","España"],       real:["Alemania Federal","Argentina"] },
+    { g:"3", teams:["Brasil","Bulgaria","Portugal","Hungría"],              real:["Portugal","Hungría"] },
+    { g:"4", teams:["URSS","Corea del Norte","Italia","Chile"],             real:["URSS","Corea del Norte"] }
+  ],
+  venues: { wembley:["Estadio de Wembley","Londres"], sheffield:["Hillsborough","Sheffield"],
+            sunderland:["Roker Park","Sunderland"], liverpool:["Goodison Park","Liverpool"] },
+  /* bracket order: the semi-finals were W(Q2)–W(Q3) and W(Q1)–W(Q4) */
+  rounds: [
+    ["qf", [
+      { id:"wc1966q2", a:["2",0], b:["1",1], date:"1966-07-23", v:"sheffield" },
+      { id:"wc1966q3", a:["4",0], b:["3",1], date:"1966-07-23", v:"sunderland" },
+      { id:"wc1966q1", a:["1",0], b:["2",1], date:"1966-07-23", v:"wembley" },
+      { id:"wc1966q4", a:["3",0], b:["4",1], date:"1966-07-23", v:"liverpool" }
+    ]],
+    ["sf", [
+      { id:"wc1966s1", from:["wc1966q2","wc1966q3"], date:"1966-07-25", v:"liverpool" },
+      { id:"wc1966s2", from:["wc1966q1","wc1966q4"], date:"1966-07-26", v:"wembley" }
+    ]]
+  ],
+  final: { id:"wc1966final", from:["wc1966s1","wc1966s2"], date:"1966-07-30", v:"wembley" },
+  third: { id:"wc1966third", fromLosers:["wc1966s1","wc1966s2"], date:"1966-07-28", v:"wembley" }
+});
+
+const WC1970 = makeInventaMundial({
+  px: "wc1970", key: "diegosWorldCup.inventa1970.v1", places: 2,
+  groups: [
+    { g:"1", teams:["México","URSS","Bélgica","El Salvador"],               real:["URSS","México"] },
+    { g:"2", teams:["Uruguay","Israel","Italia","Suecia"],                  real:["Italia","Uruguay"] },
+    { g:"3", teams:["Inglaterra","Rumania","Brasil","Checoslovaquia"],      real:["Brasil","Inglaterra"] },
+    { g:"4", teams:["Perú","Bulgaria","Alemania Federal","Marruecos"],      real:["Alemania Federal","Perú"] }
+  ],
+  venues: { azteca:["Estadio Azteca","Ciudad de México"], toluca:["Estadio Luis Dosal (hoy Nemesio Díez)","Toluca"],
+            guadalajara:["Estadio Jalisco","Guadalajara"], leon:["Estadio Nou Camp","León"] },
+  /* bracket order: the semi-finals were W(Q3)–W(Q1) and W(Q2)–W(Q4) */
+  rounds: [
+    ["qf", [
+      { id:"wc1970q3", a:["3",0], b:["4",1], date:"1970-06-14", v:"guadalajara" },
+      { id:"wc1970q1", a:["1",0], b:["2",1], date:"1970-06-14", v:"azteca" },
+      { id:"wc1970q2", a:["2",0], b:["1",1], date:"1970-06-14", v:"toluca" },
+      { id:"wc1970q4", a:["4",0], b:["3",1], date:"1970-06-14", v:"leon" }
+    ]],
+    ["sf", [
+      { id:"wc1970s1", from:["wc1970q3","wc1970q1"], date:"1970-06-17", v:"guadalajara" },
+      { id:"wc1970s2", from:["wc1970q2","wc1970q4"], date:"1970-06-17", v:"azteca" }
+    ]]
+  ],
+  final: { id:"wc1970final", from:["wc1970s1","wc1970s2"], date:"1970-06-21", v:"azteca" },
+  third: { id:"wc1970third", fromLosers:["wc1970s1","wc1970s2"], date:"1970-06-20", v:"azteca" }
+});
+
+const WC1974 = makeInventaMundial({
+  px: "wc1974", key: "diegosWorldCup.inventa1974.v1", places: 2, places2: 2,
+  groups: [
+    { g:"1", teams:["Alemania Federal","Chile","Alemania Democrática","Australia"], real:["Alemania Democrática","Alemania Federal"] },
+    { g:"2", teams:["Brasil","Yugoslavia","Zaire","Escocia"],                      real:["Yugoslavia","Brasil"] },
+    { g:"3", teams:["Uruguay","Países Bajos","Suecia","Bulgaria"],                 real:["Países Bajos","Suecia"] },
+    { g:"4", teams:["Italia","Haití","Polonia","Argentina"],                       real:["Polonia","Argentina"] }
+  ],
+  /* the 8 that went through played a second group stage */
+  groups2: [
+    { g:"A", slots:[["1",0],["2",1],["3",0],["4",1]], real:["Países Bajos","Brasil"] },
+    { g:"B", slots:[["1",1],["2",0],["3",1],["4",0]], real:["Alemania Federal","Polonia"] }
+  ],
+  venues: { munich:["Olympiastadion","Múnich"] },
+  rounds: [],
+  final: { id:"wc1974final", a:["A",0], b:["B",0], date:"1974-07-07", v:"munich" },
+  third: { id:"wc1974third", a:["A",1], b:["B",1], date:"1974-07-06", v:"munich" }
+});
+
+/* ---- 1978–2022 (except 2010/2018): GENERATED by scratchpad hist3/gen.py from Wikipedia's raw wikitext
+   ("<year> FIFA World Cup" group pages, knockout stage — its bracket rows — and final). 1986–1994: the 4 best
+   thirds are placed with FIFA's own table (tournament regulations, Section 28). 1978 / 1982: second group stage. ---- */
+const WC1978 = makeInventaMundial({
+  px: "wc1978", key: "diegosWorldCup.inventa1978.v1", places: 2,
+  groups: [
+    { g:"1", teams:["Italia", "Francia", "Argentina", "Hungría"], real:["Italia", "Argentina"] },
+    { g:"2", teams:["Alemania Federal", "Polonia", "Túnez", "México"], real:["Polonia", "Alemania Federal"] },
+    { g:"3", teams:["Austria", "España", "Brasil", "Suecia"], real:["Austria", "Brasil"] },
+    { g:"4", teams:["Perú", "Escocia", "Países Bajos", "Irán"], real:["Perú", "Países Bajos"] }
+  ],
+  places2: 2,
+  groups2: [
+    { g:"A", slots:[["3", 0], ["4", 1], ["1", 0], ["2", 1]], real:["Países Bajos", "Italia"] },
+    { g:"B", slots:[["3", 1], ["4", 0], ["1", 1], ["2", 0]], real:["Argentina", "Brasil"] }
+  ],
+  venues: {"buenosairesestadiomonumental": ["Estadio Monumental", "Buenos Aires"]},
+  rounds: [],
+  final: { id:"wc1978final", a:["A",0], b:["B",0], date:"1978-06-25", v:"buenosairesestadiomonumental" },
+  third: { id:"wc1978third", a:["A",1], b:["B",1], date:"1978-06-24", v:"buenosairesestadiomonumental" }
+});
+
+const WC1982 = makeInventaMundial({
+  px: "wc1982", key: "diegosWorldCup.inventa1982.v1", places: 2,
+  groups: [
+    { g:"1", teams:["Italia", "Polonia", "Perú", "Camerún"], real:["Polonia", "Italia"] },
+    { g:"2", teams:["Alemania Federal", "Argelia", "Chile", "Austria"], real:["Alemania Federal", "Austria"] },
+    { g:"3", teams:["Argentina", "Bélgica", "Hungría", "El Salvador"], real:["Bélgica", "Argentina"] },
+    { g:"4", teams:["Inglaterra", "Francia", "Checoslovaquia", "Kuwait"], real:["Inglaterra", "Francia"] },
+    { g:"5", teams:["España", "Honduras", "Yugoslavia", "Irlanda del Norte"], real:["Irlanda del Norte", "España"] },
+    { g:"6", teams:["Brasil", "URSS", "Escocia", "Nueva Zelanda"], real:["Brasil", "URSS"] }
+  ],
+  places2: 1,
+  groups2: [
+    { g:"A", slots:[["1", 0], ["3", 0], ["6", 1]], real:["Polonia"] },
+    { g:"B", slots:[["2", 0], ["4", 0], ["5", 1]], real:["Alemania Federal"] },
+    { g:"C", slots:[["1", 1], ["3", 1], ["6", 0]], real:["Italia"] },
+    { g:"D", slots:[["2", 1], ["4", 1], ["5", 0]], real:["Francia"] }
+  ],
+  venues: {"barcelonacampnou": ["Camp Nou", "Barcelona"], "sevillaestadioramnsnchezpizjun": ["Estadio Ramón Sánchez Pizjuán", "Sevilla"], "madridestadiosantiagobernabu": ["Estadio Santiago Bernabéu", "Madrid"], "alicanteestadiojosricoprez": ["Estadio José Rico Pérez", "Alicante"]},
+  rounds: [["sf", [
+      { id:"wc1982s1", a:["A",0], b:["C",0], date:"1982-07-08", v:"barcelonacampnou" },
+      { id:"wc1982s2", a:["B",0], b:["D",0], date:"1982-07-08", v:"sevillaestadioramnsnchezpizjun" }
+  ]]],
+  final: { id:"wc1982final", from:["wc1982s1","wc1982s2"], date:"1982-07-11", v:"madridestadiosantiagobernabu" },
+  third: { id:"wc1982third", fromLosers:["wc1982s1","wc1982s2"], date:"1982-07-10", v:"alicanteestadiojosricoprez" }
+});
+
+const WC1986 = makeInventaMundial({
+  px: "wc1986", key: "diegosWorldCup.inventa1986.v1", places: 3, bestThirds: 4,
+  groups: [
+    { g:"A", teams:["Bulgaria", "Italia", "Argentina", "Corea del Sur"], real:["Argentina", "Italia", "Bulgaria"] },
+    { g:"B", teams:["Bélgica", "México", "Paraguay", "Irak"], real:["México", "Paraguay", "Bélgica"] },
+    { g:"C", teams:["Canadá", "Francia", "URSS", "Hungría"], real:["URSS", "Francia", "Hungría"] },
+    { g:"D", teams:["España", "Brasil", "Argelia", "Irlanda del Norte"], real:["Brasil", "España", "Irlanda del Norte"] },
+    { g:"E", teams:["Uruguay", "Alemania Federal", "Escocia", "Dinamarca"], real:["Dinamarca", "Alemania Federal", "Uruguay"] },
+    { g:"F", teams:["Marruecos", "Polonia", "Portugal", "Inglaterra"], real:["Marruecos", "Inglaterra", "Polonia"] }
+  ],
+  thirdTable: {"ABCD": {"A": "C", "B": "D", "C": "A", "D": "B"}, "ABCE": {"A": "C", "B": "A", "C": "B", "D": "E"}, "ABCF": {"A": "C", "B": "A", "C": "B", "D": "F"}, "ABDE": {"A": "D", "B": "A", "C": "B", "D": "E"}, "ABDF": {"A": "D", "B": "A", "C": "B", "D": "F"}, "ABEF": {"A": "E", "B": "A", "C": "B", "D": "F"}, "ACDE": {"A": "C", "B": "D", "C": "A", "D": "E"}, "ACDF": {"A": "C", "B": "D", "C": "A", "D": "F"}, "ACEF": {"A": "C", "B": "A", "C": "F", "D": "E"}, "ADEF": {"A": "D", "B": "A", "C": "F", "D": "E"}, "BCDE": {"A": "C", "B": "D", "C": "B", "D": "E"}, "BCDF": {"A": "C", "B": "D", "C": "B", "D": "F"}, "BCEF": {"A": "E", "B": "C", "C": "B", "D": "F"}, "BDEF": {"A": "E", "B": "D", "C": "B", "D": "F"}, "CDEF": {"A": "C", "B": "D", "C": "F", "D": "E"}},
+  venues: {"puebla": [null, "Puebla"], "ciudaddemxicoestadioazteca": ["Estadio Azteca", "Ciudad de México"], "quertaro": [null, "Querétaro"], "len": [null, "León"], "guadalajara": [null, "Guadalajara"], "ciudaddemxicoestadioolmpico": ["Estadio Olímpico", "Ciudad de México"], "sannicolsdelosgarza": [null, "San Nicolás de los Garza"]},
+  rounds: [
+    ["r16", [
+      { id:"wc1986r1", a:["A", 0], b:{ third:"CDE" }, date:"1986-06-16", v:"puebla" },
+      { id:"wc1986r2", a:["F", 1], b:["B", 1], date:"1986-06-18", v:"ciudaddemxicoestadioazteca" },
+      { id:"wc1986r3", a:["E", 0], b:["D", 1], date:"1986-06-18", v:"quertaro" },
+      { id:"wc1986r4", a:["C", 0], b:{ third:"ABF" }, date:"1986-06-15", v:"len" },
+      { id:"wc1986r5", a:["D", 0], b:{ third:"BEF" }, date:"1986-06-16", v:"guadalajara" },
+      { id:"wc1986r6", a:["A", 1], b:["C", 1], date:"1986-06-17", v:"ciudaddemxicoestadioolmpico" },
+      { id:"wc1986r7", a:["F", 0], b:["E", 1], date:"1986-06-17", v:"sannicolsdelosgarza" },
+      { id:"wc1986r8", a:["B", 0], b:{ third:"ACD" }, date:"1986-06-15", v:"ciudaddemxicoestadioazteca" }
+    ]],
+    ["qf", [
+      { id:"wc1986q1", from:["wc1986r1", "wc1986r2"], date:"1986-06-22", v:"ciudaddemxicoestadioazteca" },
+      { id:"wc1986q2", from:["wc1986r3", "wc1986r4"], date:"1986-06-22", v:"puebla" },
+      { id:"wc1986q3", from:["wc1986r5", "wc1986r6"], date:"1986-06-21", v:"guadalajara" },
+      { id:"wc1986q4", from:["wc1986r7", "wc1986r8"], date:"1986-06-21", v:"sannicolsdelosgarza" }
+    ]],
+    ["sf", [
+      { id:"wc1986s1", from:["wc1986q1", "wc1986q2"], date:"1986-06-25", v:"ciudaddemxicoestadioazteca" },
+      { id:"wc1986s2", from:["wc1986q3", "wc1986q4"], date:"1986-06-25", v:"guadalajara" }
+    ]]
+  ],
+  final: { id:"wc1986final", from:["wc1986s1", "wc1986s2"], date:"1986-06-29", v:"ciudaddemxicoestadioazteca" },
+  third: { id:"wc1986third", fromLosers:["wc1986s1", "wc1986s2"], date:"1986-06-28", v:"puebla" }
+});
+
+const WC1990 = makeInventaMundial({
+  px: "wc1990", key: "diegosWorldCup.inventa1990.v1", places: 3, bestThirds: 4,
+  groups: [
+    { g:"A", teams:["Italia", "Austria", "Estados Unidos", "Checoslovaquia"], real:["Italia", "Checoslovaquia", "Austria"] },
+    { g:"B", teams:["Argentina", "Camerún", "URSS", "Rumania"], real:["Camerún", "Rumania", "Argentina"] },
+    { g:"C", teams:["Brasil", "Suecia", "Costa Rica", "Escocia"], real:["Brasil", "Costa Rica", "Escocia"] },
+    { g:"D", teams:["Emiratos Árabes Unidos", "Colombia", "Alemania Federal", "Yugoslavia"], real:["Alemania Federal", "Yugoslavia", "Colombia"] },
+    { g:"E", teams:["Bélgica", "Corea del Sur", "Uruguay", "España"], real:["España", "Bélgica", "Uruguay"] },
+    { g:"F", teams:["Inglaterra", "Irlanda", "Países Bajos", "Egipto"], real:["Inglaterra", "Irlanda", "Países Bajos"] }
+  ],
+  thirdTable: {"ABCD": {"A": "C", "B": "D", "C": "A", "D": "B"}, "ABCE": {"A": "C", "B": "A", "C": "B", "D": "E"}, "ABCF": {"A": "C", "B": "A", "C": "B", "D": "F"}, "ABDE": {"A": "D", "B": "A", "C": "B", "D": "E"}, "ABDF": {"A": "D", "B": "A", "C": "B", "D": "F"}, "ABEF": {"A": "E", "B": "A", "C": "B", "D": "F"}, "ACDE": {"A": "C", "B": "D", "C": "A", "D": "E"}, "ACDF": {"A": "C", "B": "D", "C": "A", "D": "F"}, "ACEF": {"A": "C", "B": "A", "C": "F", "D": "E"}, "ADEF": {"A": "D", "B": "A", "C": "F", "D": "E"}, "BCDE": {"A": "C", "B": "D", "C": "B", "D": "E"}, "BCDF": {"A": "C", "B": "D", "C": "B", "D": "F"}, "BCEF": {"A": "E", "B": "C", "C": "B", "D": "F"}, "BDEF": {"A": "E", "B": "D", "C": "B", "D": "F"}, "CDEF": {"A": "C", "B": "D", "C": "F", "D": "E"}},
+  venues: {"turn": [null, "Turín"], "verona": [null, "Verona"], "gnova": [null, "Génova"], "roma": [null, "Roma"], "bari": [null, "Bari"], "miln": [null, "Milán"], "npoles": [null, "Nápoles"], "bolonia": [null, "Bolonia"], "florencia": [null, "Florencia"]},
+  rounds: [
+    ["r16", [
+      { id:"wc1990r1", a:["C", 0], b:{ third:"ABF" }, date:"1990-06-24", v:"turn" },
+      { id:"wc1990r2", a:["E", 0], b:["D", 1], date:"1990-06-26", v:"verona" },
+      { id:"wc1990r3", a:["F", 1], b:["B", 1], date:"1990-06-25", v:"gnova" },
+      { id:"wc1990r4", a:["A", 0], b:{ third:"CDE" }, date:"1990-06-25", v:"roma" },
+      { id:"wc1990r5", a:["A", 1], b:["C", 1], date:"1990-06-23", v:"bari" },
+      { id:"wc1990r6", a:["D", 0], b:{ third:"BEF" }, date:"1990-06-24", v:"miln" },
+      { id:"wc1990r7", a:["B", 0], b:{ third:"ACD" }, date:"1990-06-23", v:"npoles" },
+      { id:"wc1990r8", a:["F", 0], b:["E", 1], date:"1990-06-26", v:"bolonia" }
+    ]],
+    ["qf", [
+      { id:"wc1990q1", from:["wc1990r1", "wc1990r2"], date:"1990-06-30", v:"florencia" },
+      { id:"wc1990q2", from:["wc1990r3", "wc1990r4"], date:"1990-06-30", v:"roma" },
+      { id:"wc1990q3", from:["wc1990r5", "wc1990r6"], date:"1990-07-01", v:"miln" },
+      { id:"wc1990q4", from:["wc1990r7", "wc1990r8"], date:"1990-07-01", v:"npoles" }
+    ]],
+    ["sf", [
+      { id:"wc1990s1", from:["wc1990q1", "wc1990q2"], date:"1990-07-03", v:"npoles" },
+      { id:"wc1990s2", from:["wc1990q3", "wc1990q4"], date:"1990-07-04", v:"turn" }
+    ]]
+  ],
+  final: { id:"wc1990final", from:["wc1990s1", "wc1990s2"], date:"1990-07-08", v:"roma" },
+  third: { id:"wc1990third", fromLosers:["wc1990s1", "wc1990s2"], date:"1990-07-07", v:"bari" }
+});
+
+const WC1994 = makeInventaMundial({
+  px: "wc1994", key: "diegosWorldCup.inventa1994.v1", places: 3, bestThirds: 4,
+  groups: [
+    { g:"A", teams:["Estados Unidos", "Suiza", "Colombia", "Rumania"], real:["Rumania", "Suiza", "Estados Unidos"] },
+    { g:"B", teams:["Camerún", "Suecia", "Brasil", "Rusia"], real:["Brasil", "Suecia", "Rusia"] },
+    { g:"C", teams:["Alemania", "Bolivia", "España", "Corea del Sur"], real:["Alemania", "España", "Corea del Sur"] },
+    { g:"D", teams:["Argentina", "Grecia", "Nigeria", "Bulgaria"], real:["Nigeria", "Bulgaria", "Argentina"] },
+    { g:"E", teams:["Italia", "Irlanda", "Noruega", "México"], real:["México", "Irlanda", "Italia"] },
+    { g:"F", teams:["Bélgica", "Marruecos", "Países Bajos", "Arabia Saudita"], real:["Países Bajos", "Arabia Saudita", "Bélgica"] }
+  ],
+  thirdTable: {"ABCD": {"A": "C", "B": "D", "C": "A", "D": "B"}, "ABCE": {"A": "C", "B": "A", "C": "B", "D": "E"}, "ABCF": {"A": "C", "B": "A", "C": "B", "D": "F"}, "ABDE": {"A": "D", "B": "A", "C": "B", "D": "E"}, "ABDF": {"A": "D", "B": "A", "C": "B", "D": "F"}, "ABEF": {"A": "E", "B": "A", "C": "B", "D": "F"}, "ACDE": {"A": "C", "B": "D", "C": "A", "D": "E"}, "ACDF": {"A": "C", "B": "D", "C": "A", "D": "F"}, "ACEF": {"A": "C", "B": "A", "C": "F", "D": "E"}, "ADEF": {"A": "D", "B": "A", "C": "F", "D": "E"}, "BCDE": {"A": "C", "B": "D", "C": "B", "D": "E"}, "BCDF": {"A": "C", "B": "D", "C": "B", "D": "F"}, "BCEF": {"A": "E", "B": "C", "C": "B", "D": "F"}, "BDEF": {"A": "E", "B": "D", "C": "B", "D": "F"}, "CDEF": {"A": "C", "B": "D", "C": "F", "D": "E"}},
+  venues: {"pasadena": [null, "Pasadena"], "dallas": [null, "Dallas"], "orlando": [null, "Orlando"], "stanford": [null, "Stanford"], "eastrutherford": [null, "East Rutherford"], "chicago": [null, "Chicago"], "foxborough": [null, "Foxborough"], "washington": [null, "Washington"]},
+  rounds: [
+    ["r16", [
+      { id:"wc1994r1", a:["A", 0], b:{ third:"CDE" }, date:"1994-07-03", v:"pasadena" },
+      { id:"wc1994r2", a:["F", 1], b:["B", 1], date:"1994-07-03", v:"dallas" },
+      { id:"wc1994r3", a:["F", 0], b:["E", 1], date:"1994-07-04", v:"orlando" },
+      { id:"wc1994r4", a:["B", 0], b:{ third:"ACD" }, date:"1994-07-04", v:"stanford" },
+      { id:"wc1994r5", a:["E", 0], b:["D", 1], date:"1994-07-05", v:"eastrutherford" },
+      { id:"wc1994r6", a:["C", 0], b:{ third:"ABF" }, date:"1994-07-02", v:"chicago" },
+      { id:"wc1994r7", a:["D", 0], b:{ third:"BEF" }, date:"1994-07-05", v:"foxborough" },
+      { id:"wc1994r8", a:["C", 1], b:["A", 1], date:"1994-07-02", v:"washington" }
+    ]],
+    ["qf", [
+      { id:"wc1994q1", from:["wc1994r1", "wc1994r2"], date:"1994-07-10", v:"stanford" },
+      { id:"wc1994q2", from:["wc1994r3", "wc1994r4"], date:"1994-07-09", v:"dallas" },
+      { id:"wc1994q3", from:["wc1994r5", "wc1994r6"], date:"1994-07-10", v:"eastrutherford" },
+      { id:"wc1994q4", from:["wc1994r7", "wc1994r8"], date:"1994-07-09", v:"foxborough" }
+    ]],
+    ["sf", [
+      { id:"wc1994s1", from:["wc1994q1", "wc1994q2"], date:"1994-07-13", v:"pasadena" },
+      { id:"wc1994s2", from:["wc1994q3", "wc1994q4"], date:"1994-07-13", v:"eastrutherford" }
+    ]]
+  ],
+  final: { id:"wc1994final", from:["wc1994s1", "wc1994s2"], date:"1994-07-17", v:"pasadena" },
+  third: { id:"wc1994third", fromLosers:["wc1994s1", "wc1994s2"], date:"1994-07-16", v:"pasadena" }
+});
+
+const WC1998 = makeInventaMundial({
+  px: "wc1998", key: "diegosWorldCup.inventa1998.v1", places: 2,
+  groups: [
+    { g:"A", teams:["Brasil", "Escocia", "Marruecos", "Noruega"], real:["Brasil", "Noruega"] },
+    { g:"B", teams:["Italia", "Chile", "Camerún", "Austria"], real:["Italia", "Chile"] },
+    { g:"C", teams:["Arabia Saudita", "Dinamarca", "Francia", "Sudáfrica"], real:["Francia", "Dinamarca"] },
+    { g:"D", teams:["Paraguay", "Bulgaria", "España", "Nigeria"], real:["Nigeria", "Paraguay"] },
+    { g:"E", teams:["Corea del Sur", "México", "Países Bajos", "Bélgica"], real:["Países Bajos", "México"] },
+    { g:"F", teams:["Irán", "Alemania", "Estados Unidos", "Yugoslavia"], real:["Alemania", "Yugoslavia"] },
+    { g:"G", teams:["Inglaterra", "Túnez", "Rumania", "Colombia"], real:["Rumania", "Inglaterra"] },
+    { g:"H", teams:["Argentina", "Japón", "Jamaica", "Croacia"], real:["Argentina", "Croacia"] }
+  ],
+  venues: {"pars": [null, "París"], "saintdenis": [null, "Saint-Denis"], "toulouse": [null, "Toulouse"], "sainttienne": [null, "Saint-Étienne"], "marsella": [null, "Marsella"], "lens": [null, "Lens"], "montpellier": [null, "Montpellier"], "burdeos": [null, "Burdeos"], "nantes": [null, "Nantes"], "lyon": [null, "Lyon"]},
+  rounds: [
+    ["r16", [
+      { id:"wc1998r1", a:["A", 0], b:["B", 1], date:"1998-06-27", v:"pars" },
+      { id:"wc1998r2", a:["D", 0], b:["C", 1], date:"1998-06-28", v:"saintdenis" },
+      { id:"wc1998r3", a:["E", 0], b:["F", 1], date:"1998-06-29", v:"toulouse" },
+      { id:"wc1998r4", a:["H", 0], b:["G", 1], date:"1998-06-30", v:"sainttienne" },
+      { id:"wc1998r5", a:["B", 0], b:["A", 1], date:"1998-06-27", v:"marsella" },
+      { id:"wc1998r6", a:["C", 0], b:["D", 1], date:"1998-06-28", v:"lens" },
+      { id:"wc1998r7", a:["F", 0], b:["E", 1], date:"1998-06-29", v:"montpellier" },
+      { id:"wc1998r8", a:["G", 0], b:["H", 1], date:"1998-06-30", v:"burdeos" }
+    ]],
+    ["qf", [
+      { id:"wc1998q1", from:["wc1998r1", "wc1998r2"], date:"1998-07-03", v:"nantes" },
+      { id:"wc1998q2", from:["wc1998r3", "wc1998r4"], date:"1998-07-04", v:"marsella" },
+      { id:"wc1998q3", from:["wc1998r5", "wc1998r6"], date:"1998-07-03", v:"saintdenis" },
+      { id:"wc1998q4", from:["wc1998r7", "wc1998r8"], date:"1998-07-04", v:"lyon" }
+    ]],
+    ["sf", [
+      { id:"wc1998s1", from:["wc1998q1", "wc1998q2"], date:"1998-07-07", v:"marsella" },
+      { id:"wc1998s2", from:["wc1998q3", "wc1998q4"], date:"1998-07-08", v:"saintdenis" }
+    ]]
+  ],
+  final: { id:"wc1998final", from:["wc1998s1", "wc1998s2"], date:"1998-07-12", v:"saintdenis" },
+  third: { id:"wc1998third", fromLosers:["wc1998s1", "wc1998s2"], date:"1998-07-11", v:"pars" }
+});
+
+const WC2002 = makeInventaMundial({
+  px: "wc2002", key: "diegosWorldCup.inventa2002.v1", places: 2,
+  groups: [
+    { g:"A", teams:["Francia", "Senegal", "Uruguay", "Dinamarca"], real:["Dinamarca", "Senegal"] },
+    { g:"B", teams:["Paraguay", "Sudáfrica", "España", "Eslovenia"], real:["España", "Paraguay"] },
+    { g:"C", teams:["Brasil", "Turquía", "China", "Costa Rica"], real:["Brasil", "Turquía"] },
+    { g:"D", teams:["Corea del Sur", "Polonia", "Estados Unidos", "Portugal"], real:["Corea del Sur", "Estados Unidos"] },
+    { g:"E", teams:["Irlanda", "Camerún", "Alemania", "Arabia Saudita"], real:["Alemania", "Irlanda"] },
+    { g:"F", teams:["Argentina", "Nigeria", "Inglaterra", "Suecia"], real:["Suecia", "Inglaterra"] },
+    { g:"G", teams:["Croacia", "México", "Italia", "Ecuador"], real:["México", "Italia"] },
+    { g:"H", teams:["Japón", "Bélgica", "Rusia", "Túnez"], real:["Japón", "Bélgica"] }
+  ],
+  venues: {"seogwipo": [null, "Seogwipo"], "jeonju": [null, "Jeonju"], "suwon": [null, "Suwon"], "daejeon": [null, "Daejeon"], "niigata": [null, "Niigata"], "kobe": [null, "Kobe"], "ita": [null, "Ōita"], "rifu": [null, "Rifu"], "ulsan": [null, "Ulsan"], "gwangju": [null, "Gwangju"], "fukuroi": [null, "Fukuroi"], "osaka": [null, "Osaka"], "sel": [null, "Seúl"], "saitama": [null, "Saitama"], "yokohama": [null, "Yokohama"], "daegu": [null, "Daegu"]},
+  rounds: [
+    ["r16", [
+      { id:"wc2002r1", a:["E", 0], b:["B", 1], date:"2002-06-15", v:"seogwipo" },
+      { id:"wc2002r2", a:["G", 0], b:["D", 1], date:"2002-06-17", v:"jeonju" },
+      { id:"wc2002r3", a:["B", 0], b:["E", 1], date:"2002-06-16", v:"suwon" },
+      { id:"wc2002r4", a:["D", 0], b:["G", 1], date:"2002-06-18", v:"daejeon" },
+      { id:"wc2002r5", a:["A", 0], b:["F", 1], date:"2002-06-15", v:"niigata" },
+      { id:"wc2002r6", a:["C", 0], b:["H", 1], date:"2002-06-17", v:"kobe" },
+      { id:"wc2002r7", a:["F", 0], b:["A", 1], date:"2002-06-16", v:"ita" },
+      { id:"wc2002r8", a:["H", 0], b:["C", 1], date:"2002-06-18", v:"rifu" }
+    ]],
+    ["qf", [
+      { id:"wc2002q1", from:["wc2002r1", "wc2002r2"], date:"2002-06-21", v:"ulsan" },
+      { id:"wc2002q2", from:["wc2002r3", "wc2002r4"], date:"2002-06-22", v:"gwangju" },
+      { id:"wc2002q3", from:["wc2002r5", "wc2002r6"], date:"2002-06-21", v:"fukuroi" },
+      { id:"wc2002q4", from:["wc2002r7", "wc2002r8"], date:"2002-06-22", v:"osaka" }
+    ]],
+    ["sf", [
+      { id:"wc2002s1", from:["wc2002q1", "wc2002q2"], date:"2002-06-25", v:"sel" },
+      { id:"wc2002s2", from:["wc2002q3", "wc2002q4"], date:"2002-06-26", v:"saitama" }
+    ]]
+  ],
+  final: { id:"wc2002final", from:["wc2002s1", "wc2002s2"], date:"2002-06-30", v:"yokohama" },
+  third: { id:"wc2002third", fromLosers:["wc2002s1", "wc2002s2"], date:"2002-06-29", v:"daegu" }
+});
+
+const WC2006 = makeInventaMundial({
+  px: "wc2006", key: "diegosWorldCup.inventa2006.v1", places: 2,
+  groups: [
+    { g:"A", teams:["Alemania", "Costa Rica", "Polonia", "Ecuador"], real:["Alemania", "Ecuador"] },
+    { g:"B", teams:["Inglaterra", "Paraguay", "Trinidad y Tobago", "Suecia"], real:["Inglaterra", "Suecia"] },
+    { g:"C", teams:["Argentina", "Costa de Marfil", "Serbia y Montenegro", "Países Bajos"], real:["Argentina", "Países Bajos"] },
+    { g:"D", teams:["México", "Irán", "Angola", "Portugal"], real:["Portugal", "México"] },
+    { g:"E", teams:["Estados Unidos", "Rep. Checa", "Italia", "Ghana"], real:["Italia", "Ghana"] },
+    { g:"F", teams:["Australia", "Japón", "Brasil", "Croacia"], real:["Brasil", "Australia"] },
+    { g:"G", teams:["Corea del Sur", "Togo", "Francia", "Suiza"], real:["Suiza", "Francia"] },
+    { g:"H", teams:["España", "Ucrania", "Túnez", "Arabia Saudita"], real:["España", "Ucrania"] }
+  ],
+  venues: {"mnich": [null, "Múnich"], "leipzig": [null, "Leipzig"], "kaiserslautern": [null, "Kaiserslautern"], "colonia": [null, "Colonia"], "stuttgart": [null, "Stuttgart"], "nremberg": [null, "Núremberg"], "dortmund": [null, "Dortmund"], "hannover": [null, "Hannover"], "berln": [null, "Berlín"], "hamburgo": [null, "Hamburgo"], "gelsenkirchen": [null, "Gelsenkirchen"], "frncfort": [null, "Fráncfort"]},
+  rounds: [
+    ["r16", [
+      { id:"wc2006r1", a:["A", 0], b:["B", 1], date:"2006-06-24", v:"mnich" },
+      { id:"wc2006r2", a:["C", 0], b:["D", 1], date:"2006-06-24", v:"leipzig" },
+      { id:"wc2006r3", a:["E", 0], b:["F", 1], date:"2006-06-26", v:"kaiserslautern" },
+      { id:"wc2006r4", a:["G", 0], b:["H", 1], date:"2006-06-26", v:"colonia" },
+      { id:"wc2006r5", a:["B", 0], b:["A", 1], date:"2006-06-25", v:"stuttgart" },
+      { id:"wc2006r6", a:["D", 0], b:["C", 1], date:"2006-06-25", v:"nremberg" },
+      { id:"wc2006r7", a:["F", 0], b:["E", 1], date:"2006-06-27", v:"dortmund" },
+      { id:"wc2006r8", a:["H", 0], b:["G", 1], date:"2006-06-27", v:"hannover" }
+    ]],
+    ["qf", [
+      { id:"wc2006q1", from:["wc2006r1", "wc2006r2"], date:"2006-06-30", v:"berln" },
+      { id:"wc2006q2", from:["wc2006r3", "wc2006r4"], date:"2006-06-30", v:"hamburgo" },
+      { id:"wc2006q3", from:["wc2006r5", "wc2006r6"], date:"2006-07-01", v:"gelsenkirchen" },
+      { id:"wc2006q4", from:["wc2006r7", "wc2006r8"], date:"2006-07-01", v:"frncfort" }
+    ]],
+    ["sf", [
+      { id:"wc2006s1", from:["wc2006q1", "wc2006q2"], date:"2006-07-04", v:"dortmund" },
+      { id:"wc2006s2", from:["wc2006q3", "wc2006q4"], date:"2006-07-05", v:"mnich" }
+    ]]
+  ],
+  final: { id:"wc2006final", from:["wc2006s1", "wc2006s2"], date:"2006-07-09", v:"berln" },
+  third: { id:"wc2006third", fromLosers:["wc2006s1", "wc2006s2"], date:"2006-07-08", v:"stuttgart" }
+});
+
+const WC2014 = makeInventaMundial({
+  px: "wc2014", key: "diegosWorldCup.inventa2014.v1", places: 2,
+  groups: [
+    { g:"A", teams:["Brasil", "Croacia", "México", "Camerún"], real:["Brasil", "México"] },
+    { g:"B", teams:["España", "Países Bajos", "Chile", "Australia"], real:["Países Bajos", "Chile"] },
+    { g:"C", teams:["Colombia", "Grecia", "Costa de Marfil", "Japón"], real:["Colombia", "Grecia"] },
+    { g:"D", teams:["Uruguay", "Costa Rica", "Inglaterra", "Italia"], real:["Costa Rica", "Uruguay"] },
+    { g:"E", teams:["Suiza", "Ecuador", "Francia", "Honduras"], real:["Francia", "Suiza"] },
+    { g:"F", teams:["Argentina", "Bosnia", "Irán", "Nigeria"], real:["Argentina", "Nigeria"] },
+    { g:"G", teams:["Alemania", "Portugal", "Ghana", "Estados Unidos"], real:["Alemania", "Estados Unidos"] },
+    { g:"H", teams:["Bélgica", "Argelia", "Rusia", "Corea del Sur"], real:["Bélgica", "Argelia"] }
+  ],
+  venues: {"belohorizonte": [null, "Belo Horizonte"], "riodejaneiro": [null, "Rio de Janeiro"], "brasilia": [null, "Brasilia"], "portoalegre": [null, "Porto Alegre"], "fortaleza": [null, "Fortaleza"], "recife": [null, "Recife"], "sopaulo": [null, "São Paulo"], "salvador": [null, "Salvador"]},
+  rounds: [
+    ["r16", [
+      { id:"wc2014r1", a:["A", 0], b:["B", 1], date:"2014-06-28", v:"belohorizonte" },
+      { id:"wc2014r2", a:["C", 0], b:["D", 1], date:"2014-06-28", v:"riodejaneiro" },
+      { id:"wc2014r3", a:["E", 0], b:["F", 1], date:"2014-06-30", v:"brasilia" },
+      { id:"wc2014r4", a:["G", 0], b:["H", 1], date:"2014-06-30", v:"portoalegre" },
+      { id:"wc2014r5", a:["B", 0], b:["A", 1], date:"2014-06-29", v:"fortaleza" },
+      { id:"wc2014r6", a:["D", 0], b:["C", 1], date:"2014-06-29", v:"recife" },
+      { id:"wc2014r7", a:["F", 0], b:["E", 1], date:"2014-07-01", v:"sopaulo" },
+      { id:"wc2014r8", a:["H", 0], b:["G", 1], date:"2014-07-01", v:"salvador" }
+    ]],
+    ["qf", [
+      { id:"wc2014q1", from:["wc2014r1", "wc2014r2"], date:"2014-07-04", v:"fortaleza" },
+      { id:"wc2014q2", from:["wc2014r3", "wc2014r4"], date:"2014-07-04", v:"riodejaneiro" },
+      { id:"wc2014q3", from:["wc2014r5", "wc2014r6"], date:"2014-07-05", v:"salvador" },
+      { id:"wc2014q4", from:["wc2014r7", "wc2014r8"], date:"2014-07-05", v:"brasilia" }
+    ]],
+    ["sf", [
+      { id:"wc2014s1", from:["wc2014q1", "wc2014q2"], date:"2014-07-08", v:"belohorizonte" },
+      { id:"wc2014s2", from:["wc2014q3", "wc2014q4"], date:"2014-07-09", v:"sopaulo" }
+    ]]
+  ],
+  final: { id:"wc2014final", from:["wc2014s1", "wc2014s2"], date:"2014-07-13", v:"riodejaneiro" },
+  third: { id:"wc2014third", fromLosers:["wc2014s1", "wc2014s2"], date:"2014-07-12", v:"brasilia" }
+});
+
+const WC2022 = makeInventaMundial({
+  px: "wc2022", key: "diegosWorldCup.inventa2022.v1", places: 2,
+  groups: [
+    { g:"A", teams:["Catar", "Ecuador", "Senegal", "Países Bajos"], real:["Países Bajos", "Senegal"] },
+    { g:"B", teams:["Inglaterra", "Irán", "Estados Unidos", "Gales"], real:["Inglaterra", "Estados Unidos"] },
+    { g:"C", teams:["Argentina", "Arabia Saudita", "México", "Polonia"], real:["Argentina", "Polonia"] },
+    { g:"D", teams:["Dinamarca", "Túnez", "Francia", "Australia"], real:["Francia", "Australia"] },
+    { g:"E", teams:["Alemania", "Japón", "España", "Costa Rica"], real:["Japón", "España"] },
+    { g:"F", teams:["Marruecos", "Croacia", "Bélgica", "Canadá"], real:["Marruecos", "Croacia"] },
+    { g:"G", teams:["Suiza", "Camerún", "Brasil", "Serbia"], real:["Brasil", "Suiza"] },
+    { g:"H", teams:["Uruguay", "Corea del Sur", "Portugal", "Ghana"], real:["Portugal", "Corea del Sur"] }
+  ],
+  venues: {"alrayyanestadiokhalifa": ["Estadio Khalifa", "Al Rayyan"], "alrayyanestadioahmadbinali": ["Estadio Ahmad bin Ali", "Al Rayyan"], "alwakrah": [null, "Al Wakrah"], "dohaestadio974": ["Estadio 974", "Doha"], "alkhor": [null, "Al Khor"], "dohaestadioalthumama": ["Estadio Al Thumama", "Doha"], "alrayyanestadioeducationcity": ["Estadio Education City", "Al Rayyan"], "lusail": [null, "Lusail"]},
+  rounds: [
+    ["r16", [
+      { id:"wc2022r1", a:["A", 0], b:["B", 1], date:"2022-12-03", v:"alrayyanestadiokhalifa" },
+      { id:"wc2022r2", a:["C", 0], b:["D", 1], date:"2022-12-03", v:"alrayyanestadioahmadbinali" },
+      { id:"wc2022r3", a:["E", 0], b:["F", 1], date:"2022-12-05", v:"alwakrah" },
+      { id:"wc2022r4", a:["G", 0], b:["H", 1], date:"2022-12-05", v:"dohaestadio974" },
+      { id:"wc2022r5", a:["B", 0], b:["A", 1], date:"2022-12-04", v:"alkhor" },
+      { id:"wc2022r6", a:["D", 0], b:["C", 1], date:"2022-12-04", v:"dohaestadioalthumama" },
+      { id:"wc2022r7", a:["F", 0], b:["E", 1], date:"2022-12-06", v:"alrayyanestadioeducationcity" },
+      { id:"wc2022r8", a:["H", 0], b:["G", 1], date:"2022-12-06", v:"lusail" }
+    ]],
+    ["qf", [
+      { id:"wc2022q1", from:["wc2022r1", "wc2022r2"], date:"2022-12-09", v:"lusail" },
+      { id:"wc2022q2", from:["wc2022r3", "wc2022r4"], date:"2022-12-09", v:"alrayyanestadioeducationcity" },
+      { id:"wc2022q3", from:["wc2022r5", "wc2022r6"], date:"2022-12-10", v:"alkhor" },
+      { id:"wc2022q4", from:["wc2022r7", "wc2022r8"], date:"2022-12-10", v:"dohaestadioalthumama" }
+    ]],
+    ["sf", [
+      { id:"wc2022s1", from:["wc2022q1", "wc2022q2"], date:"2022-12-13", v:"lusail" },
+      { id:"wc2022s2", from:["wc2022q3", "wc2022q4"], date:"2022-12-14", v:"alkhor" }
+    ]]
+  ],
+  final: { id:"wc2022final", from:["wc2022s1", "wc2022s2"], date:"2022-12-18", v:"lusail" },
+  third: { id:"wc2022third", fromLosers:["wc2022s1", "wc2022s2"], date:"2022-12-17", v:"alrayyanestadiokhalifa" }
+});
+
+/* ---------------- 🌍 INVENTA TU MUNDIAL — one tab, a timeline of World Cups ---------------- */
+/* Each year is a sub-tab. Engine years get their page generated from their config;
+   2026 is the existing "Inventa tu Mundial" (fantasy) page, moved in as it is. */
+const IMH = [
+  { year: 1930, hosts: ["Uruguay"], emoji: "🏟️", engine: WC1930,
+    intro: `El <b>primer Mundial</b> de la historia. Solo <b class="text-emerald-300">13 equipos</b>, todos invitados (no hubo eliminatorias),
+      en 4 grupos: uno de 4 y tres de 3. <b class="text-yellow-300">Solo el 1.º de cada grupo pasaba</b>, directo a las semifinales.
+      ¡Y no hubo partido por el 3.er lugar!`,
+    groupHelp: `En cada grupo toca al equipo que queda <b>1.º</b>: ese pasa a semifinales.` },
+  { year: 1934, hosts: ["Italia"], emoji: "🏟️", engine: WC1934,
+    intro: `El primer Mundial con eliminatorias para entrar. <b class="text-emerald-300">16 equipos</b> y <b class="text-yellow-300">sin fase de grupos</b>:
+      desde el primer partido, el que perdía se iba a casa (eliminación directa). Uruguay, el campeón de 1930, no fue.` },
+  { year: 1938, hosts: ["Francia"], emoji: "🏟️", engine: WC1938,
+    intro: `Otra vez <b class="text-yellow-300">eliminación directa</b>, sin grupos. Eran <b class="text-emerald-300">16 lugares</b>, pero
+      <b>Austria se retiró</b> (acababa de pasar a ser parte de Alemania), así que Suecia pasó directo a cuartos.` },
+  { year: 1950, hosts: ["Brasil"], emoji: "🏟️", engine: WC1950,
+    intro: `El <b>único Mundial sin partido final</b>. Hubo <b class="text-emerald-300">13 equipos</b> (varios se retiraron) en 4 grupos, y
+      <b class="text-yellow-300">solo el 1.º de cada grupo pasaba</b>. Los 4 ganadores jugaron un <b>grupo final</b> todos contra todos:
+      el que sumara más puntos era el campeón.`,
+    groupHelp: `En cada grupo toca al equipo que queda <b>1.º</b>. Después ordena el grupo final: tu 1.º es el campeón.` },
+  { year: 1954, hosts: ["Suiza"], emoji: "🏟️", engine: WC1954,
+    intro: `<b class="text-emerald-300">16 equipos</b> en 4 grupos de 4, y <b class="text-yellow-300">pasaban los 2 primeros</b>.
+      Un formato raro: en cada grupo había 2 cabezas de serie que no jugaban entre sí, así que cada equipo jugó solo 2 partidos.
+      En cuartos, los <b>1.º jugaban contra 1.º</b> y los <b>2.º contra 2.º</b>.` },
+  { year: 1958, hosts: ["Suecia"], emoji: "🏟️", engine: WC1958,
+    intro: `<b class="text-emerald-300">16 equipos</b> en 4 grupos de 4, y <b class="text-yellow-300">pasaban los 2 primeros</b> a cuartos.
+      Si dos equipos empataban por el 2.º lugar, jugaban un partido de desempate. Fue el primer Mundial de Pelé: ¡tenía 17 años!` },
+  { year: 1962, hosts: ["Chile"], emoji: "🏟️", engine: WC1962,
+    intro: `<b class="text-emerald-300">16 equipos</b> en 4 grupos de 4, y <b class="text-yellow-300">pasaban los 2 primeros</b> a cuartos.
+      Chile organizó el Mundial apenas dos años después de un terremoto enorme (1960).` },
+  { year: 1966, hosts: ["Inglaterra"], emoji: "🏟️", engine: WC1966,
+    intro: `<b class="text-emerald-300">16 equipos</b> en 4 grupos de 4, y <b class="text-yellow-300">pasaban los 2 primeros</b> a cuartos.
+      Fue el primer Mundial con mascota: el león Willie.` },
+  { year: 1970, hosts: ["México"], emoji: "🌮", engine: WC1970,
+    intro: `¡El primer Mundial en <b>México</b>! <b class="text-emerald-300">16 equipos</b> en 4 grupos de 4, y <b class="text-yellow-300">pasaban
+      los 2 primeros</b> a cuartos. Fue el primer Mundial con tarjetas amarillas y rojas, y con cambios de jugadores.` },
+  { year: 1974, hosts: ["Alemania Federal"], emoji: "🏟️", engine: WC1974,
+    intro: `<b class="text-emerald-300">16 equipos</b> en 4 grupos de 4, y <b class="text-yellow-300">pasaban los 2 primeros</b>… ¡pero no a cuartos!
+      Los 8 jugaron una <b>segunda fase de grupos</b> (2 grupos de 4): los 1.º de esos grupos jugaron la <b>Final</b> y los 2.º el
+      <b>3.er lugar</b>. Fue el primer Mundial con el trofeo de hoy.`,
+    groupHelp: `En cada grupo toca al <b>1.º</b> y al <b>2.º</b>. Después, lo mismo en la segunda fase.` },
+  { year: 1978, hosts: ["Argentina"], emoji: "🏟️", engine: WC1978,
+    intro: `<b class="text-emerald-300">16 equipos</b> en 4 grupos de 4, y <b class="text-yellow-300">pasaban los 2 primeros</b> a una
+      <b>segunda fase de grupos</b> (2 grupos de 4), igual que en 1974: los 1.º jugaron la <b>Final</b> y los 2.º el <b>3.er lugar</b>.`,
+    groupHelp: `En cada grupo toca al <b>1.º</b> y al <b>2.º</b>. Después, lo mismo en la segunda fase.` },
+  { year: 1982, hosts: ["España"], emoji: "🏟️", engine: WC1982,
+    intro: `¡Por primera vez <b class="text-emerald-300">24 equipos</b>! 6 grupos de 4 y <b class="text-yellow-300">pasaban los 2 primeros</b>.
+      Luego hubo una <b>segunda fase</b> de 4 grupos de 3, y <b>solo el 1.º</b> de cada uno pasaba a las semifinales.`,
+    groupHelp: `En cada grupo toca al <b>1.º</b> y al <b>2.º</b>. Después, en la segunda fase, toca al ganador de cada grupo de 3.`,
+    groups2Title: "🔁 Segunda fase: 4 grupos de 3",
+    groups2Help: `Los 12 que pasaron juegan otra fase de grupos. Toca al <b>1.º</b> de cada grupo: esos 4 juegan las <b>semifinales</b>.` },
+  { year: 1986, hosts: ["México"], emoji: "🌮", engine: WC1986,
+    intro: `¡México fue el primer país en organizar <b>dos</b> Mundiales! <b class="text-emerald-300">24 equipos</b> en 6 grupos de 4:
+      a Octavos <b class="text-yellow-300">pasaban los 2 primeros</b> de cada grupo y los <b>4 mejores terceros</b>.`, groupHelp: `En cada grupo toca al <b>1.º</b>, al <b>2.º</b> y al <b>3.º</b>. Luego escoge a los <b>4 mejores terceros</b>.` },
+  { year: 1990, hosts: ["Italia"], emoji: "🏟️", engine: WC1990,
+    intro: `<b class="text-emerald-300">24 equipos</b> en 6 grupos de 4: a Octavos <b class="text-yellow-300">pasaban los 2 primeros</b>
+      de cada grupo y los <b>4 mejores terceros</b>.`, groupHelp: `En cada grupo toca al <b>1.º</b>, al <b>2.º</b> y al <b>3.º</b>. Luego escoge a los <b>4 mejores terceros</b>.` },
+  { year: 1994, hosts: ["Estados Unidos"], emoji: "🏟️", engine: WC1994,
+    intro: `<b class="text-emerald-300">24 equipos</b> en 6 grupos de 4: a Octavos <b class="text-yellow-300">pasaban los 2 primeros</b>
+      y los <b>4 mejores terceros</b>. Fue el primer Mundial en que ganar un partido daba <b>3 puntos</b> (antes eran 2).`, groupHelp: `En cada grupo toca al <b>1.º</b>, al <b>2.º</b> y al <b>3.º</b>. Luego escoge a los <b>4 mejores terceros</b>.` },
+  { year: 1998, hosts: ["Francia"], emoji: "🏟️", engine: WC1998,
+    intro: `¡Por primera vez <b class="text-emerald-300">32 equipos</b>! 8 grupos de 4 y <b class="text-yellow-300">pasaban los 2 primeros</b> a Octavos.` },
+  { year: 2002, hosts: ["Corea del Sur", "Japón"], emoji: "🏟️", engine: WC2002,
+    intro: `El primer Mundial en <b>Asia</b> y el primero con <b>dos países</b> organizando. <b class="text-emerald-300">32 equipos</b>
+      en 8 grupos de 4, y <b class="text-yellow-300">pasaban los 2 primeros</b> a Octavos.` },
+  { year: 2006, hosts: ["Alemania"], emoji: "🏟️", engine: WC2006,
+    intro: `<b class="text-emerald-300">32 equipos</b> en 8 grupos de 4, y <b class="text-yellow-300">pasaban los 2 primeros</b> a Octavos.
+      Alemania volvió a organizar, ya como un solo país (en 1974 era Alemania Federal).` },
+  { year: 2010, hosts: ["Sudáfrica"], emoji: "🦁", engine: SA10,
+    intro: `El Mundial de <b class="text-emerald-300">Sudáfrica 2010</b>, el primero en África. <b>32 equipos</b> en 8 grupos de 4:
+      <b class="text-yellow-300">pasan los 2 primeros</b> de cada grupo a Octavos.` },
+  { year: 2014, hosts: ["Brasil"], emoji: "🏟️", engine: WC2014,
+    intro: `Brasil volvió a organizar el Mundial (la primera vez fue en 1950). <b class="text-emerald-300">32 equipos</b> en 8 grupos de 4,
+      y <b class="text-yellow-300">pasaban los 2 primeros</b> a Octavos.` },
+  { year: 2018, hosts: ["Rusia"], emoji: "🐻", engine: RU18,
+    intro: `El Mundial de <b class="text-emerald-300">Rusia 2018</b>. <b>32 equipos</b> en 8 grupos de 4: <b class="text-yellow-300">pasan los
+      2 primeros</b> de cada grupo a Octavos. Rusia es tan grande que tiene varios husos horarios: cada partido muestra su hora local y la de México.` },
+  { year: 2022, hosts: ["Catar"], emoji: "🏟️", engine: WC2022,
+    intro: `El primer Mundial en <b>Medio Oriente</b>, jugado en noviembre y diciembre. <b class="text-emerald-300">32 equipos</b> en 8 grupos
+      de 4, y <b class="text-yellow-300">pasaban los 2 primeros</b> a Octavos. (Los resultados de verdad están en la pestaña de Catar 2022.)` },
+  { year: 2026, hosts: ["Estados Unidos", "México", "Canadá"], emoji: "🎮", panelId: "tab-fantasy",
+    draw: () => drawFConnectors(), reset: () => { fpicks = {}; renderFantasy(); } },
+  { year: 2030, hosts: ["España", "Portugal", "Marruecos"], emoji: "🌐", engine: WC30,
+    intro: `Un Mundial con <b class="text-emerald-300">48 equipos</b> en <b>12 grupos de 4</b>, igual que el formato oficial de 2030.
+      Los grupos son <b>inventados</b> (el sorteo real es en ~2029) y <b class="text-yellow-300">no hay resultados: tú decides</b>. Toca al <b>1.º</b>, al <b>2.º</b> y al <b>3.º</b> de cada grupo,
+      y luego escoge a los <b>8 mejores terceros</b>: con los 1.º y 2.º son <b class="text-emerald-300">32 equipos</b> para la Ronda de 32.
+      Sedes: España, Portugal y Marruecos, con 3 partidos de aniversario en Uruguay, Argentina y Paraguay.`,
+    groupHelp: `En cada grupo toca al <b>1.º</b>, al <b>2.º</b> y al <b>3.º</b>.`,
+    top: `<div id="wc30-legend" class="flex flex-wrap items-center justify-center gap-2 mt-3"></div>
+      <div class="flex items-center justify-center mt-3">
+        <button id="wc30-redraw" class="text-xs px-4 py-2 rounded-xl bg-slate-700/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-200">🎲 Otro sorteo de grupos</button>
+      </div>`,
+    bracketClass: "wm30bracket" }
+];
+const IMH_HEAD = { r32: ["🌍 Ronda de 32", "32 equipos"], r16: ["🥅 Octavos", "16 equipos"], qf: ["⚔️ Cuartos", "quedan 8"],
+                   sf: ["🔥 Semis", "quedan 4"], final: ["🏆 Final", "¡tu campeón!"] };
+
+/* the page for one engine year, built from its config */
+function imhPanelHtml(m) {
+  const e = m.engine, c = e.cfg, px = e.px;
+  const where = m.hosts.join(", ");
+  const hasReal = c.groups.some(g => (g.real || []).length) || (c.finalGroup && c.finalGroup.real);
+  const cols = [...e.rounds.map(([k]) => k), ...(c.final ? ["final"] : [])];
+  const minW = Math.max(600, cols.length * 250);
+  const width = cols.length === 1 ? "max-w-xl" : "max-w-7xl";   /* a lone final (1974) stays card-sized */
+  const groupCols = c.groups.length > 8 ? "sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-4";
+  const groupHelp = m.groupHelp || `En cada grupo toca al <b>1.º</b> y luego al <b>2.º</b>: esos dos pasan.`;
+  return `
+<div id="imh-${m.year}" class="hidden">
+<section class="max-w-4xl mx-auto px-4 pt-4 pb-2">
+  <div class="text-center mb-2">
+    <div class="text-xs uppercase tracking-[0.3em] text-yellow-300/80">Inventa tu Mundial · ${where}</div>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Mundial ${m.year} ${m.emoji}</h2>
+    <p class="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl mx-auto">${m.intro}</p>
+    <p class="text-xs text-slate-400 mt-2">
+      ${c.groups.length ? groupHelp + " " : ""}Toca un equipo elegido <b>otra vez</b> para quitarlo.
+      ${hasReal ? `<br><b class="text-amber-300">⭐ de verdad</b> = lo que pasó de verdad en ${m.year}, por si quieres elegirlo.` : ""}
+    </p>
+    ${m.top || ""}
+    <p id="${px}-missing" class="text-xs text-slate-300 mt-2"></p>
+  </div>
+</section>
+${c.groups.length ? `<section class="max-w-6xl mx-auto px-4 pt-2 pb-4">
+  <div class="grid grid-cols-1 ${groupCols} gap-3" id="${px}-groups"></div>
+</section>` : ""}
+${e.nThirds ? `<section class="max-w-5xl mx-auto px-4 pt-2 pb-4">
+  <h3 class="text-lg font-black text-amber-300 text-center mb-1">🥉 Los ${e.nThirds} mejores terceros</h3>
+  <p class="text-center text-[11px] text-slate-400 mb-3">De los ${c.groups.length} terceros, toca a los <b>${e.nThirds}</b> que pasan. Cada uno juega contra un 1.º de grupo, nunca de su mismo grupo.</p>
+  <div id="${px}-thirds"></div>
+</section>` : ""}
+${c.finalGroup ? `<section class="max-w-md mx-auto px-4 pt-2 pb-4">
+  <h3 class="text-lg font-black text-yellow-300 text-center mb-1">🏆 Grupo final</h3>
+  <p class="text-center text-[11px] text-slate-400 mb-3">Los 4 ganadores de grupo juegan todos contra todos. Ordénalos del 1.º al 4.º: <b>tu 1.º es el campeón</b>. ${c.finalGroup.note}</p>
+  <div id="${px}-fg"></div>
+</section>` : ""}
+${c.groups2 ? `<section class="max-w-4xl mx-auto px-4 pt-2 pb-4">
+  <h3 class="text-lg font-black text-yellow-300 text-center mb-1">${m.groups2Title || "🔁 Segunda fase: 2 grupos de 4"}</h3>
+  <p class="text-center text-[11px] text-slate-400 mb-3">${m.groups2Help || `Los 8 que pasaron juegan otra fase de grupos. Toca al 1.º y al 2.º de cada grupo:
+    <b>los 1.º juegan la Final</b> y <b>los 2.º el 3.er lugar</b>.`}</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 ${c.groups2.length > 2 ? "lg:grid-cols-4" : ""} gap-3" id="${px}-groups2"></div>
+</section>` : ""}
+<section class="max-w-3xl mx-auto px-4 pt-2 pb-2">
+  <div id="${px}champ-banner" class="hidden glass champ-glow rounded-3xl p-6 text-center border-yellow-400/40">
+    <div class="text-xs uppercase tracking-[0.35em] text-yellow-300/90">Tu campeón de ${where} ${m.year}</div>
+    <div class="text-7xl mt-2">🏆</div>
+    <div id="${px}champ-name" class="text-3xl sm:text-4xl font-black text-white mt-2"></div>
+    <div class="text-slate-300 mt-2">¡Este equipo ganó tu Mundial ${m.year}! 🎉</div>
+  </div>
+</section>
+${cols.length ? `<main class="max-w-7xl mx-auto px-2 sm:px-4 pb-10">
+  <p class="text-center text-xs text-slate-500 mb-2 sm:hidden">👉 Desliza el cuadro para ver todo el camino a la final</p>
+  <div class="bracket-scroll">
+    <div class="head-row ${width} mx-auto" style="min-width:${cols.length === 1 ? 0 : minW}px">
+      ${cols.map(k => `<div class="head-col"><div class="text-sm font-black ${k === "sf" || k === "final" ? "text-yellow-300" : "text-emerald-300"}">${IMH_HEAD[k][0]}</div><div class="text-[10px] text-slate-500">${IMH_HEAD[k][1]}</div></div>`).join("")}
+    </div>
+    <div id="${px}bracket" class="bracket ${m.bracketClass || "wmbracket"} ${width} mx-auto" style="min-width:${cols.length === 1 ? 0 : minW}px">
+      <svg id="${px}connectors" class="wmconnectors"></svg>
+      ${cols.map(k => `<div class="round" id="${px}round-${k}"></div>`).join("")}
+    </div>
+  </div>
+</main>` : ""}
+${c.third ? `<section class="max-w-sm mx-auto px-4 pt-2 pb-10">
+  <div class="text-center mb-3">
+    <div class="text-xs uppercase tracking-[0.3em] text-amber-300/80">Extra</div>
+    <h3 class="text-xl font-black text-amber-300 mt-1">🥉 Partido por el 3.er lugar</h3>
+    <p class="text-xs text-slate-400 mt-1">${c.third.fromLosers
+      ? `Lo juegan los dos equipos que <b class="text-slate-200">pierden</b> tus semifinales.`
+      : `Lo juegan los <b class="text-slate-200">2.º</b> de los grupos de la segunda fase.`}</p>
+  </div>
+  <div id="${px}round-third"></div>
+</section>` : ""}
+</div>`;
+}
+
+/* build the timeline + every page (2026's page already exists and is moved in) */
+const IMHKEY = "diegosWorldCup.imh.year.v1";
+let imhYear = 1930;
+try { imhYear = +localStorage.getItem(IMHKEY) || 1930; } catch(e) { imhYear = 1930; }
+if (!IMH.some(m => m.year === imhYear)) imhYear = 1930;
+(function buildImh() {
+  const bar = document.getElementById("imh-timeline");
+  bar.innerHTML = IMH.map(m => `
+    <button data-imh="${m.year}" class="imh-btn tab-btn shrink-0 flex flex-col items-center gap-1 rounded-2xl px-2 py-2 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60">
+      <span class="flex items-center gap-0.5">${m.hosts.map(h => flag(h, 22)).join("")}</span>
+      <span class="text-sm font-black text-white">${m.year}</span>
+      <span class="text-[10px] text-slate-400 whitespace-nowrap">${m.hosts.length > 1 ? m.hosts[0] + " +" + (m.hosts.length - 1) : m.hosts[0]}</span>
+    </button>`).join(`<span class="shrink-0 self-center w-2 h-0.5 bg-slate-600"></span>`);
+  const box = document.getElementById("imh-panels");
+  IMH.forEach(m => {
+    if (m.engine) box.insertAdjacentHTML("beforeend", imhPanelHtml(m));
+    else box.appendChild(document.getElementById(m.panelId));   /* 2026: move the existing page in */
+  });
+})();
+const imhMeta = () => IMH.find(m => m.year === imhYear);
+const imhPanel = (m) => document.getElementById(m.engine ? "imh-" + m.year : m.panelId);
+function imhDraw() { const m = imhMeta(); if (m.engine) m.engine.drawConnectors(); else m.draw(); }
+function imhReset() { const m = imhMeta(); if (m.engine) m.engine.reset(); else m.reset(); }
+function showImh(year) {
+  imhYear = year;
+  try { localStorage.setItem(IMHKEY, String(year)); } catch(e) {}
+  IMH.forEach(m => imhPanel(m).classList.toggle("hidden", m.year !== year));
+  document.querySelectorAll("[data-imh]").forEach(b => b.classList.toggle("active", +b.dataset.imh === year));
+  /* the timeline is long now: scroll it so the chosen year is in view */
+  const btn = document.querySelector('[data-imh="' + year + '"]'), bar = btn && btn.closest(".bracket-scroll");
+  if (bar) bar.scrollLeft = btn.offsetLeft - bar.clientWidth / 2 + btn.offsetWidth / 2;
+  requestAnimationFrame(imhDraw);
+}
+document.addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-imh]");
+  if (b) showImh(+b.dataset.imh);
+});
+document.getElementById("wc30-redraw").addEventListener("click", wc30Redraw);
 
 /* ---------------- TABS ---------------- */
 let activeTab = "real";
+const IMH_ALIAS = { fantasy: 2026, sa10: 2010, ru18: 2018, wc30: 2030 };   /* old tab names = years of the timeline */
 function showTab(name) {
+  if (IMH_ALIAS[name]) { imhYear = IMH_ALIAS[name]; name = "imh"; }
   activeTab = name;
+  document.getElementById("tab-imh").classList.toggle("hidden", name !== "imh");
+  document.getElementById("tabbtn-imh").classList.toggle("active", name === "imh");
+  if (name === "imh") showImh(imhYear);
   document.getElementById("tab-real").classList.toggle("hidden", name !== "real");
-  document.getElementById("tab-fantasy").classList.toggle("hidden", name !== "fantasy");
   document.getElementById("tab-custom").classList.toggle("hidden", name !== "custom");
   document.getElementById("tab-elim").classList.toggle("hidden", name !== "elim");
-  document.getElementById("tab-wc30").classList.toggle("hidden", name !== "wc30");
   document.getElementById("tab-groups").classList.toggle("hidden", name !== "groups");
   document.getElementById("tab-oct").classList.toggle("hidden", name !== "oct");
   document.getElementById("tab-q22").classList.toggle("hidden", name !== "q22");
@@ -5087,13 +5814,9 @@ function showTab(name) {
   document.getElementById("tab-cw27").classList.toggle("hidden", name !== "cw27");
   document.getElementById("tab-unl").classList.toggle("hidden", name !== "unl");
   document.getElementById("tab-inl").classList.toggle("hidden", name !== "inl");
-  document.getElementById("tab-sa10").classList.toggle("hidden", name !== "sa10");
-  document.getElementById("tab-ru18").classList.toggle("hidden", name !== "ru18");
   document.getElementById("tabbtn-real").classList.toggle("active", name === "real");
-  document.getElementById("tabbtn-fantasy").classList.toggle("active", name === "fantasy");
   document.getElementById("tabbtn-custom").classList.toggle("active", name === "custom");
   document.getElementById("tabbtn-elim").classList.toggle("active", name === "elim");
-  document.getElementById("tabbtn-wc30").classList.toggle("active", name === "wc30");
   document.getElementById("tabbtn-groups").classList.toggle("active", name === "groups");
   document.getElementById("tabbtn-oct").classList.toggle("active", name === "oct");
   document.getElementById("tabbtn-q22").classList.toggle("active", name === "q22");
@@ -5101,20 +5824,17 @@ function showTab(name) {
   document.getElementById("tabbtn-cw27").classList.toggle("active", name === "cw27");
   document.getElementById("tabbtn-unl").classList.toggle("active", name === "unl");
   document.getElementById("tabbtn-inl").classList.toggle("active", name === "inl");
-  document.getElementById("tabbtn-sa10").classList.toggle("active", name === "sa10");
-  document.getElementById("tabbtn-ru18").classList.toggle("active", name === "ru18");
   /* the "Empezar de nuevo" button has nothing to reset on the info/sim tabs */
   document.getElementById("reset-all").classList.toggle("hidden",
     name === "elim" || (name === "q22" && q22Mode === "real"));
   /* connector lines can only be measured while a bracket is visible (elim tab has none) */
-  const drawFn = name === "real" ? drawConnectors : name === "fantasy" ? drawFConnectors : name === "custom" ? drawCConnectors : name === "oct" ? drawOConnectors : name === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : name === "k22" ? drawKConnectors : name === "cw27" ? drawCwConnectors : name === "unl" ? drawNlConnectors : name === "inl" ? drawInlConnectors : WM[name] ? WM[name].drawConnectors : null;
+  const drawFn = name === "imh" ? imhDraw : name === "real" ? drawConnectors : name === "fantasy" ? drawFConnectors : name === "custom" ? drawCConnectors : name === "oct" ? drawOConnectors : name === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : name === "k22" ? drawKConnectors : name === "cw27" ? drawCwConnectors : name === "unl" ? drawNlConnectors : name === "inl" ? drawInlConnectors : WM[name] ? WM[name].drawConnectors : null;
   if (drawFn) requestAnimationFrame(drawFn);
 }
 document.getElementById("tabbtn-real").addEventListener("click", () => showTab("real"));
-document.getElementById("tabbtn-fantasy").addEventListener("click", () => showTab("fantasy"));
+document.getElementById("tabbtn-imh").addEventListener("click", () => showTab("imh"));
 document.getElementById("tabbtn-custom").addEventListener("click", () => showTab("custom"));
 document.getElementById("tabbtn-elim").addEventListener("click", () => showTab("elim"));
-document.getElementById("tabbtn-wc30").addEventListener("click", () => showTab("wc30"));
 document.getElementById("tabbtn-groups").addEventListener("click", () => showTab("groups"));
 document.getElementById("tabbtn-oct").addEventListener("click", () => showTab("oct"));
 document.getElementById("tabbtn-q22").addEventListener("click", () => showTab("q22"));
@@ -5122,8 +5842,6 @@ document.getElementById("tabbtn-k22").addEventListener("click", () => showTab("k
 document.getElementById("tabbtn-cw27").addEventListener("click", () => showTab("cw27"));
 document.getElementById("tabbtn-unl").addEventListener("click", () => showTab("unl"));
 document.getElementById("tabbtn-inl").addEventListener("click", () => showTab("inl"));
-document.getElementById("tabbtn-sa10").addEventListener("click", () => showTab("sa10"));
-document.getElementById("tabbtn-ru18").addEventListener("click", () => showTab("ru18"));
 
 /* ---- click handling ---- */
 document.addEventListener("click", (e) => {
@@ -5195,7 +5913,8 @@ document.addEventListener("click", (e) => {
 
 document.getElementById("reset-all").addEventListener("click", () => {
   if (!confirm("¿Empezar de nuevo y borrar todo lo que eligió Diego?")) return;
-  if (activeTab === "fantasy") { fpicks = {}; renderFantasy(); }
+  if (activeTab === "imh") { imhReset(); }
+  else if (activeTab === "fantasy") { fpicks = {}; renderFantasy(); }
   else if (activeTab === "custom") { cpicks = {}; renderCustom(); }
   else if (activeTab === "groups") { gStand = {}; gThirds = []; gsave(); renderGroups(); }
   else if (activeTab === "oct") { opicks = {}; renderOct(); }
@@ -5211,7 +5930,7 @@ document.getElementById("reset-all").addEventListener("click", () => {
 let rz;
 window.addEventListener("resize", () => {
   clearTimeout(rz);
-  const fn = activeTab === "real" ? drawConnectors : activeTab === "fantasy" ? drawFConnectors : activeTab === "custom" ? drawCConnectors : activeTab === "oct" ? drawOConnectors : activeTab === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : activeTab === "k22" ? drawKConnectors : activeTab === "cw27" ? drawCwConnectors : activeTab === "unl" ? drawNlConnectors : activeTab === "inl" ? drawInlConnectors : WM[activeTab] ? WM[activeTab].drawConnectors : null;
+  const fn = activeTab === "imh" ? imhDraw : activeTab === "real" ? drawConnectors : activeTab === "fantasy" ? drawFConnectors : activeTab === "custom" ? drawCConnectors : activeTab === "oct" ? drawOConnectors : activeTab === "q22" ? (q22Mode === "real" ? drawQConnectors : drawPConnectors) : activeTab === "k22" ? drawKConnectors : activeTab === "cw27" ? drawCwConnectors : activeTab === "unl" ? drawNlConnectors : activeTab === "inl" ? drawInlConnectors : WM[activeTab] ? WM[activeTab].drawConnectors : null;
   if (fn) rz = setTimeout(fn, 120);
 });
 window.addEventListener("load", drawConnectors);
@@ -5239,6 +5958,27 @@ renderNations();
 renderInventaNations();
 SA10.render();
 RU18.render();
+WC1930.render();
+WC1934.render();
+WC1938.render();
+WC1950.render();
+WC1954.render();
+WC1958.render();
+WC1962.render();
+WC1966.render();
+WC1970.render();
+WC1974.render();
+WC1978.render();
+WC1982.render();
+WC1986.render();
+WC1990.render();
+WC1994.render();
+WC1998.render();
+WC2002.render();
+WC2006.render();
+WC2014.render();
+WC2022.render();
+showImh(imhYear);
 </script>
 </body>
 </html>
